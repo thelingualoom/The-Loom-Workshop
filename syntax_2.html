@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <title>Syntax | The Loom Workshop</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Tree Tool ── */
+    .tree-input-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+    @media(max-width:700px){.tree-input-row{grid-template-columns:1fr;}}
+    .tree-preview{background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--r-sm);
+      min-height:260px;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:12px;}
+    .tree-preview canvas{display:block;}
+    .bracket-input{font-family:var(--font-m);font-size:13px;min-height:110px;resize:vertical;
+      background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);
+      padding:10px 12px;width:100%;color:var(--ink);line-height:1.7;}
+    .bracket-input:focus{outline:none;border-color:var(--forest-3);}
+    .bracket-error{color:var(--copper);font-size:12px;font-family:var(--font-m);margin-top:4px;min-height:18px;}
+    .shortcut-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+    /* ── POS ── */
+    .pos-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
+    .pos-legend-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);font-family:var(--font-m);}
+    .pos-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+    .syntax-token{border:1px solid transparent;display:inline-block;padding:2px 9px;margin:2px;
+      border-radius:4px;font-family:var(--font-m);font-size:14px;}
+    /* ── Clause ── */
+    .clause-card{background:var(--bg-dark);border-radius:var(--r-sm);padding:11px 14px;margin-top:8px;border-left:3px solid var(--forest-3);}
+    .clause-type-label{font-size:10.5px;font-family:var(--font-m);color:var(--copper);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;}
+    /* ── Voice ── */
+    .voice-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:20px;
+      font-size:14px;font-weight:600;margin:6px 0;}
+    .v-active{background:rgba(27,58,45,.1);color:var(--forest);border:1.5px solid var(--forest-3);}
+    .v-passive{background:rgba(192,124,62,.1);color:var(--copper);border:1.5px solid var(--copper);}
+    /* ── RC Table ── */
+    .rc-section{margin-bottom:24px;border-radius:var(--r-sm);overflow:hidden;border:1.5px solid var(--border);}
+    .rc-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+    .rc-table th{background:var(--forest);color:#fff;padding:9px 14px;text-align:left;font-family:var(--font-d);font-weight:600;}
+    .rc-table td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+    .rc-table tr:nth-child(even) td{background:var(--bg-dark);}
+    .rc-verb{font-family:var(--font-m);color:var(--copper);font-weight:600;}
+    .rc-head{padding:14px 16px;border-bottom:2px solid var(--border);}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<main>
+  <div class="page-hero">
+    <span class="page-hero-icon">🌿</span>
+    <h1>Syntax</h1>
+    <p>Tag parts of speech, build phrase structure trees from bracket notation, count clauses, detect voice, and explore raising &amp; control verbs.</p>
+  </div>
+
+  <div class="section">
+
+    <!-- ══ POS TAGGER ══════════════════════════════ -->
+    <h2 class="section-title">Part-of-Speech Tagger</h2>
+    <div class="tool-card" style="margin-bottom:28px;">
+      <div class="tool-card-header">
+        <span class="icon">🏷</span>
+        <div><h2>POS Tagger</h2><p>Tag every word with its grammatical category</p></div>
+      </div>
+      <div class="tool-card-body">
+        <div class="notice">
+          Closed-class words (articles, prepositions, conjunctions, pronouns, auxiliaries) are tagged from a built-in lexicon.
+          Open-class words use a 1 000+ word lexicon + morphological rules. Unknown words fall back to the Free Dictionary API.
+        </div>
+        <div class="input-group" style="margin-top:14px;">
+          <label>Enter a Sentence</label>
+          <textarea id="posIn" rows="3" placeholder="e.g. The old man quietly watched the young children playing in the park."></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="posBtn" onclick="runPOS()">Tag Parts of Speech</button>
+          <button class="btn btn-outline" onclick="clearPOS()">Clear</button>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px;">
+          Try:&nbsp;
+          <span class="tag" style="cursor:pointer" onclick="setPOS('The quick brown fox jumps over the lazy dog.')">Classic</span>
+          <span class="tag" style="cursor:pointer" onclick="setPOS('She will have been reading quietly in her room.')">Verb phrase</span>
+          <span class="tag" style="cursor:pointer" onclick="setPOS('The match was played in the park after noon.')">Tricky nouns</span>
+          <span class="tag" style="cursor:pointer" onclick="setPOS('Although he was tired he kept working because he had a deadline.')">Conjunctions</span>
+        </p>
+        <div class="result-box" id="posRes" style="margin-top:12px;"></div>
+        <div class="pos-legend" id="posLeg" style="display:none;">
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(74,136,112,.9)"></span>Noun</span>
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(192,124,62,.9)"></span>Verb</span>
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(100,80,160,.9)"></span>Adjective</span>
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(60,100,180,.9)"></span>Adverb</span>
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(200,50,80,.9)"></span>Det / Pronoun</span>
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(20,150,140,.9)"></span>Preposition</span>
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(180,120,20,.9)"></span>Conjunction</span>
+          <span class="pos-legend-item"><span class="pos-dot" style="background:rgba(140,140,140,.9)"></span>Aux / Other</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SYNTAX TREE ═════════════════════════════ -->
+    <h2 class="section-title">Phrase Structure Tree</h2>
+    <div class="tool-card" style="margin-bottom:28px;">
+      <div class="tool-card-header">
+        <span class="icon">🌳</span>
+        <div><h2>Syntax Tree Builder</h2><p>Type bracket notation — tree updates in real time</p></div>
+      </div>
+      <div class="tool-card-body">
+        <div class="notice">
+          Use bracket notation: <code style="font-family:var(--font-m);font-size:12px;">[S [NP [D the] [N cat]] [VP [V sat] [PP [P on] [NP [D the] [N mat]]]]]</code><br>
+          Add <strong>^</strong> after a label to draw a triangle: <code style="font-family:var(--font-m);font-size:12px;">[NP^ the big cat]</code>. Tree redraws on every keystroke.
+        </div>
+        <div class="tree-input-row" style="margin-top:14px;">
+          <div>
+            <label style="font-size:13px;font-weight:600;color:var(--forest);display:block;margin-bottom:6px;">Bracket Notation</label>
+            <textarea class="bracket-input" id="treeIn" placeholder="[S [NP [D the] [N cat]] [VP [V sat]]]" oninput="liveTree()" onkeydown="handleTreeKey(event)" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+            <div class="bracket-error" id="treeErr"></div>
+            <div class="shortcut-row">
+              <span class="tag" style="cursor:pointer;font-size:11px;" onclick="loadEx('[S [NP [D The] [N cat]] [VP [V sat] [PP [P on] [NP [D the] [N mat]]]]]')">The cat sat</span>
+              <span class="tag" style="cursor:pointer;font-size:11px;" onclick="loadEx('[S [NP [D The] [AdjP [Adj quick] [Adj brown]] [N fox]] [VP [V jumps] [PP [P over] [NP [D the] [AdjP [Adj lazy]] [N dog]]]]]')">Fox &amp; dog</span>
+              <span class="tag" style="cursor:pointer;font-size:11px;" onclick="loadEx('[S [NP [D She]] [VP [Aux will] [VP [Aux have] [VP [Aux been] [VP [V reading] [ADVP [Adv quietly]]]]]]]')">She will have been</span>
+              <span class="tag" style="cursor:pointer;font-size:11px;" onclick="loadEx('[S [NP^ The old man] [VP [V watched] [NP^ the young children] [PP [P in] [NP^ the park]]]]')">Triangles</span>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:var(--forest);display:block;margin-bottom:6px;">Tree Preview</label>
+            <div class="tree-preview" id="treePreview">
+              <div style="font-size:13px;color:var(--muted);text-align:center;padding-top:60px;">Start typing bracket notation →</div>
+            </div>
+            <p style="font-size:12px;color:var(--muted);margin-top:6px;">Right-click tree → Save image as…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CLAUSE + VOICE ══════════════════════════ -->
+    <h2 class="section-title">Clause &amp; Voice Analysis</h2>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <span class="icon">🔢</span>
+          <div><h2>Clause Counter</h2><p>Independent, dependent, and asyndetic clauses</p></div>
+        </div>
+        <div class="tool-card-body">
+          <div class="notice">Detects independent clauses (including asyndeton), dependent adverbial clauses, and classifies sentence type.</div>
+          <div class="input-group" style="margin-top:14px;">
+            <label>Enter a Sentence</label>
+            <textarea id="clauseIn" rows="4" placeholder="e.g. I came, I saw, I conquered."></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="runClause()">Analyze Clauses</button>
+            <button class="btn btn-outline" onclick="clearClause()">Clear</button>
+          </div>
+          <p style="font-size:13px;color:var(--muted);margin-top:8px;">
+            <span class="tag" style="cursor:pointer" onclick="setClause('I came, I saw, I conquered.')">Asyndeton</span>
+            <span class="tag" style="cursor:pointer" onclick="setClause('Although he was tired, he kept working because he had a deadline.')">Complex</span>
+            <span class="tag" style="cursor:pointer" onclick="setClause('She sang and he danced, but they were both tired.')">Compound</span>
+            <span class="tag" style="cursor:pointer" onclick="setClause('The dog barked.')">Simple</span>
+          </p>
+          <div class="result-box" id="clauseRes"></div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <span class="icon">🎙</span>
+          <div><h2>Active / Passive Voice</h2><p>BE-passive, GET-passive, agentive &amp; agentless</p></div>
+        </div>
+        <div class="tool-card-body">
+          <div class="notice">Detects regular passive (BE + -ed), irregular passive (BE + irregular past participle), and GET-passive.</div>
+          <div class="input-group" style="margin-top:14px;">
+            <label>Enter a Sentence</label>
+            <textarea id="voiceIn" rows="4" placeholder="e.g. The report has been written by the team."></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="runVoice()">Detect Voice</button>
+            <button class="btn btn-outline" onclick="clearVoice()">Clear</button>
+          </div>
+          <p style="font-size:13px;color:var(--muted);margin-top:8px;">
+            <span class="tag" style="cursor:pointer" onclick="setVoice('The cake was eaten by the children.')">Agentive</span>
+            <span class="tag" style="cursor:pointer" onclick="setVoice('The report has been written.')">Agentless</span>
+            <span class="tag" style="cursor:pointer" onclick="setVoice('She got promoted last year.')">GET-passive</span>
+            <span class="tag" style="cursor:pointer" onclick="setVoice('The dog chased the cat.')">Active</span>
+          </p>
+          <div class="result-box" id="voiceRes"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RAISING & CONTROL ═══════════════════════ -->
+    <h2 class="section-title" style="margin-top:32px;">Raising &amp; Control Verbs</h2>
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <span class="icon">📖</span>
+        <div><h2>Raising &amp; Control Reference Guide</h2><p>SSR, ECM, Subject Control, Object Control — with diagnostics and examples</p></div>
+      </div>
+      <div class="tool-card-body" id="rcBody"></div>
+    </div>
+
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="shared-ui.js"></script>
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════════ */
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ══════════════════════════════════════════════════════════
+   LEXICON  (closed-class — always correct)
+══════════════════════════════════════════════════════════ */
+var DETS  = new Set(['the','a','an','this','that','these','those','my','your','his','her','its',
+  'our','their','some','any','no','every','each','all','both','either','neither','few','little',
+  'much','many','more','most','other','another','such','what','which','whatever','whichever']);
+
+var PRONS = new Set(['i','me','we','us','you','he','him','she','her','it','they','them',
+  'myself','yourself','himself','herself','itself','ourselves','themselves','yourselves',
+  'who','whom','whose','mine','yours','ours','theirs','one','oneself',
+  'everybody','everyone','everything','somebody','someone','something',
+  'anybody','anyone','anything','nobody','no one','nothing']);
+
+var AUX   = new Set(['be','am','is','are','was','were','been','being',
+  'have','has','had','having','do','does','did',
+  'will','would','shall','should','may','might','must','can','could','ought',
+  "won't","wouldn't","shouldn't","can't","couldn't","mustn't","isn't","aren't",
+  "wasn't","weren't","hasn't","haven't","hadn't","doesn't","don't","didn't",
+  "won't","needn't"]);
+
+var BE    = new Set(['be','am','is','are','was','were','been','being']);
+var GETS  = new Set(['get','gets','got','gotten','getting']);
+
+var COORD = new Set(['and','but','or','nor','yet','so','for']);
+var SUBS  = new Set(['although','because','though','unless','whether','whereas','wherever',
+  'whenever','when','where','while','once','if','since','before','after','until','as',
+  'even','provided','assuming','given','seeing','lest','in order','so that']);
+
+var PREPS = new Set(['in','on','at','by','for','from','of','to','with','about','above',
+  'across','after','against','along','among','around','as','before','behind','below',
+  'beneath','beside','between','beyond','despite','during','except','inside','into',
+  'like','near','off','onto','outside','over','past','since','through','throughout',
+  'till','toward','towards','under','underneath','until','up','upon','via','within',
+  'without','per','plus','amid','amidst','versus','next to','instead of','because of',
+  'out of','due to','according to','along with','apart from']);
+
+/* Irregular past participles */
+var IRR_PP = new Set(['written','broken','spoken','stolen','taken','given','known','shown',
+  'grown','thrown','driven','ridden','hidden','bitten','chosen','frozen','gotten','forgotten',
+  'forbidden','beaten','eaten','fallen','risen','flown','drawn','worn','torn','born','sworn',
+  'woven','proven','woken','awoken','done','gone','seen','come','run','become','begun',
+  'won','held','sold','told','kept','felt','left','met','set','put','cut','let','hit',
+  'hurt','sent','spent','built','read','heard','meant','led','fed','lost','found','paid',
+  'laid','said','made','had','got','stood','understood','brought','bought','taught',
+  'thought','caught','sought','fought','stuck','strung','sung','rung','hung','spun',
+  'drunk','sunk','shrunk','swum','struck','split','spread','shed','burst','cast','cost',
+  'dealt','knelt','leapt','lent','lit','wept','slept','crept','bent','blended',
+  'undergone','undertaken','mistaken','overtaken','forsaken','shaken','chosen','arisen',
+  'strode','bidden']);
+
+/* Open-class word lists — used for POS tagging */
+var NOUNS_SET = new Set(['time','year','people','way','day','man','woman','child','world',
+  'life','hand','part','place','case','week','company','system','program','question','work',
+  'government','number','night','point','home','water','room','mother','area','money','story',
+  'fact','month','lot','right','study','book','eye','job','word','business','issue','side',
+  'kind','head','house','service','friend','father','power','hour','game','line','end','city',
+  'name','team','minute','street','body','information','back','parent','face','level','door',
+  'health','person','art','war','history','party','result','change','morning','reason',
+  'research','girl','guy','moment','air','teacher','force','education','food','office',
+  'school','field','state','group','center','course','heart','fire','country','mind',
+  'letter','class','music','color','sound','ground','policy','figure','surface','form',
+  'action','age','light','voice','process','space','size','rate','wind','road','memory',
+  'care','nature','science','society','decision','table','chair','window','car','dog','cat',
+  'bird','tree','garden','flower','river','mountain','ocean','sea','sky','cloud','rain',
+  'sun','moon','star','stone','bridge','hospital','university','library','computer','phone',
+  'paper','pen','cup','glass','bottle','bag','box','key','wall','floor','roof','bed','desk',
+  'mirror','picture','idea','thought','dream','hope','fear','love','anger','joy','pain',
+  'death','truth','beauty','energy','news','report','data','evidence','theory','model',
+  'method','approach','problem','solution','goal','plan','strategy','challenge','opportunity',
+  'relationship','family','culture','language','knowledge','experience','difference','effect',
+  'cause','purpose','function','role','task','situation','condition','event','movement',
+  'activity','progress','growth','success','failure','victory','defeat','peace','conflict',
+  'agreement','pattern','structure','network','connection','competition','technology',
+  'economy','politics','religion','philosophy','psychology','literature','mathematics',
+  'chemistry','biology','physics','match','park','run','drive','light','play','turn','show',
+  'call','help','work','start','use','need','love','hate','fear','study','change','move',
+  'mark','stand','watch','look','walk','talk','rise','fall','hit','cut','set','put','let',
+  'note','name','order','rule','model','guide','spring','summer','autumn','winter',
+  'afternoon','evening','decade','century','weight','height','depth','width','length',
+  'speed','distance','direction','location','address','quantity','quality','value','price',
+  'cost','amount','total','average','minimum','maximum','percentage','proportion',
+  'majority','minority','increase','decrease','example','type','sort','category','series',
+  'list','collection','range','variety','ability','skill','talent','performance',
+  'achievement','outcome','consequence','impact','influence','attitude','opinion','belief',
+  'concept','law','principle','standard','procedure','technique','answer','choice',
+  'option','judgment','conclusion','recommendation','suggestion','proposal','project',
+  'effort','attempt','resource','material','equipment','device','product','item','object',
+  'thing','matter','substance','element','factor','aspect','feature','characteristic',
+  'component','section','portion','segment','chapter','paragraph','sentence','phrase',
+  'term','definition','meaning','interpretation','explanation','description','analysis',
+  'evaluation','assessment','review','survey','interview','discussion','conversation',
+  'debate','argument','point','view','perspective','position','stance','feeling','emotion',
+  'reaction','response','behavior','measure','infrastructure','platform','substance',
+  'cricket','football','tennis','basketball','baseball','golf','player','coach','score',
+  'season','league','championship','tournament','cup','trophy','farm','forest','desert',
+  'island','beach','lake','field','second','hour','decade','century','minute','address',
+  'attempt','stage','phase','section','level','step','measure','impact','focus','effect']);
+
+var VERBS_SET = new Set(['say','go','come','take','get','know','make','look','think','see',
+  'give','find','want','tell','become','show','leave','feel','put','bring','begin','keep',
+  'hold','write','stand','hear','let','mean','set','meet','run','pay','sit','speak','lie',
+  'lead','read','grow','lose','fall','send','build','understand','draw','break','spend',
+  'cut','rise','drive','buy','wear','choose','carry','open','close','move','live','play',
+  'turn','ask','seem','help','talk','start','call','try','use','work','need','follow',
+  'create','believe','love','hate','learn','reach','remember','forget','decide','agree',
+  'disagree','consider','explain','describe','mention','suggest','allow','prevent','cause',
+  'include','provide','require','receive','expect','remain','continue','change','increase',
+  'decrease','improve','develop','produce','reduce','raise','appear','happen','contain',
+  'represent','add','form','involve','cover','affect','offer','serve','apply','present',
+  'support','enter','pass','accept','avoid','manage','return','act','fight','catch','kill',
+  'test','check','push','pull','lift','throw','drop','pick','place','focus','deal',
+  'compare','control','determine','identify','achieve','maintain','establish','indicate',
+  'demonstrate','examine','discuss','express','respond','perform','prepare','measure',
+  'replace','combine','connect','separate','protect','ensure','enable','relate','differ',
+  'share','hope','wish','plan','attempt','fail','succeed','struggle','challenge','overcome',
+  'discover','realize','recognize','notice','observe','wait','watch','listen','walk','fly',
+  'swim','jump','climb','sleep','wake','eat','drink','cook','clean','wash','travel','visit',
+  'arrive','depart','stay','touch','hit','hurt','save','teach','sing','dance','laugh',
+  'cry','smile','shout','whisper','answer','reply','confirm','deny','refuse','reject',
+  'prefer','like','dislike','enjoy','suffer','experience','handle','resolve','solve','fix',
+  'repair','design','generate','deliver','collect','gather','distribute','spread','update',
+  'modify','adjust','enhance','expand','extend','limit','restrict','stop','finish',
+  'complete','resume','pause','delay','advance','progress','disappear','repeat','report',
+  'announce','declare','claim','argue','propose','recommend','request','demand',
+  'include','exclude','promote','oppose','support','challenge','question','prove','test',
+  'says','goes','comes','takes','gets','knows','makes','looks','thinks','sees','gives',
+  'finds','wants','tells','becomes','shows','leaves','feels','puts','brings','begins',
+  'keeps','holds','writes','stands','hears','means','sets','meets','runs','pays','sits',
+  'speaks','leads','reads','grows','loses','falls','sends','builds','draws','breaks',
+  'spends','rises','drives','buys','wears','chooses','carries','opens','closes','moves',
+  'lives','plays','turns','asks','seems','helps','talks','starts','calls','tries','uses',
+  'works','needs','follows','creates','believes','loves','hates','learns','reaches',
+  'remains','continues','changes','increases','decreases','improves','develops','produces',
+  'reduces','raises','appears','happens','contains','represents','adds','forms','involves',
+  'covers','affects','offers','serves','applies','presents','supports','enters','passes',
+  'accepts','avoids','manages','returns','acts','fights','catches','tests','checks',
+  'pushes','pulls','lifts','throws','drops','picks','places','focuses','deals','compares',
+  'controls','determines','identifies','achieves','maintains','establishes','indicates',
+  'demonstrates','examines','discusses','expresses','responds','performs','prepares',
+  'measures','replaces','combines','connects','separates','protects','ensures','enables',
+  'watched','started','played','helped','talked','moved','turned','opened','closed',
+  'walked','jumped','climbed','traveled','visited','arrived','stayed','touched','saved',
+  'smiled','laughed','cried','shouted','confirmed','enjoyed','suffered','experienced',
+  'reported','announced','declared','claimed','argued','proposed','recommended','demanded',
+  'promoted','opposed','challenged','questioned','proved','tested','sat','ran','left',
+  'came','went','said','took','knew','made','thought','saw','gave','found','told',
+  'showed','felt','brought','began','kept','held','wrote','stood','heard','meant','led',
+  'read','grew','lost','fell','sent','built','understood','drew','broke','spent','rose',
+  'drove','bought','wore','chose','carried','asked','tried','used','worked','learned',
+  'reached','remembered','forgot','decided','agreed','considered','explained','described',
+  'mentioned','suggested','allowed','prevented','caused','received','expected','remained',
+  'continued','changed','increased','decreased','improved','developed','produced','reduced',
+  'appeared','happened','added','formed','involved','covered','affected','offered','served',
+  'applied','presented','entered','passed','accepted','avoided','managed','returned',
+  'caught','killed','picked','placed','focused','dealt','compared','controlled','identified',
+  'achieved','maintained','established','indicated','demonstrated','examined','discussed',
+  'expressed','responded','performed','prepared','measured','replaced','combined',
+  'connected','separated','protected','ensured','enabled','shared','hoped','wished',
+  'planned','attempted','failed','succeeded','struggled','discovered','realized',
+  'recognized','noticed','observed','waited','listened','ate','drank','cooked',
+  'cleaned','washed','replied','refused','rejected','preferred','liked','disliked',
+  'resolved','solved','fixed','repaired','designed','delivered','collected','gathered',
+  'distributed','updated','modified','adjusted','enhanced','expanded','extended',
+  'limited','restricted','stopped','finished','completed','resumed','paused','delayed',
+  'advanced','progressed','disappeared','repeated','conquered','saw','came']);
+
+var ADJS_SET = new Set(['good','new','first','last','long','great','little','own','right',
+  'big','high','different','small','large','next','early','young','important','public',
+  'private','real','best','free','happy','sad','bad','old','full','sure','true','hard',
+  'short','hot','cold','dark','light','deep','clear','open','strong','weak','fast','slow',
+  'easy','difficult','heavy','soft','smooth','rough','thick','thin','wide','narrow','tall',
+  'low','rich','poor','clean','dirty','quiet','loud','bright','dull','sharp','blunt',
+  'fresh','dry','wet','warm','cool','sweet','bitter','sour','salty','beautiful','ugly',
+  'pretty','handsome','cute','lovely','elegant','plain','simple','complex','strange',
+  'normal','common','rare','unique','special','general','specific','particular','major',
+  'minor','main','central','local','national','international','global','modern',
+  'traditional','ancient','natural','artificial','physical','mental','social','political',
+  'economic','cultural','historical','scientific','technical','medical','legal','military',
+  'religious','educational','professional','personal','individual','collective','positive',
+  'negative','neutral','active','passive','direct','indirect','formal','informal','official',
+  'available','possible','necessary','significant','effective','successful','popular',
+  'usual','regular','standard','original','creative','interesting','boring','exciting',
+  'serious','funny','similar','equal','various','certain','probable','likely','unlikely',
+  'obvious','visible','hidden','complete','partial','total','final','initial','basic',
+  'advanced','current','recent','entire','whole','single','double','multiple','absolute',
+  'relative','approximate','exact','precise','accurate','correct','wrong','false','actual',
+  'potential','angry','calm','brave','honest','kind','cruel','gentle','polite','rude',
+  'patient','careful','careless','wise','foolish','clever','lazy','generous','selfish',
+  'loyal','reliable','fair','just','quick','gradual','sudden','violent','peaceful',
+  'dangerous','safe','secure','stable','uncertain','busy','lively','dead','alive',
+  'healthy','sick','tired','valuable','useful','useless','expensive','cheap','affordable',
+  'slight','severe','mild','extreme','moderate','average','typical','unusual','surprising',
+  'expected','unexpected','constant','variable','flexible','rigid','loose','tight',
+  'consistent','permanent','temporary','inner','outer','peripheral','universal','ethical',
+  'logical','rational','irrational','practical','theoretical','abstract','concrete',
+  'literal','figurative','quick','brown','lazy','silent','loud','young','beautiful',
+  'ancient','distant','foreign','domestic','commercial','industrial','rural','urban',
+  'classical','digital','virtual','physical','verbal','written','oral','visual','musical']);
+
+var ADVS_SET = new Set(['very','also','now','just','how','so','here','even','back','only',
+  'still','well','most','then','more','really','often','never','always','sometimes',
+  'usually','finally','already','again','together','away','around','however','therefore',
+  'thus','hence','moreover','furthermore','nevertheless','nonetheless','instead',
+  'otherwise','meanwhile','subsequently','consequently','accordingly','additionally',
+  'alternatively','simultaneously','quickly','slowly','carefully','suddenly','easily',
+  'clearly','simply','completely','directly','exactly','actually','perhaps','probably',
+  'certainly','obviously','apparently','recently','immediately','soon','almost','nearly',
+  'barely','hardly','quite','rather','fairly','enough','too','much','less','least',
+  'especially','particularly','specifically','generally','normally','typically','mainly',
+  'mostly','largely','partly','fully','officially','formally','publicly','privately',
+  'personally','previously','currently','early','late','instantly','temporarily',
+  'permanently','gradually','rapidly','steadily','unexpectedly','accidentally',
+  'deliberately','safely','quietly','loudly','openly','strongly','deeply','badly',
+  'greatly','highly','widely','broadly','elsewhere','anywhere','everywhere','nowhere',
+  'somewhere','nearby','above','below','inside','outside','ahead','behind','abroad',
+  'apart','aside','basically','essentially','literally','virtually','practically',
+  'approximately','roughly','scarcely','briefly','slightly','heavily','softly','gently',
+  'firmly','tightly','loosely','poorly','nicely','warmly','coldly','brightly','darkly',
+  'proudly','freely','closely','swiftly','rarely','seldom','frequently','occasionally']);
+
+/* POS tag styles and labels */
+var TAG_CSS = {n:'tok-n',v:'tok-v',adj:'tok-adj',adv:'tok-adv',
+  det:'tok-det',pron:'tok-det',prep:'tok-prep',conj:'tok-conj',
+  sub:'tok-conj',aux:'tok-v',part:'tok-other',num:'tok-other','?':'tok-other'};
+var TAG_LBL = {n:'Noun',v:'Verb',adj:'Adj',adv:'Adv',
+  det:'Det',pron:'Pron',prep:'Prep',conj:'Conj',
+  sub:'Sub.Conj',aux:'Aux',part:'Particle',num:'Number','?':'Unknown'};
+
+/* ══════════════════════════════════════════════════════════
+   POS TAGGER
+══════════════════════════════════════════════════════════ */
+function tokenize(text){
+  var out = [];
+  /* Split on whitespace, strip punctuation but remember it */
+  var parts = text.trim().split(/\s+/);
+  parts.forEach(function(tok){
+    if(!tok) return;
+    var m = tok.match(/^([a-zA-Z][a-zA-Z'\-]*)([.,!?;:]*)$/);
+    if(m){
+      out.push({word:m[1], punct:m[2]||''});
+    } else {
+      var clean = tok.replace(/[^a-zA-Z'\-]/g,'');
+      if(clean.length > 0) out.push({word:clean, punct:''});
+    }
+  });
+  return out;
+}
+
+function morphTag(w){
+  var lo = w.toLowerCase();
+  if(/^\d+(\.\d+)?$/.test(w)) return 'num';
+  /* suffixes → POS */
+  if(/(tion|sion|ness|ment|ity|ance|ence|ship|hood|dom|ism|age|ure)$/i.test(lo) && lo.length>5) return 'n';
+  if(/(ist|er|or|ant|ent|eer|ian|ee)$/i.test(lo) && lo.length>4) return 'n';
+  if(/(ful|less|ous|ious|ish|ic|ical|able|ible|ary|ory|ive|ative|ate)$/i.test(lo) && lo.length>4) return 'adj';
+  if(/ly$/i.test(lo) && lo.length>3 && !['only','early','likely','holy','lonely','friendly','lively','elderly','silly','bully','jolly','rally','belly','jelly','rally'].includes(lo)) return 'adv';
+  if(/(ize|ise|ify|en)$/i.test(lo) && lo.length>4) return 'v';
+  if(/(ing|ed)$/i.test(lo) && lo.length>4) return 'v';
+  return null;
+}
+
+function firstPassTag(tokens){
+  return tokens.map(function(t){
+    var lo = t.word.toLowerCase();
+    var tag = null;
+    /* Closed-class — definitive, highest priority */
+    if(AUX.has(lo))   tag='aux';
+    else if(DETS.has(lo))  tag='det';
+    else if(PRONS.has(lo)) tag='pron';
+    else if(COORD.has(lo)) tag='conj';
+    else if(SUBS.has(lo))  tag='sub';
+    else if(PREPS.has(lo)) tag='prep';
+    else if(lo==='not'||lo==="n't") tag='part';
+    /* Open-class lexicons */
+    else if(VERBS_SET.has(lo)) tag='v';
+    else if(NOUNS_SET.has(lo)) tag='n';
+    else if(ADJS_SET.has(lo))  tag='adj';
+    else if(ADVS_SET.has(lo))  tag='adv';
+    /* Morphological rules */
+    else tag = morphTag(t.word);
+    return {word:t.word, punct:t.punct, tag:tag, src:tag?'lex':'unk'};
+  });
+}
+
+function contextPass(tagged){
+  var res = tagged.map(function(t){return Object.assign({},t);});
+  for(var i=0;i<res.length;i++){
+    var t    = res[i];
+    var prev = i>0 ? res[i-1] : null;
+    var pp   = i>1 ? res[i-2] : null;
+    var lo   = t.word.toLowerCase();
+
+    /* RULE 1: DET → next word that is ambiguously verb → noun
+       "the match", "a run", "the play"
+       Only fires if word is currently tagged 'v' AND is not an auxiliary */
+    if(prev && prev.tag==='det'){
+      if(t.tag==='v' && !AUX.has(lo) && !SUBS.has(lo)){
+        res[i].tag='n'; res[i].src='ctx:DET+N';
+      }
+    }
+
+    /* RULE 2: DET + ADJ + ambiguous-verb → noun
+       "the big match", "a fast run" */
+    if(pp && pp.tag==='det' && prev && prev.tag==='adj'){
+      if(t.tag==='v' && !AUX.has(lo)){
+        res[i].tag='n'; res[i].src='ctx:DET+ADJ+N';
+      }
+    }
+
+    /* RULE 3: After AUX or BE copula */
+    if(prev && (prev.tag==='aux' || BE.has(prev.word.toLowerCase()))){
+      if(/ing$/i.test(lo)){
+        /* progressive: "is running / was reading" → always verb */
+        res[i].tag='v'; res[i].src='ctx:PROG';
+      } else if(IRR_PP.has(lo) || /[^aeiou]ed$/i.test(lo)){
+        /* past participle → passive verb: "was written / was eaten" */
+        res[i].tag='v'; res[i].src='ctx:PASSIVE';
+      } else if(ADJS_SET.has(lo) && !VERBS_SET.has(lo)){
+        /* purely adjectival word after copula: "was tired / seems happy" */
+        res[i].tag='adj'; res[i].src='ctx:PRED_ADJ';
+      }
+    }
+
+    /* RULE 4: Mid-sentence capital letter → proper noun (if not a known word) */
+    if(i>0 && /^[A-Z]/.test(t.word) && (t.tag===null || t.tag==='v')){
+      if(!AUX.has(lo) && !COORD.has(lo) && !SUBS.has(lo) && !PREPS.has(lo)){
+        res[i].tag='n'; res[i].src='ctx:PROPER';
+      }
+    }
+
+    /* RULE 5: Fallback */
+    if(res[i].tag===null){
+      res[i].tag='n'; res[i].src='fallback';
+    }
+  }
+  return res;
+}
+
+var API_MAP={noun:'n',verb:'v',adjective:'adj',adverb:'adv',
+  pronoun:'pron',preposition:'prep',conjunction:'conj',determiner:'det'};
+
+function fetchPOSApi(word){
+  var ctrl=new AbortController();
+  var tid=setTimeout(function(){ctrl.abort();},4000);
+  return fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word.toLowerCase()),{signal:ctrl.signal})
+    .then(function(r){clearTimeout(tid);if(!r.ok)return null;return r.json();})
+    .then(function(d){
+      if(!d||!d[0]||!d[0].meanings||!d[0].meanings[0])return null;
+      return API_MAP[d[0].meanings[0].partOfSpeech]||null;
+    })
+    .catch(function(){return null;});
+}
+
+function tagSentence(text){
+  var tokens  = tokenize(text);
+  var tagged  = firstPassTag(tokens);
+  tagged      = contextPass(tagged);
+  var unknowns = tagged.filter(function(t){return t.src==='fallback';});
+  if(!unknowns.length) return Promise.resolve(tagged);
+  var lookups = unknowns.map(function(t){
+    return fetchPOSApi(t.word).then(function(tag){
+      if(tag){t.tag=tag;t.src='api';}
+    });
+  });
+  return Promise.all(lookups).then(function(){return tagged;});
+}
+
+/* ── POS UI ── */
+function setPOS(t){document.getElementById('posIn').value=t;runPOS();}
+function clearPOS(){
+  document.getElementById('posIn').value='';
+  document.getElementById('posRes').className='result-box';
+  document.getElementById('posLeg').style.display='none';
+}
+function runPOS(){
+  var text=document.getElementById('posIn').value.trim();
+  var el=document.getElementById('posRes');
+  var btn=document.getElementById('posBtn');
+  if(!text){el.className='result-box';return;}
+  el.className='result-box show';
+  el.innerHTML='<span style="font-size:13px;color:var(--muted)">⏳ Tagging…</span>';
+  btn.disabled=true;
+  tagSentence(text).then(function(tagged){
+    var counts={};
+    tagged.forEach(function(t){counts[t.tag]=(counts[t.tag]||0)+1;});
+    var apiUsed=tagged.some(function(t){return t.src==='api';});
+    var tokenHTML=tagged.map(function(t){
+      var css=TAG_CSS[t.tag]||'tok-other';
+      var lbl=TAG_LBL[t.tag]||t.tag||'?';
+      return '<span class="syntax-token '+css+'" title="'+esc(lbl)+(t.src==='api'?' [API]':'')+'">'
+        +esc(t.word)+'<sub style="font-size:9px;opacity:.65;font-family:var(--font-m);">'+esc(t.tag||'?')+'</sub></span>'
+        +(t.punct?'<span> '+esc(t.punct)+'</span>':'');
+    }).join(' ');
+    var statsHTML=Object.entries(counts).sort(function(a,b){return b[1]-a[1];})
+      .map(function(e){return '<div class="stat-item"><span class="num">'+e[1]+'</span><span class="lbl">'+(TAG_LBL[e[0]]||e[0])+'</span></div>';}).join('');
+    el.className='result-box show success';
+    el.innerHTML='<div class="result-label">Tagged Output</div>'
+      +'<div style="line-height:2.6;padding:6px 0;">'+tokenHTML+'</div>'
+      +'<div class="stat-grid" style="margin-top:14px;">'+statsHTML+'</div>'
+      +(apiUsed?'<p style="font-size:12px;color:var(--muted);margin-top:8px;">🌐 Some words resolved via Dictionary API</p>':'');
+    document.getElementById('posLeg').style.display='flex';
+    btn.disabled=false;
+  }).catch(function(){
+    el.className='result-box show warning';
+    el.innerHTML='<p>Tagging error — please try again.</p>';
+    btn.disabled=false;
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   SYNTAX TREE — BRACKET NOTATION PARSER + CANVAS RENDERER
+══════════════════════════════════════════════════════════ */
+
+/* ── PARSER ──
+   Grammar:
+     node  ::= '[' LABEL '^'? (node|word)* ']'
+     word  ::= any non-bracket, non-whitespace token
+   Returns: {label, tri, children:[...]} | {label:word, leaf:true}
+*/
+function parseBracket(src){
+  var pos=0;
+  function skipWS(){while(pos<src.length&&/\s/.test(src[pos]))pos++;}
+  function parseNode(){
+    skipWS();
+    if(pos>=src.length) return null;
+    if(src[pos]==='['){
+      pos++; /* consume [ */
+      skipWS();
+      /* read label (until space or [ or ]) */
+      var lstart=pos;
+      while(pos<src.length&&!/[\s\[\]]/.test(src[pos]))pos++;
+      var raw=src.slice(lstart,pos);
+      var tri=raw.endsWith('^');
+      var label=tri?raw.slice(0,-1):raw;
+      if(!label){label='?';}
+      skipWS();
+      var children=[];
+      if(tri){
+        /* triangle: collect all remaining text until matching ] */
+        var depth=1,textStart=pos;
+        while(pos<src.length&&depth>0){
+          if(src[pos]==='[')depth++;
+          else if(src[pos]===']')depth--;
+          if(depth>0)pos++;
+        }
+        var triText=src.slice(textStart,pos).trim();
+        pos++; /* consume ] */
+        return {label:label,tri:true,triText:triText,children:null};
+      }
+      /* parse children until matching ] */
+      while(pos<src.length&&src[pos]!==']'){
+        skipWS();
+        if(pos>=src.length||src[pos]===']') break;
+        if(src[pos]==='['){
+          var child=parseNode();
+          if(child) children.push(child);
+        } else {
+          /* word token */
+          var wstart=pos;
+          while(pos<src.length&&!/[\s\[\]]/.test(src[pos]))pos++;
+          var w=src.slice(wstart,pos);
+          if(w) children.push({label:w,leaf:true,children:null});
+        }
+      }
+      if(pos<src.length&&src[pos]===']') pos++; /* consume ] */
+      return {label:label,tri:false,children:children};
+    } else {
+      /* bare word */
+      var wstart=pos;
+      while(pos<src.length&&!/[\s\[\]]/.test(src[pos]))pos++;
+      var w=src.slice(wstart,pos);
+      return w?{label:w,leaf:true,children:null}:null;
+    }
+  }
+  skipWS();
+  var tree=parseNode();
+  skipWS();
+  /* If there's more stuff, wrap everything */
+  if(tree && pos<src.length){
+    var extras=[tree];
+    while(pos<src.length){
+      skipWS();
+      if(pos>=src.length)break;
+      var n=parseNode();
+      if(n)extras.push(n);
+    }
+    if(extras.length>1) tree={label:'',hidden:true,children:extras};
+  }
+  return tree;
+}
+
+/* ── LAYOUT ──
+   Each node gets:  _x, _y, _w (pixel coords, assigned top-down)
+*/
+var T_FONT_N='bold 12px JetBrains Mono,monospace'; /* non-terminal */
+var T_FONT_L='italic 12px Lora,serif';              /* word leaf */
+var T_H=22;    /* node box height */
+var T_VGAP=52; /* vertical spacing between levels */
+var T_HPAD=10; /* horizontal padding inside box */
+var T_HGAP=10; /* gap between siblings */
+
+var _mCanvas=null;
+function getMeasureCtx(){
+  if(!_mCanvas){_mCanvas=document.createElement('canvas');}
+  return _mCanvas.getContext('2d');
+}
+
+function nodeWidth(node){
+  var ctx=getMeasureCtx();
+  if(node.leaf){
+    ctx.font=T_FONT_L;
+    return Math.max(32,ctx.measureText(node.label).width+T_HPAD*2);
+  }
+  if(node.tri){
+    ctx.font=T_FONT_N;
+    var lw=ctx.measureText(node.label).width+T_HPAD*2;
+    ctx.font=T_FONT_L;
+    var tw=ctx.measureText(node.triText||'').width+T_HPAD*2;
+    return Math.max(lw,tw,40);
+  }
+  ctx.font=T_FONT_N;
+  var lw=node.hidden?0:Math.max(32,ctx.measureText(node.label).width+T_HPAD*2);
+  if(!node.children||!node.children.length) return Math.max(lw,32);
+  var childSum=node.children.reduce(function(s,c){return s+nodeWidth(c)+T_HGAP;},-T_HGAP);
+  return Math.max(lw,childSum);
+}
+
+function assignPos(node,x,y){
+  node._y=y;
+  node._w=nodeWidth(node);
+  if(node.leaf){
+    node._x=x+node._w/2; return;
+  }
+  if(node.tri){
+    node._x=x+node._w/2; return;
+  }
+  if(!node.children||!node.children.length){
+    node._x=x+node._w/2; return;
+  }
+  /* Assign children */
+  var childW=node.children.reduce(function(s,c){return s+nodeWidth(c)+T_HGAP;},-T_HGAP);
+  var cx=x+(node._w-childW)/2;
+  if(cx<x)cx=x;
+  node.children.forEach(function(c){
+    assignPos(c,cx,y+T_VGAP);
+    cx+=nodeWidth(c)+T_HGAP;
+  });
+  /* Center this node over children */
+  var first=node.children[0],last=node.children[node.children.length-1];
+  node._x=(first._x+last._x)/2;
+  if(node.hidden) node._x=node._w/2+(x);
+}
+
+function treeDepth(node){
+  if(!node.children||!node.children.length) return 1;
+  return 1+Math.max.apply(null,node.children.map(treeDepth));
+}
+
+function treeActualWidth(node){
+  if(!node.children||!node.children.length) return node._w;
+  var first=node.children[0],last=node.children[node.children.length-1];
+  return last._x+last._w/2 - (first._x-first._w/2)+T_HGAP;
+}
+
+/* ── DRAW ── */
+var NODE_COLORS={
+  /* phrase nodes */
+  S:'#1B3A2D', NP:'#2D7A4F', VP:'#7A4010', PP:'#0A5048',
+  ADVP:'#1A2E7A', ADJP:'#3D1F7A', CP:'#6B0A40', TP:'#4A4A10',
+  DP:'#2D4A8A', AP:'#4A1F7A', IP:'#1B5E4A',
+};
+function nodeColor(label){
+  var up=label.toUpperCase();
+  if(NODE_COLORS[up]) return NODE_COLORS[up];
+  /* phrase heuristic */
+  if(/P$/.test(up)) return '#2D5A7A';
+  return '#4A6B5A';
+}
+
+function rr(ctx,x,y,w,h,r){
+  if(ctx.roundRect){ctx.beginPath();ctx.roundRect(x,y,w,h,r);return;}
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+}
+
+function drawNode(ctx,node){
+  var x=node._x, y=node._y;
+
+  /* ── LEAF (word) ── */
+  if(node.leaf){
+    ctx.font=T_FONT_L;
+    ctx.fillStyle='#333';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(node.label,x,y);
+    return;
+  }
+
+  /* ── TRIANGLE ── */
+  if(node.tri){
+    var hw=node._w/2;
+    /* draw node box */
+    var col=nodeColor(node.label);
+    ctx.font=T_FONT_N;
+    var lw=ctx.measureText(node.label).width+T_HPAD*2;
+    rr(ctx,x-lw/2,y-T_H/2,lw,T_H,3);
+    ctx.fillStyle=col;ctx.fill();
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(node.label,x,y);
+    /* triangle below */
+    var triY=y+T_VGAP;
+    ctx.font=T_FONT_L;
+    var tw=ctx.measureText(node.triText||'').width;
+    var triHalfW=Math.max(hw,tw/2+8);
+    ctx.beginPath();
+    ctx.moveTo(x,y+T_H/2+2);
+    ctx.lineTo(x-triHalfW,triY+T_H/2);
+    ctx.lineTo(x+triHalfW,triY+T_H/2);
+    ctx.closePath();
+    ctx.fillStyle=col+'22';ctx.fill();
+    ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.stroke();
+    /* text inside triangle */
+    ctx.fillStyle='#333';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(node.triText||'',x,triY+T_H/2+2);
+    return;
+  }
+
+  /* ── PHRASE / INTERNAL NODE ── */
+  if(!node.hidden){
+    var col=nodeColor(node.label);
+    ctx.font=T_FONT_N;
+    var lw=ctx.measureText(node.label).width+T_HPAD*2;
+    lw=Math.max(lw,32);
+    rr(ctx,x-lw/2,y-T_H/2,lw,T_H,3);
+    ctx.fillStyle=col;ctx.fill();
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(node.label,x,y);
+  }
+
+  /* draw lines to children */
+  if(node.children){
+    node.children.forEach(function(c){
+      ctx.beginPath();
+      ctx.moveTo(x, y+(node.hidden?0:T_H/2+1));
+      ctx.lineTo(c._x, c._y-(c.leaf?4:T_H/2+1));
+      ctx.strokeStyle='rgba(0,0,0,.22)';ctx.lineWidth=1.4;ctx.stroke();
+      drawNode(ctx,c);
+    });
+  }
+}
+
+/* ── TREE UI ── */
+var _treeTimer=null;
+function liveTree(){
+  clearTimeout(_treeTimer);
+  _treeTimer=setTimeout(renderTree,80);
+}
+
+function handleTreeKey(e){
+  /* Tab inserts spaces instead of changing focus */
+  if(e.key==='Tab'){
+    e.preventDefault();
+    var ta=e.target;
+    var s=ta.selectionStart,en=ta.selectionEnd;
+    ta.value=ta.value.slice(0,s)+'  '+ta.value.slice(en);
+    ta.selectionStart=ta.selectionEnd=s+2;
+    liveTree();
+  }
+}
+
+function loadEx(bracket){
+  document.getElementById('treeIn').value=bracket;
+  renderTree();
+}
+
+function renderTree(){
+  var src=document.getElementById('treeIn').value.trim();
+  var errEl=document.getElementById('treeErr');
+  var wrap=document.getElementById('treePreview');
+  if(!src){
+    wrap.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding-top:60px;">Start typing bracket notation →</div>';
+    errEl.textContent='';return;
+  }
+
+  var tree;
+  try{tree=parseBracket(src);}
+  catch(e){errEl.textContent='Parse error: '+e.message;return;}
+  if(!tree){errEl.textContent='Could not parse — check brackets match.';return;}
+
+  errEl.textContent='';
+
+  /* Layout */
+  var PAD=24;
+  assignPos(tree,PAD,30);
+  var depth=treeDepth(tree);
+  var W=Math.max(380,tree._w+PAD*2);
+  var H=depth*T_VGAP+60;
+
+  /* Allocate canvas */
+  var canvas=wrap.querySelector('canvas');
+  if(!canvas){canvas=document.createElement('canvas');wrap.innerHTML='';wrap.appendChild(canvas);}
+  canvas.width=W;canvas.height=H;
+  canvas.style.maxWidth='100%';
+
+  var ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#FDFAF5';ctx.fillRect(0,0,W,H);
+
+  /* Subtle grid */
+  ctx.strokeStyle='rgba(27,58,45,.035)';ctx.lineWidth=1;
+  for(var gx=0;gx<W;gx+=40){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+  for(var gy=0;gy<H;gy+=40){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+
+  ctx.save();
+  drawNode(ctx,tree);
+  ctx.restore();
+}
+
+/* ══════════════════════════════════════════════════════════
+   CLAUSE COUNTER
+══════════════════════════════════════════════════════════ */
+
+/* ── CLAUSE HELPERS ── */
+
+var SUB_WORDS = ['although','because','though','unless','whether','whereas',
+  'wherever','whenever','when','where','while','once','if','since',
+  'before','after','until','even though','even if','so that','in order that',
+  'as though','as if','provided that','given that'];
+
+var COORD_WORDS = ['and','but','or','nor','yet','so','for'];
+
+/* Finite verb check */
+var IRR_PAST = new Set(['came','went','saw','conquered','ran','fell','rose','flew','spoke','wrote','knew','took','gave','found','told','showed','felt','brought','began','kept','held','stood','heard','meant','led','read','grew','lost','sent','built','drew','broke','spent','drove','bought','wore','chose','won','sold','taught','thought','caught','sought','sat','met','cut','let','hit','put','set','got','made','said','swam','sang','rang','hung','stung','swung','clung','flung','strung','spun','drank','shrank','sank','bore','tore','swore','froze','wove','beat','bit','blew','bound','bred','crept','dealt','dug','dreamt','fed','fled','fought','ground','hid','knelt','laid','leapt','left','lent','lit','pled','rode','slept','slid','smelt','sought','slew','sped','split','spread','sprang','stole','stank','struck','strode','swept','swung','threw','withdrew','wept','wound','wrung']);
+
+function segHasVerb(seg){
+  var words = seg.toLowerCase().replace(/[^a-z'\-\s]/g,'').split(/\s+/);
+  return words.some(function(w){
+    if(!w||w.length<2) return false;
+    if(AUX.has(w)||BE.has(w)||VERBS_SET.has(w)||IRR_PAST.has(w)) return true;
+    if(/[^aeiou]ed$/i.test(w)||/ing$/i.test(w)) return true;
+    /* 3rd-person singular: "studies"→"study", "goes"→"go", "runs"→"run" */
+    var stem = w.endsWith('ies') ? w.slice(0,-3)+'y'
+             : w.endsWith('es')  ? w.slice(0,-2)
+             : w.endsWith('s')   ? w.slice(0,-1)
+             : w;
+    if(stem !== w && (VERBS_SET.has(stem)||AUX.has(stem))) return true;
+    return false;
+  });
+}
+
+/* Subject check — first meaningful word is a pronoun, det, or capital */
+function segHasSubj(seg){
+  var first = seg.trim().replace(/^(and|but|or|nor|yet|so|for)\s+/i,'').trim().split(/\s+/)[0];
+  if(!first) return false;
+  var lo = first.toLowerCase().replace(/[^a-z]/g,'');
+  var SUBJ_STARTERS = new Set(['i','you','he','she','it','we','they',
+    'the','a','an','this','that','these','those',
+    'my','your','his','her','its','our','their',
+    'one','there','here','what','who','whoever','whatever',
+    'everyone','someone','no one','nobody','somebody','anybody','anything',
+    'something','nothing','everything']);
+  return SUBJ_STARTERS.has(lo) || /^[A-Z]/.test(first);
+}
+
+/* Check if a string starts with a sub-conj word */
+function startsWithSub(seg){
+  var lo = seg.toLowerCase().trimLeft();
+  return SUB_WORDS.find(function(sw){
+    return lo === sw || lo.startsWith(sw+' ') || lo.startsWith(sw+',');
+  }) || null;
+}
+
+/* ── MAIN CLAUSE ANALYSIS ──
+   Algorithm:
+   1. Find ALL cut positions: commas/semicolons + every sub-conj position + coord-conj positions (only when followed by a subject)
+   2. Extract segments between cuts
+   3. Classify each segment: starts-with-sub-conj → Dependent, else → Independent (if has verb)
+   4. Post-process: mark Asyndeton when no conj in sentence at all
+*/
+function analyzeSent(sent){
+  var clauses = [];
+
+  /* Build cut positions */
+  var cuts = new Set([0]);
+
+  /* Helper: does a word at this position exist at a word boundary? */
+  function atWordBoundary(str, idx, word){
+    var before = idx === 0 || /\W/.test(str[idx-1]);
+    var after  = idx+word.length >= str.length || /\W/.test(str[idx+word.length]);
+    return before && after;
+  }
+
+  var loSent = sent.toLowerCase();
+
+  /* Comma / semicolon cuts — only when NOT immediately followed by a coord/sub conj
+     (those will get their own cut point) */
+  for(var ci=0; ci<sent.length; ci++){
+    if(sent[ci]===','||sent[ci]===';'){
+      var rest = sent.slice(ci+1).replace(/^\s+/,'');
+      var nextWord = rest.split(/\s+/)[0].toLowerCase();
+      var followedByConj = COORD_WORDS.indexOf(nextWord)!==-1 ||
+        SUB_WORDS.some(function(sw){ return nextWord===sw.split(' ')[0]; });
+      if(!followedByConj) cuts.add(ci+1);
+    }
+  }
+
+  /* Sub-conj cuts — every occurrence (including position 0, already in set) */
+  SUB_WORDS.forEach(function(sw){
+    var start = 0;
+    while(true){
+      var idx = loSent.indexOf(sw, start);
+      if(idx===-1) break;
+      if(atWordBoundary(loSent, idx, sw)){
+        cuts.add(idx); /* 0 is already there, duplicates ignored by Set */
+      }
+      start = idx+1;
+    }
+  });
+
+  /* Coord-conj cuts — only when what follows has a subject (new independent clause) */
+  COORD_WORDS.forEach(function(cw){
+    var start = 0;
+    while(true){
+      var idx = loSent.indexOf(cw, start);
+      if(idx===-1) break;
+      if(atWordBoundary(loSent, idx, cw) && idx>0){
+        var after = sent.slice(idx+cw.length).replace(/^\s+/,'');
+        if(segHasSubj(after)) cuts.add(idx);
+      }
+      start = idx+1;
+    }
+  });
+
+  /* Sort cuts, add sentinel */
+  var cutArr = Array.from(cuts).sort(function(a,b){return a-b;});
+  cutArr.push(sent.length);
+
+  /* Extract + clean segments */
+  var segments = [];
+  for(var i=0; i<cutArr.length-1; i++){
+    var seg = sent.slice(cutArr[i], cutArr[i+1]).replace(/^[\s,;]+|[\s,;]+$/g,'').trim();
+    if(seg.length > 2) segments.push(seg);
+  }
+
+  /* Classify segments */
+  segments.forEach(function(seg){
+    var subConj = startsWithSub(seg);
+    if(subConj && segHasVerb(seg)){
+      clauses.push({text:seg, type:'Dependent', subtype:'Adverbial', conj:subConj});
+    } else if(segHasVerb(seg)){
+      /* For coord-starting segments, check new subject exists */
+      var cleanSeg = seg.replace(/^(and|but|or|nor|yet|so|for)\s+/i,'').trim();
+      if(segHasSubj(cleanSeg) || clauses.length===0){
+        clauses.push({text:seg, type:'Independent', subtype:null, conj:null});
+      }
+    }
+  });
+
+  /* Fallback: whole sentence is one clause */
+  if(!clauses.length && segHasVerb(sent)){
+    clauses.push({text:sent, type:'Independent', subtype:null, conj:null});
+  }
+
+  /* Mark Asyndeton: 2+ independent clauses, ZERO coord or sub conj in sentence */
+  var hasCoord = COORD_WORDS.some(function(cw){ return new RegExp('\\b'+cw+'\\b','i').test(sent); });
+  var hasSub   = SUB_WORDS.some(function(sw){ return new RegExp('\\b'+sw.split(' ')[0]+'\\b','i').test(sent); });
+  if(!hasCoord && !hasSub){
+    clauses.forEach(function(c){ if(c.type==='Independent') c.subtype='Asyndeton'; });
+  }
+
+  return clauses;
+}
+
+function setClause(t){document.getElementById('clauseIn').value=t;runClause();}
+function clearClause(){document.getElementById('clauseIn').value='';document.getElementById('clauseRes').className='result-box';}
+
+function runClause(){
+  var text = document.getElementById('clauseIn').value.trim();
+  var el   = document.getElementById('clauseRes');
+  if(!text){el.className='result-box';return;}
+
+  /* Split into sentences (basic — handle .!? boundaries) */
+  var rawSents = text.replace(/([.!?])\s+/g,'$1\n').split('\n')
+    .map(function(s){return s.replace(/[.!?]+$/,'').trim();})
+    .filter(function(s){return s.length>1;});
+  if(!rawSents.length) rawSents=[text.replace(/[.!?]+$/,'').trim()];
+
+  var totalInd=0, totalDep=0;
+  var sentResults=[];
+
+  rawSents.forEach(function(sent){
+    var clauses = analyzeSent(sent);
+    var iCount = clauses.filter(function(c){return c.type==='Independent';}).length;
+    var dCount = clauses.filter(function(c){return c.type==='Dependent';}).length;
+    totalInd += iCount; totalDep += dCount;
+    var sType = iCount>=2&&dCount>=1 ? 'Compound-Complex'
+              : iCount>=2&&dCount===0 ? 'Compound'
+              : iCount===1&&dCount>=1 ? 'Complex'
+              : 'Simple';
+    sentResults.push({sent:sent, clauses:clauses, sType:sType, iCount:iCount, dCount:dCount});
+  });
+
+  el.className='result-box show success';
+  var html='<div class="stat-grid" style="margin-bottom:14px;">'
+    +'<div class="stat-item"><span class="num">'+(totalInd+totalDep)+'</span><span class="lbl">Total</span></div>'
+    +'<div class="stat-item"><span class="num">'+totalInd+'</span><span class="lbl">Independent</span></div>'
+    +'<div class="stat-item"><span class="num">'+totalDep+'</span><span class="lbl">Dependent</span></div>'
+    +'<div class="stat-item"><span class="num">'+sentResults.length+'</span><span class="lbl">Sentence(s)</span></div>'
+    +'</div>';
+
+  sentResults.forEach(function(r){
+    html+='<div style="margin-bottom:14px;">'
+      +'<div class="result-label" style="margin-bottom:6px;">Type: <strong style="color:var(--forest);font-size:13px;">'+esc(r.sType)+'</strong></div>';
+    r.clauses.forEach(function(c){
+      var bdr=c.type==='Independent'?'var(--forest-3)':'var(--copper)';
+      html+='<div class="clause-card" style="border-left-color:'+bdr+';">'
+        +'<div class="clause-type-label">'+esc(c.type)+' Clause'
+        +(c.subtype?' · '+esc(c.subtype):'')
+        +(c.conj?' · <em>'+esc(c.conj)+'</em>':'')
+        +'</div>'
+        +'<div style="font-size:14px;font-style:italic;">&ldquo;'+esc(c.text)+'&rdquo;</div>'
+        +'</div>';
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VOICE DETECTOR
+══════════════════════════════════════════════════════════ */
+function isRegPP(word){return /[^aeiou]ed$/i.test(word)&&word.length>3;}
+
+function analyzeVoice(sent){
+  var words=sent.toLowerCase().split(/\s+/).map(function(w){return w.replace(/[^a-z']/g,'');});
+  var orig=sent.split(/\s+/);
+
+  /* GET-passive */
+  for(var i=0;i<words.length;i++){
+    if(GETS.has(words[i])){
+      var j=i+1;
+      while(j<words.length&&(words[j]==='not'||ADVS_SET.has(words[j])))j++;
+      if(j<words.length&&(IRR_PP.has(words[j])||isRegPP(words[j]))){
+        var byIdx=words.indexOf('by',j);
+        var agent=byIdx>j?orig.slice(byIdx).join(' '):null;
+        return {voice:'Passive',ptype:'GET-Passive',vPhrase:orig[i]+' '+orig[j],
+          explanation:'GET-passive — subject is affected by the action. '+(agent?'Agent: "'+agent+'".':'No agent stated (agentless).')};
+      }
+    }
+  }
+
+  /* BE-passive */
+  for(var i=0;i<words.length;i++){
+    if(BE.has(words[i])){
+      var j=i+1;
+      while(j<words.length&&(words[j]==='not'||words[j]==='never'||words[j]==='just'||words[j]==='already'||words[j]==='also'||ADVS_SET.has(words[j])))j++;
+      if(j<words.length&&(IRR_PP.has(words[j])||isRegPP(words[j]))){
+        var perf=(i>0&&(words[i-1]==='have'||words[i-1]==='has'||words[i-1]==='had'||words[i-1]==='been'));
+        var ptype=perf?'Perfect Passive (BE)':'Simple Passive (BE)';
+        var byIdx=words.indexOf('by',j);
+        var agent=byIdx>j?orig.slice(byIdx).join(' '):null;
+        return {voice:'Passive',ptype:ptype,vPhrase:orig[i]+' '+orig[j],
+          explanation:agent
+            ?'Agentive passive — agent expressed via "by" phrase: "'+agent+'".'
+            :'Agentless passive — agent omitted; focus on recipient or result.'};
+      }
+    }
+  }
+
+  /* Active */
+  var fv=words.find(function(w){return VERBS_SET.has(w)||AUX.has(w);});
+  return {voice:'Active',ptype:null,vPhrase:fv||null,
+    explanation:'Active voice — the grammatical subject performs the action.'};
+}
+
+function setVoice(t){document.getElementById('voiceIn').value=t;runVoice();}
+function clearVoice(){document.getElementById('voiceIn').value='';document.getElementById('voiceRes').className='result-box';}
+function runVoice(){
+  var text=document.getElementById('voiceIn').value.trim();
+  var el=document.getElementById('voiceRes');
+  if(!text){el.className='result-box';return;}
+  var sents=text.split(/[.!?]+/).map(function(s){return s.trim();}).filter(function(s){return s.length>1;});
+  if(!sents.length)sents=[text];
+  var html='';
+  sents.forEach(function(sent){
+    var a=analyzeVoice(sent);
+    var isP=a.voice==='Passive';
+    html+='<div style="margin-bottom:14px;">'
+      +'<div class="voice-badge '+(isP?'v-passive':'v-active')+'">'
+      +(isP?'🟠 Passive':'🟢 Active')+(a.ptype?' &nbsp;—&nbsp; '+esc(a.ptype):'')+' Voice</div>'
+      +'<div style="background:var(--bg-dark);border-radius:var(--r-sm);padding:12px 14px;">'
+      +'<p style="font-size:14px;font-style:italic;margin-bottom:8px;">&ldquo;'+esc(sent)+'&rdquo;</p>'
+      +'<p style="font-size:13.5px;">'+esc(a.explanation)+'</p>'
+      +(a.vPhrase?'<div class="tag-row" style="margin-top:8px;"><span class="tag copper" style="font-family:var(--font-m);font-size:12px;">'+esc(a.vPhrase)+'</span>'
+        +'<span style="font-size:12.5px;color:var(--muted);margin-left:4px;">'+(isP?'passive verb phrase':'main verb')+'</span></div>':'')
+      +'</div></div>';
+  });
+  el.className='result-box show success';
+  el.innerHTML=html;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RAISING & CONTROL REFERENCE
+══════════════════════════════════════════════════════════ */
+var RC=[
+  {title:'Subject-to-Subject Raising (SSR)',color:'#1B3A2D',
+   desc:'The embedded subject is "raised" into the matrix subject position. The matrix verb assigns NO theta role to this NP.',
+   diag:'Substitute expletive <em>it</em>: "She seems tired" ↔ "It seems that she is tired." ✓&nbsp; Also works with <em>there</em>: "There seems to be a problem."',
+   verbs:[
+     ['seem',     '"She seems to be tired."',         '"It seems that she is tired." — expletive it ✓'],
+     ['appear',   '"He appears to have left."',       '"It appears that he has left."'],
+     ['happen',   '"They happen to know her."',       '"It happened that they knew her."'],
+     ['turn out', '"It turned out to be true."',      'Expletive it subject possible'],
+     ['prove',    '"She proved to be right."',        '"It proved that she was right."'],
+     ['tend',     '"Prices tend to rise."',            'Generalization; inanimate subject fine'],
+     ['threaten', '"The plan threatens to collapse."','Non-volitional raising; no agent'],
+   ]},
+  {title:'Raising-to-Object / ECM (Exceptional Case Marking)',color:'#2D7A4F',
+   desc:'The matrix verb assigns ACCUSATIVE case to the embedded subject, surfacing as the object of the matrix clause.',
+   diag:'Embedded subject takes accusative: "I believe <u>him</u> to be honest" (not *he). Passivizes: "He is believed to be honest." ✓',
+   verbs:[
+     ['believe',    '"I believe her to be honest."',       'ECM: "her" in accusative; subject of "be honest"'],
+     ['expect',     '"We expect them to arrive."',         '"They are expected to arrive." (passive ✓)'],
+     ['consider',   '"They consider him a genius."',       'Small clause; accusative NP'],
+     ['find',       '"She found the task to be hard."',    'Evaluative ECM'],
+     ['understand', '"I understand him to have resigned."','Epistemic; formal register'],
+     ['assume',     '"We assumed her to be the leader."',  'ECM with infinitival complement'],
+   ]},
+  {title:'Subject Control',color:'#7A4010',
+   desc:'The matrix SUBJECT is co-indexed with PRO (empty subject) of the embedded infinitive. Subject is agent of BOTH predicates.',
+   diag:'Cannot replace subject with expletive: *"It tried to leave." Subject must be agentive. <strong>Promise</strong> is unique: subject controls even in ditransitives ("the promise paradox").',
+   verbs:[
+     ['try',     '"She tried to leave."',         'Deliberate; subject=PRO; *"It tried"'],
+     ['decide',  '"He decided to go."',            'Volitional; subject controls'],
+     ['agree',   '"They agreed to cooperate."',   'Mutual subject control'],
+     ['refuse',  '"She refused to answer."',       'Negated subject control'],
+     ['promise', '"He promised her to return."',  'UNIQUE: subject controls — "the promise paradox" (cf. object control)'],
+     ['plan',    '"We plan to expand."',           'Prospective intentional action'],
+     ['intend',  '"She intends to resign."',       'Strong intentionality; subject controls'],
+     ['manage',  '"He managed to escape."',        'Implication of difficulty; animate subject'],
+     ['want',    '"I want to leave."',              'Desiderative; subject controls PRO'],
+   ]},
+  {title:'Object Control',color:'#1A2E7A',
+   desc:'The matrix OBJECT is co-indexed with PRO of the embedded infinitive. The object is the agent of the lower predicate.',
+   diag:'Object is OBLIGATORY — remove it and the sentence breaks: *"She persuaded to leave." Contrast: "I told him to leave" ≠ "I tried to leave."',
+   verbs:[
+     ['persuade', '"She persuaded him to leave."',    'Object "him"=PRO; coercive persuasion'],
+     ['force',    '"They forced her to confess."',    'Coercive; animate object obligatory'],
+     ['tell',     '"I told him to wait."',            'Directive speech act; object controls'],
+     ['ask',      '"She asked them to stay."',        'Polite directive; object controls'],
+     ['convince', '"He convinced her to apply."',    'Epistemic causation; object controls'],
+     ['urge',     '"We urged them to vote."',         'Encouragement; object control'],
+     ['advise',   '"She advised him to rest."',       'Recommendation; object controls'],
+     ['order',    '"He ordered them to retreat."',    'Authoritative directive'],
+     ['allow',    '"They allowed her to enter."',     'Permission; object controls'],
+     ['warn',     '"He warned her not to go."',       'Negative infinitive; object controls'],
+   ]},
+];
+
+document.getElementById('rcBody').innerHTML=RC.map(function(cat){
+  return '<div class="rc-section">'
+    +'<div class="rc-head" style="background:'+cat.color+'12;border-bottom:2px solid '+cat.color+'22;">'
+    +'<div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:'+cat.color+';margin-bottom:6px;">'+esc(cat.title)+'</div>'
+    +'<div style="font-size:13.5px;color:var(--ink);margin-bottom:8px;">'+cat.desc+'</div>'
+    +'<div style="font-size:13px;padding:8px 12px;background:rgba(192,124,62,.07);border-radius:4px;"><strong>Diagnostic:</strong> '+cat.diag+'</div>'
+    +'</div>'
+    +'<table class="rc-table"><thead><tr>'
+    +'<th style="width:100px;">Verb</th><th>Example</th><th>Note</th>'
+    +'</tr></thead><tbody>'
+    +cat.verbs.map(function(v){
+      return '<tr>'
+        +'<td class="rc-verb">'+esc(v[0])+'</td>'
+        +'<td style="font-style:italic;font-size:13px;">'+esc(v[1])+'</td>'
+        +'<td style="font-size:12.5px;color:var(--muted);">'+esc(v[2])+'</td>'
+        +'</tr>';
+    }).join('')
+    +'</tbody></table></div>';
+}).join('');
+</script>
+</body>
+</html>
