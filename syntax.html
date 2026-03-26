@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <title>Syntax | The Loom Workshop</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .tree-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+      margin-top: 16px;
+    }
+    @media (max-width: 720px) { .tree-layout { grid-template-columns: 1fr; } }
+
+    .bracket-input {
+      font-family: var(--font-m);
+      font-size: 13px;
+      min-height: 120px;
+      resize: vertical;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      width: 100%;
+      color: var(--ink);
+      line-height: 1.8;
+    }
+    .bracket-input:focus { outline: none; border-color: var(--forest-3); }
+    .bracket-error { color: var(--red); font-size: 12px; font-family: var(--font-m); margin-top: 5px; min-height: 16px; }
+
+    .color-toggle { display: inline-flex; border: 1.5px solid var(--border); border-radius: var(--r-sm); overflow: hidden; }
+    .color-toggle button {
+      padding: 6px 18px; font-size: 12.5px; font-family: var(--font-m);
+      border: none; background: transparent; color: var(--muted);
+      cursor: pointer; transition: background 0.15s, color 0.15s; letter-spacing: 0.04em;
+    }
+    .color-toggle button.active-black { background: #111; color: #fff; }
+    .color-toggle button.active-theme { background: var(--forest); color: #fff; }
+
+    .tree-preview {
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      border-radius: var(--r-sm); min-height: 280px; overflow: auto;
+      display: flex; align-items: flex-start; justify-content: center; padding: 16px 12px 12px;
+    }
+    .tree-preview canvas { display: block; max-width: 100%; }
+    .tree-placeholder { font-size: 13px; color: var(--muted); text-align: center; padding-top: 80px; font-style: italic; }
+
+    .shortcut-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .shortcut-row .tag { cursor: pointer; font-size: 11px; }
+    .shortcut-row .tag:hover { background: var(--forest); color: #fff; border-color: var(--forest); }
+
+    .dl-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .dl-row .btn { font-size: 12.5px; padding: 7px 16px; }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<main>
+  <div class="page-hero">
+    <span class="page-hero-icon">🌿</span>
+    <h1>Syntax</h1>
+    <p>Build phrase-structure trees from bracket notation. Type your structure and the tree draws instantly.</p>
+  </div>
+
+  <div class="section">
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <span class="icon">🌳</span>
+        <div><h2>Syntax Tree Builder</h2><p>Type bracket notation — tree updates in real time</p></div>
+      </div>
+      <div class="tool-card-body">
+        <div class="notice">
+          Bracket notation: <code style="font-family:var(--font-m);font-size:12px;">[S [NP [D the] [N cat]] [VP [V sat]]]</code><br>
+          Add <strong>^</strong> after a label to draw a triangle: <code style="font-family:var(--font-m);font-size:12px;">[NP^ the big cat]</code>
+        </div>
+
+        <div class="tree-layout">
+          <!-- LEFT: input -->
+          <div>
+            <label style="font-size:13px;font-weight:600;color:var(--forest);display:block;margin-bottom:6px;">Bracket Notation</label>
+            <textarea class="bracket-input" id="treeIn"
+              placeholder="[S [NP [D the] [N cat]] [VP [V sat]]]"
+              oninput="liveTree()" onkeydown="handleTreeKey(event)"
+              spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+            <div class="bracket-error" id="treeErr"></div>
+            <div class="shortcut-row">
+              <span class="tag" onclick="loadEx('[S [NP [D The] [N dog]] [VP [V ate] [NP [D the] [N bone]]]]')">The dog ate</span>
+              <span class="tag" onclick="loadEx('[S [NP [D The] [N cat]] [VP [V sat] [PP [P on] [NP [D the] [N mat]]]]]')">Cat sat on mat</span>
+              <span class="tag" onclick="loadEx('[S [NP [D She]] [VP [Aux will] [VP [Aux have] [VP [Aux been] [VP [V reading] [ADVP [Adv quietly]]]]]]]')">She will have been</span>
+              <span class="tag" onclick="loadEx('[CP [C that] [IP [NP [D the] [N rain]] [I&apos; [I will] [VP [V come]]]]]')">CP / IP</span>
+              <span class="tag" onclick="loadEx('[S [NP^ The old man] [VP [V watched] [NP^ the young children]]]')">Triangles</span>
+            </div>
+          </div>
+
+          <!-- RIGHT: preview -->
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+              <label style="font-size:13px;font-weight:600;color:var(--forest);">Tree Preview</label>
+              <div class="color-toggle">
+                <button id="btnBlack" class="active-black" onclick="setColorMode('black')">⬤ Black</button>
+                <button id="btnTheme" onclick="setColorMode('theme')">◆ Theme</button>
+              </div>
+            </div>
+            <div class="tree-preview" id="treePreview">
+              <div class="tree-placeholder">Type bracket notation to see your tree →</div>
+            </div>
+            <div class="dl-row">
+              <button class="btn btn-outline" id="dlBtn" onclick="downloadTree()" style="display:none;">↓ Download PNG</button>
+              <span style="font-size:12px;color:var(--muted);">Works on mobile &amp; desktop</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="shared-ui.js"></script>
+<script>
+'use strict';
+
+/* ── COLOUR MODES ── */
+var COLOR_MODES = {
+  black: { nt: '#111111', leaf: '#111111', line: '#333333', bg: '#FFFFFF' },
+  theme: { nt: '#1B3A2D', leaf: '#C07C3E', line: '#1B3A2D', bg: '#FDFAF5' }
+};
+var currentMode = 'black';
+
+function setColorMode(mode) {
+  currentMode = mode;
+  document.getElementById('btnBlack').className = mode === 'black' ? 'active-black' : '';
+  document.getElementById('btnTheme').className  = mode === 'theme'  ? 'active-theme'  : '';
+  renderTree();
+}
+
+/* ── PARSER ── */
+function parseBracket(src) {
+  var pos = 0;
+  function skipWS() { while (pos < src.length && /\s/.test(src[pos])) pos++; }
+
+  function parseNode() {
+    skipWS();
+    if (pos >= src.length) return null;
+    if (src[pos] === '[') {
+      pos++;
+      skipWS();
+      var lstart = pos;
+      while (pos < src.length && !/[\s\[\]]/.test(src[pos])) pos++;
+      var raw = src.slice(lstart, pos);
+      var tri = raw.endsWith('^');
+      var label = tri ? raw.slice(0, -1) : raw;
+      if (!label) label = '?';
+      skipWS();
+
+      if (tri) {
+        var depth = 1, textStart = pos;
+        while (pos < src.length && depth > 0) {
+          if (src[pos] === '[') depth++;
+          else if (src[pos] === ']') depth--;
+          if (depth > 0) pos++;
+        }
+        var triText = src.slice(textStart, pos).trim();
+        pos++;
+        return { label: label, tri: true, triText: triText, children: null };
+      }
+
+      var children = [];
+      while (pos < src.length && src[pos] !== ']') {
+        skipWS();
+        if (pos >= src.length || src[pos] === ']') break;
+        if (src[pos] === '[') {
+          var ch = parseNode(); if (ch) children.push(ch);
+        } else {
+          var wstart = pos;
+          while (pos < src.length && !/[\s\[\]]/.test(src[pos])) pos++;
+          var w = src.slice(wstart, pos);
+          if (w) children.push({ label: w, leaf: true, children: null });
+        }
+      }
+      if (pos < src.length && src[pos] === ']') pos++;
+      return { label: label, tri: false, children: children };
+    } else {
+      var wstart = pos;
+      while (pos < src.length && !/[\s\[\]]/.test(src[pos])) pos++;
+      var w = src.slice(wstart, pos);
+      return w ? { label: w, leaf: true, children: null } : null;
+    }
+  }
+
+  skipWS();
+  var tree = parseNode();
+  skipWS();
+  if (tree && pos < src.length) {
+    var extras = [tree];
+    while (pos < src.length) { skipWS(); if (pos >= src.length) break; var n = parseNode(); if (n) extras.push(n); }
+    if (extras.length > 1) tree = { label: '', hidden: true, children: extras };
+  }
+  return tree;
+}
+
+/* ── LAYOUT ── */
+var T_FONT_N = 'bold 13px "JetBrains Mono",Consolas,monospace';
+var T_FONT_L = '13px Lora,Georgia,serif';
+var T_H    = 18;
+var T_VGAP = 58;
+var T_HPAD = 12;
+var T_HGAP = 16;
+
+var _mc = null;
+function mCtx() { if (!_mc) _mc = document.createElement('canvas'); return _mc.getContext('2d'); }
+
+function nodeWidth(node) {
+  var ctx = mCtx();
+  if (node.leaf) { ctx.font = T_FONT_L; return Math.max(28, ctx.measureText(node.label).width + T_HPAD * 2); }
+  if (node.tri) {
+    ctx.font = T_FONT_N; var lw = ctx.measureText(node.label).width + T_HPAD * 2;
+    ctx.font = T_FONT_L; var tw = ctx.measureText(node.triText || '').width + T_HPAD * 2;
+    return Math.max(lw, tw, 36);
+  }
+  ctx.font = T_FONT_N;
+  var lw = node.hidden ? 0 : Math.max(28, ctx.measureText(node.label).width + T_HPAD * 2);
+  if (!node.children || !node.children.length) return Math.max(lw, 28);
+  var childSum = node.children.reduce(function(s, c) { return s + nodeWidth(c) + T_HGAP; }, -T_HGAP);
+  return Math.max(lw, childSum);
+}
+
+function assignPos(node, x, y) {
+  node._y = y; node._w = nodeWidth(node);
+  if (node.leaf || node.tri) { node._x = x + node._w / 2; return; }
+  if (!node.children || !node.children.length) { node._x = x + node._w / 2; return; }
+  var childW = node.children.reduce(function(s, c) { return s + nodeWidth(c) + T_HGAP; }, -T_HGAP);
+  var cx = x + (node._w - childW) / 2; if (cx < x) cx = x;
+  node.children.forEach(function(c) { assignPos(c, cx, y + T_VGAP); cx += nodeWidth(c) + T_HGAP; });
+  var first = node.children[0], last = node.children[node.children.length - 1];
+  node._x = (first._x + last._x) / 2;
+  if (node.hidden) node._x = node._w / 2 + x;
+}
+
+function treeDepth(node) {
+  if (!node.children || !node.children.length) return 1;
+  return 1 + Math.max.apply(null, node.children.map(treeDepth));
+}
+
+/* ── DRAW  (clean text + lines, no boxes) ── */
+function drawNode(ctx, node, C) {
+  var x = node._x, y = node._y;
+
+  if (node.leaf) {
+    ctx.font = T_FONT_L;
+    ctx.fillStyle = C.leaf;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(node.label, x, y);
+    return;
+  }
+
+  if (node.tri) {
+    ctx.font = T_FONT_N;
+    ctx.fillStyle = C.nt;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(node.label, x, y);
+
+    var triY = y + T_VGAP;
+    ctx.font = T_FONT_L;
+    var tw = ctx.measureText(node.triText || '').width;
+    var hw = Math.max(node._w / 2, tw / 2 + 10);
+    ctx.beginPath();
+    ctx.moveTo(x,      y    + T_H / 2 + 3);
+    ctx.lineTo(x - hw, triY - T_H / 2 - 2);
+    ctx.lineTo(x + hw, triY - T_H / 2 - 2);
+    ctx.closePath();
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.fillStyle = C.leaf;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(node.triText || '', x, triY);
+    return;
+  }
+
+  if (!node.hidden) {
+    ctx.font = T_FONT_N;
+    ctx.fillStyle = C.nt;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(node.label, x, y);
+  }
+
+  if (node.children) {
+    node.children.forEach(function(c) {
+      ctx.beginPath();
+      ctx.moveTo(x,    y    + (node.hidden ? 0 : T_H / 2 + 3));
+      ctx.lineTo(c._x, c._y - T_H / 2 - 3);
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1.4; ctx.stroke();
+      drawNode(ctx, c, C);
+    });
+  }
+}
+
+/* ── RENDER ── */
+var _liveTimer = null;
+function liveTree() { clearTimeout(_liveTimer); _liveTimer = setTimeout(renderTree, 80); }
+
+function handleTreeKey(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    var ta = e.target, s = ta.selectionStart, en = ta.selectionEnd;
+    ta.value = ta.value.slice(0, s) + '  ' + ta.value.slice(en);
+    ta.selectionStart = ta.selectionEnd = s + 2;
+    liveTree();
+  }
+}
+
+function loadEx(bracket) { document.getElementById('treeIn').value = bracket; renderTree(); }
+
+function renderTree() {
+  var src   = document.getElementById('treeIn').value.trim();
+  var errEl = document.getElementById('treeErr');
+  var wrap  = document.getElementById('treePreview');
+  var dlBtn = document.getElementById('dlBtn');
+
+  if (!src) {
+    wrap.innerHTML = '<div class="tree-placeholder">Type bracket notation to see your tree →</div>';
+    dlBtn.style.display = 'none'; errEl.textContent = ''; return;
+  }
+
+  var tree;
+  try { tree = parseBracket(src); }
+  catch(e) { errEl.textContent = 'Parse error: ' + e.message; return; }
+  if (!tree) { errEl.textContent = 'Could not parse — check that all brackets match.'; return; }
+  errEl.textContent = '';
+
+  var PAD = 28;
+  assignPos(tree, PAD, 34);
+  var depth = treeDepth(tree);
+  var W = Math.max(320, tree._w + PAD * 2);
+  var H = depth * T_VGAP + 60;
+
+  var canvas = wrap.querySelector('canvas');
+  if (!canvas) { wrap.innerHTML = ''; canvas = document.createElement('canvas'); wrap.appendChild(canvas); }
+  canvas.width  = W * 2;
+  canvas.height = H * 2;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+
+  var ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);
+  var C = COLOR_MODES[currentMode];
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  ctx.save();
+  drawNode(ctx, tree, C);
+  ctx.restore();
+
+  dlBtn.style.display = '';
+}
+
+/* ── DOWNLOAD (works on mobile + desktop) ── */
+function downloadTree() {
+  var canvas = document.querySelector('#treePreview canvas');
+  if (!canvas) return;
+  if (canvas.toBlob) {
+    canvas.toBlob(function(blob) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'syntax-tree.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+    }, 'image/png');
+  } else {
+    var a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png'); a.download = 'syntax-tree.png'; a.click();
+  }
+}
+</script>
+</body>
+</html>
