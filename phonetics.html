@@ -7,33 +7,535 @@
   <title>Phonetics & Phonology | The Loom Workshop</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .coming-soon-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
-      min-height:54vh;text-align:center;padding:48px 24px;}
-    .cs-icon{font-size:52px;margin-bottom:18px;opacity:.85;}
-    .cs-title{font-family:var(--font-d);font-size:2rem;color:var(--forest);margin-bottom:10px;}
-    .cs-badge{display:inline-block;background:rgba(192,124,62,.12);color:var(--copper);
-      border:1.5px solid var(--copper);border-radius:20px;padding:5px 18px;
-      font-family:var(--font-m);font-size:12.5px;letter-spacing:.08em;margin-bottom:20px;}
-    .cs-desc{font-size:15px;color:var(--muted);max-width:420px;line-height:1.7;}
-    .cs-back{margin-top:28px;}
+
+    .ipa-output {
+      width: 100%;
+      min-height: 80px;
+      font-family: 'Noto Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 22px;
+      line-height: 1.6;
+      letter-spacing: 0.04em;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+      color: var(--ink);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .ipa-output:focus { border-color: var(--forest-3); }
+
+    .bracket-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+    .ipa-bracket {
+      font-family: 'Noto Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 17px;
+      padding: 5px 14px;
+      background: var(--bg-dark);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--forest);
+      cursor: pointer;
+      transition: background 0.13s, border-color 0.13s;
+      font-weight: 600;
+      user-select: none;
+    }
+    .ipa-bracket:hover { background: var(--forest); color: #fff; border-color: var(--forest); }
+
+    .ipa-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .ipa-actions .btn { font-size: 12.5px; padding: 7px 18px; }
+
+    .ipa-keyboard { margin-top: 22px; }
+
+    .ipa-group { margin-bottom: 20px; }
+    .ipa-group-label {
+      font-family: var(--font-m);
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ipa-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+
+    .ipa-key {
+      font-family: 'Noto Sans', 'Segoe UI', Arial, sans-serif;
+      font-size: 15px;
+      min-width: 34px;
+      height: 34px;
+      padding: 0 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+      user-select: none;
+      line-height: 1;
+    }
+    .ipa-key:hover {
+      background: var(--forest);
+      color: #fff;
+      border-color: var(--forest);
+    }
+    .ipa-key:active { transform: scale(0.92); }
+
+    .ipa-key.diacritic {
+      font-size: 13px;
+      min-width: 30px;
+      height: 30px;
+      color: var(--muted);
+    }
+    .ipa-key.diacritic:hover {
+      background: var(--copper);
+      border-color: var(--copper);
+      color: #fff;
+    }
+
+    .ipa-sublabel {
+      font-family: var(--font-m);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      align-self: center;
+      padding-right: 4px;
+      min-width: 90px;
+    }
+
+    @media (max-width: 600px) {
+      .ipa-key { font-size: 14px; min-width: 30px; height: 30px; }
+      .ipa-sublabel { min-width: 70px; font-size: 9px; }
+    }
   </style>
 </head>
 <body>
 <div id="nav-placeholder"></div>
 <main>
-  <div class="section">
-    <div class="coming-soon-wrap">
-      <div class="cs-icon">🎙</div>
-      <h1 class="cs-title">Phonetics &amp; Phonology</h1>
-      <span class="cs-badge">✦ Coming Soon</span>
-      <p class="cs-desc">This tool is currently being built. Check back soon — it will be part of The Loom Workshop's growing linguistics toolkit.</p>
-      <div class="cs-back">
-        <a href="index.html" class="btn btn-outline">← Back to Home</a>
-      </div>
-    </div>
+
+  <div class="page-hero">
+    <span class="page-hero-icon">🎙</span>
+    <h1>Phonetics &amp; Phonology</h1>
+    <p>Click any symbol to type it. Build transcriptions using the full International Phonetic Alphabet.</p>
   </div>
+
+  <div class="section">
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <span class="icon">⌨</span>
+        <div><h2>IPA Keyboard</h2><p>Full International Phonetic Alphabet — click to insert</p></div>
+      </div>
+
+      <div class="tool-card-body">
+
+        <label style="font-size:13px;font-weight:600;color:var(--forest);display:block;margin-bottom:7px;">
+          Transcription Output
+        </label>
+        <textarea class="ipa-output" id="ipaOut"
+          placeholder="Click symbols below to build your transcription…"
+          spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+
+        <div class="ipa-actions">
+          <button class="btn btn-outline" onclick="ipaBackspace()">⌫ Backspace</button>
+          <button class="btn btn-outline" onclick="ipaClear()">✕ Clear</button>
+          <button class="btn btn-primary"  onclick="ipaCopy()">⎘ Copy</button>
+        </div>
+
+        <div class="ipa-keyboard">
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Brackets &amp; Delimiters</div>
+            <div class="bracket-row">
+              <button class="ipa-bracket" onclick="ins('[')">[ </button>
+              <button class="ipa-bracket" onclick="ins(']')"> ]</button>
+              <button class="ipa-bracket" onclick="ins('/')">/ </button>
+              <button class="ipa-bracket" onclick="ins('/')"> /</button>
+              <button class="ipa-bracket" onclick="ins('{')">{ </button>
+              <button class="ipa-bracket" onclick="ins('}')"> }</button>
+              <button class="ipa-bracket" onclick="ins('⟨')">⟨ </button>
+              <button class="ipa-bracket" onclick="ins('⟩')"> ⟩</button>
+              <button class="ipa-bracket" onclick="ins(' ')">&nbsp;space&nbsp;</button>
+            </div>
+          </div>
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Pulmonic Consonants — Stops &amp; Nasals</div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Stops</span>
+              <button class="ipa-key" onclick="ins('p')">p</button>
+              <button class="ipa-key" onclick="ins('b')">b</button>
+              <button class="ipa-key" onclick="ins('t')">t</button>
+              <button class="ipa-key" onclick="ins('d')">d</button>
+              <button class="ipa-key" onclick="ins('ʈ')">ʈ</button>
+              <button class="ipa-key" onclick="ins('ɖ')">ɖ</button>
+              <button class="ipa-key" onclick="ins('c')">c</button>
+              <button class="ipa-key" onclick="ins('ɟ')">ɟ</button>
+              <button class="ipa-key" onclick="ins('k')">k</button>
+              <button class="ipa-key" onclick="ins('ɡ')">ɡ</button>
+              <button class="ipa-key" onclick="ins('q')">q</button>
+              <button class="ipa-key" onclick="ins('ɢ')">ɢ</button>
+              <button class="ipa-key" onclick="ins('ʔ')">ʔ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Nasals</span>
+              <button class="ipa-key" onclick="ins('m')">m</button>
+              <button class="ipa-key" onclick="ins('ɱ')">ɱ</button>
+              <button class="ipa-key" onclick="ins('n')">n</button>
+              <button class="ipa-key" onclick="ins('ɳ')">ɳ</button>
+              <button class="ipa-key" onclick="ins('ɲ')">ɲ</button>
+              <button class="ipa-key" onclick="ins('ŋ')">ŋ</button>
+              <button class="ipa-key" onclick="ins('ɴ')">ɴ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Trills</span>
+              <button class="ipa-key" onclick="ins('ʙ')">ʙ</button>
+              <button class="ipa-key" onclick="ins('r')">r</button>
+              <button class="ipa-key" onclick="ins('ʀ')">ʀ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Taps / Flaps</span>
+              <button class="ipa-key" onclick="ins('ɾ')">ɾ</button>
+              <button class="ipa-key" onclick="ins('ɽ')">ɽ</button>
+            </div>
+          </div>
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Pulmonic Consonants — Fricatives</div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Bilabial</span>
+              <button class="ipa-key" onclick="ins('ɸ')">ɸ</button>
+              <button class="ipa-key" onclick="ins('β')">β</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Labiodental</span>
+              <button class="ipa-key" onclick="ins('f')">f</button>
+              <button class="ipa-key" onclick="ins('v')">v</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Dental</span>
+              <button class="ipa-key" onclick="ins('θ')">θ</button>
+              <button class="ipa-key" onclick="ins('ð')">ð</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Alveolar</span>
+              <button class="ipa-key" onclick="ins('s')">s</button>
+              <button class="ipa-key" onclick="ins('z')">z</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Postalveolar</span>
+              <button class="ipa-key" onclick="ins('ʃ')">ʃ</button>
+              <button class="ipa-key" onclick="ins('ʒ')">ʒ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Retroflex</span>
+              <button class="ipa-key" onclick="ins('ʂ')">ʂ</button>
+              <button class="ipa-key" onclick="ins('ʐ')">ʐ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Palatal</span>
+              <button class="ipa-key" onclick="ins('ç')">ç</button>
+              <button class="ipa-key" onclick="ins('ʝ')">ʝ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Velar</span>
+              <button class="ipa-key" onclick="ins('x')">x</button>
+              <button class="ipa-key" onclick="ins('ɣ')">ɣ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Uvular</span>
+              <button class="ipa-key" onclick="ins('χ')">χ</button>
+              <button class="ipa-key" onclick="ins('ʁ')">ʁ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Pharyngeal</span>
+              <button class="ipa-key" onclick="ins('ħ')">ħ</button>
+              <button class="ipa-key" onclick="ins('ʕ')">ʕ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Glottal</span>
+              <button class="ipa-key" onclick="ins('h')">h</button>
+              <button class="ipa-key" onclick="ins('ɦ')">ɦ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Lat. fricatives</span>
+              <button class="ipa-key" onclick="ins('ɬ')">ɬ</button>
+              <button class="ipa-key" onclick="ins('ɮ')">ɮ</button>
+            </div>
+          </div>
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Pulmonic Consonants — Approximants &amp; Laterals</div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Approximants</span>
+              <button class="ipa-key" onclick="ins('ʋ')">ʋ</button>
+              <button class="ipa-key" onclick="ins('ɹ')">ɹ</button>
+              <button class="ipa-key" onclick="ins('ɻ')">ɻ</button>
+              <button class="ipa-key" onclick="ins('j')">j</button>
+              <button class="ipa-key" onclick="ins('ɰ')">ɰ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Lat. approximants</span>
+              <button class="ipa-key" onclick="ins('l')">l</button>
+              <button class="ipa-key" onclick="ins('ɭ')">ɭ</button>
+              <button class="ipa-key" onclick="ins('ʎ')">ʎ</button>
+              <button class="ipa-key" onclick="ins('ʟ')">ʟ</button>
+            </div>
+          </div>
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Non-Pulmonic Consonants</div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Clicks</span>
+              <button class="ipa-key" onclick="ins('ʘ')">ʘ</button>
+              <button class="ipa-key" onclick="ins('ǀ')">ǀ</button>
+              <button class="ipa-key" onclick="ins('ǃ')">ǃ</button>
+              <button class="ipa-key" onclick="ins('ǂ')">ǂ</button>
+              <button class="ipa-key" onclick="ins('ǁ')">ǁ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Implosives</span>
+              <button class="ipa-key" onclick="ins('ɓ')">ɓ</button>
+              <button class="ipa-key" onclick="ins('ɗ')">ɗ</button>
+              <button class="ipa-key" onclick="ins('ʄ')">ʄ</button>
+              <button class="ipa-key" onclick="ins('ɠ')">ɠ</button>
+              <button class="ipa-key" onclick="ins('ʛ')">ʛ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Ejective mark</span>
+              <button class="ipa-key" onclick="ins('ʼ')">ʼ</button>
+            </div>
+          </div>
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Vowels</div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Close</span>
+              <button class="ipa-key" onclick="ins('i')">i</button>
+              <button class="ipa-key" onclick="ins('y')">y</button>
+              <button class="ipa-key" onclick="ins('ɨ')">ɨ</button>
+              <button class="ipa-key" onclick="ins('ʉ')">ʉ</button>
+              <button class="ipa-key" onclick="ins('ɯ')">ɯ</button>
+              <button class="ipa-key" onclick="ins('u')">u</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Near-close</span>
+              <button class="ipa-key" onclick="ins('ɪ')">ɪ</button>
+              <button class="ipa-key" onclick="ins('ʏ')">ʏ</button>
+              <button class="ipa-key" onclick="ins('ʊ')">ʊ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Close-mid</span>
+              <button class="ipa-key" onclick="ins('e')">e</button>
+              <button class="ipa-key" onclick="ins('ø')">ø</button>
+              <button class="ipa-key" onclick="ins('ɘ')">ɘ</button>
+              <button class="ipa-key" onclick="ins('ɵ')">ɵ</button>
+              <button class="ipa-key" onclick="ins('ɤ')">ɤ</button>
+              <button class="ipa-key" onclick="ins('o')">o</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Mid</span>
+              <button class="ipa-key" onclick="ins('ə')">ə</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Open-mid</span>
+              <button class="ipa-key" onclick="ins('ɛ')">ɛ</button>
+              <button class="ipa-key" onclick="ins('œ')">œ</button>
+              <button class="ipa-key" onclick="ins('ɜ')">ɜ</button>
+              <button class="ipa-key" onclick="ins('ɞ')">ɞ</button>
+              <button class="ipa-key" onclick="ins('ʌ')">ʌ</button>
+              <button class="ipa-key" onclick="ins('ɔ')">ɔ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Near-open</span>
+              <button class="ipa-key" onclick="ins('æ')">æ</button>
+              <button class="ipa-key" onclick="ins('ɐ')">ɐ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Open</span>
+              <button class="ipa-key" onclick="ins('a')">a</button>
+              <button class="ipa-key" onclick="ins('ɶ')">ɶ</button>
+              <button class="ipa-key" onclick="ins('ɑ')">ɑ</button>
+              <button class="ipa-key" onclick="ins('ɒ')">ɒ</button>
+            </div>
+          </div>
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Suprasegmentals</div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Stress</span>
+              <button class="ipa-key diacritic" onclick="ins('ˈ')">ˈ</button>
+              <button class="ipa-key diacritic" onclick="ins('ˌ')">ˌ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Length</span>
+              <button class="ipa-key diacritic" onclick="ins('ː')">ː</button>
+              <button class="ipa-key diacritic" onclick="ins('ˑ')">ˑ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Boundaries</span>
+              <button class="ipa-key diacritic" onclick="ins('|')">|</button>
+              <button class="ipa-key diacritic" onclick="ins('‖')">‖</button>
+              <button class="ipa-key diacritic" onclick="ins('.')">.</button>
+              <button class="ipa-key diacritic" onclick="ins('‿')">‿</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Tone (diacritic)</span>
+              <button class="ipa-key diacritic" onclick="ins('̋')">á̋</button>
+              <button class="ipa-key diacritic" onclick="ins('́')">á</button>
+              <button class="ipa-key diacritic" onclick="ins('̄')">ā</button>
+              <button class="ipa-key diacritic" onclick="ins('̀')">à</button>
+              <button class="ipa-key diacritic" onclick="ins('̏')">à̏</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Tone (letter)</span>
+              <button class="ipa-key diacritic" onclick="ins('˥')">˥</button>
+              <button class="ipa-key diacritic" onclick="ins('˦')">˦</button>
+              <button class="ipa-key diacritic" onclick="ins('˧')">˧</button>
+              <button class="ipa-key diacritic" onclick="ins('˨')">˨</button>
+              <button class="ipa-key diacritic" onclick="ins('˩')">˩</button>
+              <button class="ipa-key diacritic" onclick="ins('↗')">↗</button>
+              <button class="ipa-key diacritic" onclick="ins('↘')">↘</button>
+              <button class="ipa-key diacritic" onclick="ins('ꜛ')">ꜛ</button>
+              <button class="ipa-key diacritic" onclick="ins('ꜜ')">ꜜ</button>
+            </div>
+          </div>
+
+          <div class="ipa-group">
+            <div class="ipa-group-label">Diacritics</div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Phonation</span>
+              <button class="ipa-key diacritic" title="Voiceless" onclick="ins('̥')">n̥</button>
+              <button class="ipa-key diacritic" title="Voiced"    onclick="ins('̬')">s̬</button>
+              <button class="ipa-key diacritic" title="Breathy"   onclick="ins('̤')">b̤</button>
+              <button class="ipa-key diacritic" title="Creaky"    onclick="ins('̰')">b̰</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Aspiration</span>
+              <button class="ipa-key diacritic" onclick="ins('ʰ')">ʰ</button>
+              <button class="ipa-key diacritic" title="No audible release" onclick="ins('̚')">t̚</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Place</span>
+              <button class="ipa-key diacritic" title="Dental"       onclick="ins('̪')">t̪</button>
+              <button class="ipa-key diacritic" title="Apical"       onclick="ins('̺')">t̺</button>
+              <button class="ipa-key diacritic" title="Laminal"      onclick="ins('̻')">t̻</button>
+              <button class="ipa-key diacritic" title="Linguolabial" onclick="ins('̼')">t̼</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Raising / lowering</span>
+              <button class="ipa-key diacritic" title="Raised"       onclick="ins('̝')">e̝</button>
+              <button class="ipa-key diacritic" title="Lowered"      onclick="ins('̞')">e̞</button>
+              <button class="ipa-key diacritic" title="Advanced"     onclick="ins('̟')">u̟</button>
+              <button class="ipa-key diacritic" title="Retracted"    onclick="ins('̠')">e̠</button>
+              <button class="ipa-key diacritic" title="Centralized"  onclick="ins('̈')">ë</button>
+              <button class="ipa-key diacritic" title="Mid-centralized" onclick="ins('̽')">e̽</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Secondary art.</span>
+              <button class="ipa-key diacritic" title="Labialized"     onclick="ins('ʷ')">ʷ</button>
+              <button class="ipa-key diacritic" title="Palatalized"    onclick="ins('ʲ')">ʲ</button>
+              <button class="ipa-key diacritic" title="Velarized"      onclick="ins('ˠ')">ˠ</button>
+              <button class="ipa-key diacritic" title="Pharyngealized" onclick="ins('ˤ')">ˤ</button>
+              <button class="ipa-key diacritic" title="Nasalized"      onclick="ins('̃')">ã</button>
+              <button class="ipa-key diacritic" title="Rhoticity"      onclick="ins('˞')">˞</button>
+              <button class="ipa-key diacritic" title="Velarized/pharyngealized" onclick="ins('̴')">ɫ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Syllabicity</span>
+              <button class="ipa-key diacritic" title="Syllabic"     onclick="ins('̩')">n̩</button>
+              <button class="ipa-key diacritic" title="Non-syllabic" onclick="ins('̯')">e̯</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Release</span>
+              <button class="ipa-key diacritic" title="Nasal release"   onclick="ins('ⁿ')">ⁿ</button>
+              <button class="ipa-key diacritic" title="Lateral release" onclick="ins('ˡ')">ˡ</button>
+            </div>
+            <div class="ipa-row">
+              <span class="ipa-sublabel">Tongue root</span>
+              <button class="ipa-key diacritic" title="ATR" onclick="ins('̘')">e̘</button>
+              <button class="ipa-key diacritic" title="RTR" onclick="ins('̙')">e̙</button>
+            </div>
+          </div>
+
+        </div><!-- /ipa-keyboard -->
+      </div><!-- /tool-card-body -->
+    </div><!-- /tool-card -->
+  </div><!-- /section -->
 </main>
 <div id="footer-placeholder"></div>
 <script src="shared-ui.js"></script>
+<script>
+'use strict';
+
+function ins(char) {
+  var ta = document.getElementById('ipaOut');
+  var s  = ta.selectionStart;
+  var e  = ta.selectionEnd;
+  ta.value = ta.value.slice(0, s) + char + ta.value.slice(e);
+  ta.selectionStart = ta.selectionEnd = s + char.length;
+  ta.focus();
+}
+
+function ipaBackspace() {
+  var ta = document.getElementById('ipaOut');
+  var s  = ta.selectionStart;
+  var e  = ta.selectionEnd;
+  if (s !== e) {
+    ta.value = ta.value.slice(0, s) + ta.value.slice(e);
+    ta.selectionStart = ta.selectionEnd = s;
+  } else if (s > 0) {
+    var before = ta.value.slice(0, s);
+    var arr    = Array.from(before);
+    arr.pop();
+    ta.value = arr.join('') + ta.value.slice(s);
+    ta.selectionStart = ta.selectionEnd = arr.join('').length;
+  }
+  ta.focus();
+}
+
+function ipaClear() {
+  document.getElementById('ipaOut').value = '';
+  document.getElementById('ipaOut').focus();
+}
+
+function ipaCopy() {
+  var ta  = document.getElementById('ipaOut');
+  var txt = ta.value;
+  if (!txt) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(function() { flashBtn(); });
+  } else {
+    ta.select();
+    document.execCommand('copy');
+    flashBtn();
+  }
+}
+
+function flashBtn() {
+  var b = document.querySelector('.ipa-actions .btn-primary');
+  if (!b) return;
+  b.textContent = '✓ Copied!';
+  setTimeout(function() { b.textContent = '⎘ Copy'; }, 1500);
+}
+</script>
 </body>
 </html>
