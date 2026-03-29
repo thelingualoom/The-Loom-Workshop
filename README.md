@@ -51,7 +51,7 @@ Built entirely from scratch with HTML, CSS, and JavaScript. Every tool designed 
 
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Join_My_Channel-%2325D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://www.whatsapp.com/channel/0029VbBkZRT4yltYZiUG0S2v)
 
-[![Email](https://img.shields.io/badge/Email-Get_In_Touch-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:thelingualoom@gmail.com)
+[![Email](https://img.shields.io/badge/Email-Get_In_Touch-D14836?style=for-the-badge&logo=gmail&logoColor=white)](https://mail.google.com/mail/?view=cm&to=thelingualoom@gmail.com)
 
 </div>
 
