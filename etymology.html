@@ -7,33 +7,596 @@
   <title>Etymology | The Loom Workshop</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .coming-soon-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
-      min-height:54vh;text-align:center;padding:48px 24px;}
-    .cs-icon{font-size:52px;margin-bottom:18px;opacity:.85;}
-    .cs-title{font-family:var(--font-d);font-size:2rem;color:var(--forest);margin-bottom:10px;}
-    .cs-badge{display:inline-block;background:rgba(192,124,62,.12);color:var(--copper);
-      border:1.5px solid var(--copper);border-radius:20px;padding:5px 18px;
-      font-family:var(--font-m);font-size:12.5px;letter-spacing:.08em;margin-bottom:20px;}
-    .cs-desc{font-size:15px;color:var(--muted);max-width:420px;line-height:1.7;}
-    .cs-back{margin-top:28px;}
+
+    /* ── Input ── */
+    .etym-input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-top: 14px;
+    }
+    @media (max-width: 520px) { .etym-input-row { grid-template-columns: 1fr; } }
+
+    /* ── Timeline chain ── */
+    .etym-chain {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 16px 0 8px;
+    }
+    .etym-step {
+      display: flex;
+      gap: 0;
+      position: relative;
+    }
+    /* vertical line connecting steps */
+    .etym-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 42px;
+      width: 2px;
+      height: calc(100% - 10px);
+      background: var(--border);
+    }
+    .etym-dot {
+      width: 40px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 10px;
+    }
+    .etym-dot-circle {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--forest);
+      border: 2px solid var(--forest);
+      flex-shrink: 0;
+    }
+    .etym-step:first-child .etym-dot-circle { background: var(--copper); border-color: var(--copper); }
+    .etym-step:last-child  .etym-dot-circle { background: var(--forest-3); border-color: var(--forest-3); }
+    .etym-card {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 12px 16px;
+      margin: 4px 0 10px;
+    }
+    .etym-lang {
+      font-family: var(--font-m);
+      font-size: 10px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .etym-form {
+      font-family: var(--font-d);
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--forest);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .etym-meaning {
+      font-size: 13.5px;
+      color: var(--ink);
+      line-height: 1.65;
+    }
+    .etym-meaning code {
+      font-family: var(--font-m);
+      font-size: 12px;
+      background: var(--bg-dark);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--copper);
+    }
+
+    /* ── Plain narrative (fallback) ── */
+    .etym-narrative {
+      font-size: 14.5px;
+      color: var(--ink);
+      line-height: 1.8;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      margin: 14px 0 6px;
+    }
+    .etym-narrative em { color: var(--forest); font-style: italic; }
+    .etym-narrative strong { color: var(--forest); font-weight: 600; }
+
+    /* ── Century badge ── */
+    .etym-century {
+      display: inline-block;
+      font-family: var(--font-m);
+      font-size: 10.5px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      background: rgba(27,58,45,.08);
+      color: var(--forest);
+      border: 1px solid var(--forest-3);
+      margin-bottom: 14px;
+    }
+
+    /* ── Cognates / related ── */
+    .etym-related {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .etym-related-label {
+      font-family: var(--font-m);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+    .etym-related-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .etym-cognate {
+      font-family: var(--font-m);
+      font-size: 12px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 10px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+    }
+    .etym-cognate:hover { background: var(--forest); color: #fff; border-color: var(--forest); }
+
+    /* ── Loading ── */
+    .etym-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px;
+      font-size: 13.5px;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .spin {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--forest);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Did you know ── */
+    .etym-dyk {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: rgba(192,124,62,.06);
+      border-left: 3px solid var(--copper);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      font-size: 13.5px;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+    .etym-dyk strong { color: var(--copper); }
   </style>
 </head>
 <body>
 <div id="nav-placeholder"></div>
 <main>
+
+  <div class="page-hero">
+    <span class="page-hero-icon">📖</span>
+    <h1>Etymology</h1>
+    <p>Where words are traced through time, uncovering layers of history within their form.</p>
+  </div>
+
   <div class="section">
-    <div class="coming-soon-wrap">
-      <div class="cs-icon">📖</div>
-      <h1 class="cs-title">Etymology</h1>
-      <span class="cs-badge">✦ Coming Soon</span>
-      <p class="cs-desc">This tool is currently being built. Check back soon — it will be part of The Loom Workshop's growing linguistics toolkit.</p>
-      <div class="cs-back">
-        <a href="index.html" class="btn btn-outline">← Back to Home</a>
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <span class="icon">🔎</span>
+        <div>
+          <h2>Word Origin Tracer</h2>
+          <p>Enter any word to explore its etymological history</p>
+        </div>
+      </div>
+      <div class="tool-card-body">
+
+        <div class="notice">
+          Traces the historical origin, root language, original form, and meaning of any English word using a live open linguistic database covering hundreds of thousands of entries.
+        </div>
+
+        <div class="etym-input-row">
+          <div class="input-group" style="margin:0;">
+            <label>Enter a Word</label>
+            <input type="text" id="etymIn"
+              placeholder="e.g. school, alcohol, window, salary, robot…"
+              style="font-size:15px;"
+              autocorrect="off" autocapitalize="none" spellcheck="false"
+              onkeydown="if(event.key==='Enter') runEtym()">
+          </div>
+          <button class="btn btn-primary" id="etymBtn" onclick="runEtym()">Trace Origin</button>
+        </div>
+
+        <p style="font-size:12.5px;color:var(--muted);margin-top:9px;">
+          Try:&nbsp;
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('school')">school</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('alcohol')">alcohol</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('window')">window</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('salary')">salary</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('robot')">robot</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('algebra')">algebra</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('jungle')">jungle</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('muscle')">muscle</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('paradise')">paradise</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('candidate')">candidate</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('disaster')">disaster</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('hazard')">hazard</span>
+        </p>
+
+        <div class="result-box" id="etymRes" style="margin-top:16px;"></div>
+
       </div>
     </div>
   </div>
+
 </main>
 <div id="footer-placeholder"></div>
 <script src="shared-ui.js"></script>
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════════════
+   LANGUAGE CODES → FULL NAMES
+══════════════════════════════════════════════════════════ */
+var LANGS = {
+  af:'Afrikaans', ar:'Arabic', az:'Azerbaijani', be:'Belarusian',
+  bg:'Bulgarian', bn:'Bengali', ca:'Catalan', cs:'Czech',
+  cy:'Welsh', da:'Danish', de:'German', el:'Modern Greek',
+  eo:'Esperanto', es:'Spanish', et:'Estonian', eu:'Basque',
+  fa:'Persian', fi:'Finnish', fr:'French', ga:'Irish',
+  gu:'Gujarati', he:'Hebrew', hi:'Hindi', hr:'Croatian',
+  hu:'Hungarian', hy:'Armenian', id:'Indonesian', is:'Icelandic',
+  it:'Italian', ja:'Japanese', ka:'Georgian', kn:'Kannada',
+  ko:'Korean', la:'Latin', lt:'Lithuanian', lv:'Latvian',
+  mk:'Macedonian', ml:'Malayalam', mr:'Marathi', ms:'Malay',
+  nl:'Dutch', 'no':'Norwegian', pa:'Punjabi', pl:'Polish',
+  pt:'Portuguese', ro:'Romanian', ru:'Russian', sa:'Sanskrit',
+  sk:'Slovak', sl:'Slovenian', sq:'Albanian', sr:'Serbian',
+  sv:'Swedish', sw:'Swahili', ta:'Tamil', te:'Telugu',
+  th:'Thai', tr:'Turkish', uk:'Ukrainian', ur:'Urdu',
+  uz:'Uzbek', vi:'Vietnamese', zh:'Chinese', yi:'Yiddish',
+  /* Historical */
+  ang:'Old English', enm:'Middle English', fro:'Old French',
+  frm:'Middle French', grc:'Ancient Greek', 'non':'Old Norse',
+  dum:'Middle Dutch', gmh:'Middle High German', goh:'Old High German',
+  osx:'Old Saxon', nds:'Low German', got:'Gothic', pro:'Old Occitan',
+  ofs:'Old Frisian', ine:'Proto-Indo-European',
+  'ine-pro':'Proto-Indo-European', 'gem-pro':'Proto-Germanic',
+  'ira-pro':'Proto-Iranian', 'sem-pro':'Proto-Semitic',
+  'grk-pro':'Proto-Greek', 'cel-pro':'Proto-Celtic',
+  'sla-pro':'Proto-Slavic', 'bat-pro':'Proto-Baltic',
+  'itc-pro':'Proto-Italic', 'gem':'Germanic', 'ira':'Iranian',
+  nan:'Min Nan Chinese', yue:'Cantonese', tl:'Tagalog',
+  jv:'Javanese', xh:'Xhosa', zu:'Zulu', am:'Amharic',
+  ne:'Nepali', si:'Sinhala', bo:'Tibetan', my:'Burmese',
+  km:'Khmer', lo:'Lao', mn:'Mongolian', tt:'Tatar',
+  ky:'Kyrgyz', kk:'Kazakh', tk:'Turkmen', uz:'Uzbek',
+  cy:'Welsh', br:'Breton', gd:'Scottish Gaelic', gl:'Galician',
+  oc:'Occitan', ro:'Romanian', la:'Latin',
+  /* extras */
+  'orv':'Old Russian','sga':'Old Irish','owl':'Old Welsh',
+  'osp':'Old Spanish','roa':'Romance','sem':'Semitic',
+  'trk':'Turkic','dra':'Dravidian','aus':'Austronesian',
+};
+
+function langName(code) {
+  if (!code) return 'Unknown';
+  var c = code.trim().toLowerCase();
+  return LANGS[c] || code.trim();
+}
+
+/* ══════════════════════════════════════════════════════════
+   FETCH WIKTIONARY
+══════════════════════════════════════════════════════════ */
+function fetchWithTimeout(url, ms) {
+  return Promise.race([
+    fetch(url),
+    new Promise(function(_, reject) {
+      setTimeout(function() { reject(new Error('timeout')); }, ms);
+    }),
+  ]);
+}
+
+function fetchWiktionary(word) {
+  var url = 'https://en.wiktionary.org/w/api.php'
+    + '?action=query&prop=revisions&rvprop=content&rvslots=main'
+    + '&format=json&titles=' + encodeURIComponent(word) + '&origin=*';
+  return fetchWithTimeout(url, 8000)
+    .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(data) {
+      var pages = data.query && data.query.pages;
+      if (!pages) return null;
+      var page = Object.values(pages)[0];
+      if (page.missing !== undefined) return null;
+      var rev = page.revisions && page.revisions[0];
+      if (!rev) return null;
+      return (rev.slots ? rev.slots.main['*'] : rev['*']) || null;
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   WIKITEXT HELPERS
+══════════════════════════════════════════════════════════ */
+function getEnglish(wiki) {
+  var m = wiki.match(/==English==([\s\S]*?)(?=\n==[^=]|\n==\w|$)/i);
+  return m ? m[1] : null;
+}
+
+function getEtymology(eng) {
+  /* May be multiple Etymology sections */
+  var m = eng.match(/===Etymology(?:\s*\d+)?===([\s\S]*?)(?=\n===|$)/i);
+  return m ? m[1] : null;
+}
+
+/* Strip wikitext to readable plain text */
+function wikiPlain(s) {
+  return s
+    .replace(/\[\[(?:[^\]|]*\|)?([^\]]+)\]\]/g, '$1')
+    .replace(/\{\{(?:l|link|m|mention|lang)\|[a-z-]+\|([^|}\]]+)[^}]*\}\}/g, '$1')
+    .replace(/\{\{gloss\|([^}]+)\}\}/g, '"$1"')
+    .replace(/\{\{[^}]+\}\}/g, '')
+    .replace(/'{2,}/g, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\[\[[^\]]+\]\]/g, '')
+    .replace(/\n+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* Pull value from inside a template argument */
+function clean(s) {
+  if (!s) return '';
+  return s.replace(/[_\[\]{}']/g, '').replace(/\|.*/,'').trim();
+}
+
+/* ══════════════════════════════════════════════════════════
+   TEMPLATE PARSER
+   Extracts structured steps from etymology wikitext
+══════════════════════════════════════════════════════════ */
+
+/* Parse {{inh|en|la|schola}} → {lang:'Latin', form:'schola', meaning:''} */
+function parseLangTemplate(template) {
+  /* strip {{ and }} */
+  var inner = template.replace(/^\{\{|\}\}$/g, '').trim();
+  var parts = inner.split('|');
+  /* parts[0]=template name, parts[1]=target lang (en), parts[2]=source lang, parts[3]=form, ... */
+  if (parts.length < 3) return null;
+  var srcLang = langName(parts[2] || '');
+  var form    = '';
+  var meaning = '';
+
+  /* Named args: t=translation, gloss=, tr=, alt= */
+  var named = {};
+  var positional = [];
+  parts.slice(3).forEach(function(p) {
+    var eq = p.indexOf('=');
+    if (eq > -1) { named[p.slice(0,eq).trim()] = p.slice(eq+1).trim(); }
+    else { positional.push(p.trim()); }
+  });
+
+  form    = named['alt'] || positional[0] || '';
+  meaning = named['t'] || named['gloss'] || named['tr'] || positional[1] || '';
+
+  return { lang: srcLang, form: clean(form), meaning: clean(meaning) };
+}
+
+/* Pull all language-carrying templates from etymology block */
+var LANG_TMPLS = /\{\{(inh|der|bor|borrowed|inherited|cog|noncog|m|mention|l|link|cal|calque|clipping|back-form|blend|compound|af|affix|prefix|suffix)[^}]*\}\}/gi;
+
+function extractSteps(etym, word) {
+  var steps = [];
+  var seen  = new Set();
+  var match;
+  var re = new RegExp(LANG_TMPLS.source, 'gi');
+
+  while ((match = re.exec(etym)) !== null) {
+    var tmpl = match[0];
+    var name = match[1].toLowerCase();
+
+    /* Skip non-source templates */
+    if (['cog','noncog'].includes(name)) continue;
+
+    var parsed = parseLangTemplate(tmpl);
+    if (!parsed) continue;
+    if (parsed.lang === 'English') continue; /* skip self-references */
+
+    var key = parsed.lang + '|' + parsed.form;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    parsed.role = name; /* inh / der / bor / blend / clipping etc. */
+    steps.push(parsed);
+    if (steps.length >= 6) break; /* cap at 6 layers */
+  }
+  return steps;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CENTURY / DATE EXTRACTION
+══════════════════════════════════════════════════════════ */
+function extractCentury(plain) {
+  var m;
+  /* "first attested in the 14th century" */
+  m = plain.match(/(\d+(?:st|nd|rd|th)[- ]century)/i);
+  if (m) return m[1];
+  /* "attested from c. 1350" or "1350s" or "circa 1200" */
+  m = plain.match(/(?:circa|c\.?)\s*(\d{3,4})/i);
+  if (m) return 'c. ' + m[1];
+  m = plain.match(/\b(1[0-9]{3}s?)\b/);
+  if (m) return m[1];
+  return null;
+}
+
+/* ══════════════════════════════════════════════════════════
+   COGNATE EXTRACTION
+══════════════════════════════════════════════════════════ */
+function extractCognates(etym) {
+  var cognates = [];
+  var re = /\{\{(?:cog|noncog|cognate)\|[^|]+\|([^|}\]]+)(?:\|[^}]*)?\}\}/gi;
+  var m;
+  while ((m = re.exec(etym)) !== null) {
+    var w = clean(m[1]);
+    if (w && w.length > 1 && !/^\d/.test(w) && !cognates.includes(w)) {
+      cognates.push(w);
+      if (cognates.length >= 8) break;
+    }
+  }
+  return cognates;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════════════════ */
+function renderEtym(word, steps, century, plain, cognates) {
+  var html = '<div class="result-label" style="margin-bottom:8px;">Etymology of <strong>' + esc(word) + '</strong></div>';
+
+  /* Century badge */
+  if (century) {
+    html += '<span class="etym-century">First recorded: ' + esc(century) + '</span>';
+  }
+
+  /* Timeline chain */
+  if (steps.length > 0) {
+    html += '<div class="etym-chain">';
+
+    /* Always start with Modern English as first step */
+    html += '<div class="etym-step">'
+      + '<div class="etym-dot"><div class="etym-dot-circle"></div></div>'
+      + '<div class="etym-card">'
+      + '<div class="etym-lang">Modern English</div>'
+      + '<div class="etym-form">' + esc(word) + '</div>'
+      + '<div class="etym-meaning">Current form in use today</div>'
+      + '</div></div>';
+
+    steps.forEach(function(s, i) {
+      html += '<div class="etym-step">'
+        + '<div class="etym-dot"><div class="etym-dot-circle"></div></div>'
+        + '<div class="etym-card">'
+        + '<div class="etym-lang">' + esc(s.lang) + '</div>'
+        + (s.form    ? '<div class="etym-form">' + esc(s.form) + '</div>' : '')
+        + (s.meaning ? '<div class="etym-meaning">"' + esc(s.meaning) + '"</div>' : '')
+        + '</div></div>';
+    });
+    html += '</div>';
+  }
+
+  /* Plain narrative (cleaned Wiktionary text) */
+  if (plain && plain.length > 20) {
+    var cleaned = plain
+      /* Bold the word being looked up */
+      .replace(new RegExp('\\b' + word + '\\b', 'gi'), '<strong>$&</strong>')
+      /* Italicize likely foreign-language forms (short words in italic context) */
+      ;
+    html += '<div class="etym-narrative">' + cleaned + '</div>';
+  }
+
+  /* Cognates */
+  if (cognates.length > 0) {
+    html += '<div class="etym-related">'
+      + '<div class="etym-related-label">Related forms in other languages</div>'
+      + '<div class="etym-related-words">'
+      + cognates.map(function(c) {
+          return '<span class="etym-cognate" onclick="quickLoad(\'' + esc(c) + '\')">' + esc(c) + '</span>';
+        }).join('')
+      + '</div></div>';
+  }
+
+  /* Did you know — only if plain text is rich enough */
+  var dykMatch = plain && plain.match(/([A-Z][^.!?]*(?:originally|literally|meant|meaning|referred to|from the sense)[^.!?]*[.!?])/i);
+  if (dykMatch) {
+    html += '<div class="etym-dyk"><strong>Did you know?</strong> ' + esc(dykMatch[1]) + '</div>';
+  }
+
+  return html;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MAIN
+══════════════════════════════════════════════════════════ */
+function runEtym() {
+  var word = document.getElementById('etymIn').value.trim();
+  if (!word) {
+    document.getElementById('etymRes').className = 'result-box';
+    return;
+  }
+
+  var el  = document.getElementById('etymRes');
+  var btn = document.getElementById('etymBtn');
+
+  /* Loading */
+  el.className = 'result-box show';
+  el.innerHTML = '<div class="etym-loading">'
+    + '<div class="spin"></div>'
+    + 'Tracing the origin of <strong style="margin:0 4px;">' + esc(word) + '</strong>…'
+    + '</div>';
+  btn.disabled = true;
+
+  fetchWiktionary(word).then(function(wiki) {
+    btn.disabled = false;
+    if (!wiki) { showNotFound(word); return; }
+
+    var eng = getEnglish(wiki);
+    if (!eng) { showNotFound(word); return; }
+
+    var etym = getEtymology(eng);
+    if (!etym) { showNotFound(word); return; }
+
+    var plain    = wikiPlain(etym);
+    var steps    = extractSteps(etym, word);
+    var century  = extractCentury(plain);
+    var cognates = extractCognates(etym);
+
+    if (!plain && steps.length === 0) { showNotFound(word); return; }
+
+    el.className = 'result-box show success';
+    el.innerHTML = renderEtym(word, steps, century, plain, cognates);
+
+  }).catch(function() {
+    btn.disabled = false;
+    el.className = 'result-box show warning';
+    el.innerHTML = '<div style="font-size:14px;line-height:1.7;padding:4px 0;">'
+      + '⚠ Network error — please check your connection and try again.'
+      + '</div>';
+  });
+}
+
+function showNotFound(word) {
+  var el = document.getElementById('etymRes');
+  el.className = 'result-box show warning';
+  el.innerHTML = '<div style="font-size:14px;line-height:1.7;padding:4px 0;">'
+    + '⚠ No etymology found for <strong>' + esc(word) + '</strong>. '
+    + 'This may be a very recent coinage, a proper noun, a technical term, or a spelling variant. '
+    + 'Try the base form of the word (e.g. <em>run</em> instead of <em>running</em>).'
+    + '</div>';
+}
+
+function quickLoad(word) {
+  document.getElementById('etymIn').value = word;
+  runEtym();
+}
+</script>
 </body>
 </html>
