@@ -13,67 +13,18 @@
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
-      align-items: start;
+      align-items: end;
+      margin-top: 14px;
     }
-    @media (max-width: 560px) { .morph-input-row { grid-template-columns: 1fr; } }
+    @media (max-width: 540px) { .morph-input-row { grid-template-columns: 1fr; } }
 
-    /* ── Breakdown display ── */
-    .morph-breakdown {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      gap: 2px;
-      padding: 14px 16px;
-      background: var(--bg-dark);
-      border-radius: var(--r-sm);
-      margin: 12px 0 8px;
-    }
-    .morph-part {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 4px 4px;
-    }
-    .morph-part-text {
-      font-family: var(--font-b);
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--ink);
-      padding-bottom: 3px;
-    }
-    .morph-part-label {
-      font-family: var(--font-m);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-    .morph-part.mp-prefix .morph-part-text {
-      color: var(--forest);
-      border-bottom: 2.5px solid var(--forest);
-    }
-    .morph-part.mp-suffix .morph-part-text {
-      color: var(--copper);
-      border-bottom: 2.5px solid var(--copper);
-    }
-    .morph-part.mp-base .morph-part-text {
-      color: var(--ink);
-      border-bottom: 2.5px solid var(--border);
-    }
-    .morph-part.mp-blend1 .morph-part-text { color: var(--forest); }
-    .morph-part.mp-blend2 .morph-part-text { color: var(--copper); }
-    .morph-plus {
-      font-size: 16px;
-      color: var(--muted);
-      padding: 0 2px 8px;
-      align-self: flex-end;
-    }
+    /* ── Source badge ── */
+    
 
-    /* ── Process heading ── */
+    /* ── Process name ── */
     .morph-process-name {
       font-family: var(--font-d);
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       color: var(--forest);
       font-weight: 700;
       margin-bottom: 6px;
@@ -88,18 +39,60 @@
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.07em;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .badge-deriv { background: rgba(27,58,45,.1);   color: var(--forest); border: 1.5px solid var(--forest-3); }
     .badge-infl  { background: rgba(192,124,62,.1); color: var(--copper); border: 1.5px solid var(--copper);   }
-    .badge-lex   { background: rgba(50,80,160,.08); color: #3a50b0;       border: 1.5px solid #8090cc;         }
+    .badge-lex   { background: rgba(50,80,160,.07); color: #3a50b0;       border: 1.5px solid #8090cc;         }
 
-    /* ── Explanation ── */
+    /* ── Morpheme breakdown ── */
+    .morph-breakdown {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 2px;
+      padding: 14px 16px;
+      background: var(--bg-dark);
+      border-radius: var(--r-sm);
+      margin: 4px 0 12px;
+    }
+    .morph-part {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 6px 4px;
+    }
+    .morph-part-text {
+      font-family: var(--font-b);
+      font-size: 21px;
+      font-weight: 600;
+      color: var(--ink);
+      padding-bottom: 3px;
+    }
+    .morph-part-label {
+      font-family: var(--font-m);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .mp-a .morph-part-text { color: var(--forest);  border-bottom: 2.5px solid var(--forest); }
+    .mp-b .morph-part-text { color: var(--copper);  border-bottom: 2.5px solid var(--copper); }
+    .mp-c .morph-part-text { color: var(--ink);     border-bottom: 2.5px dashed var(--muted); }
+    .morph-plus {
+      font-size: 15px;
+      color: var(--muted);
+      padding: 0 2px 12px;
+      align-self: flex-end;
+    }
+
+    /* ── Note ── */
     .morph-note {
       font-size: 14px;
       color: var(--ink);
-      line-height: 1.7;
-      margin-top: 6px;
+      line-height: 1.75;
+      margin-top: 4px;
     }
     .morph-note code {
       font-family: var(--font-m);
@@ -110,18 +103,30 @@
       color: var(--forest);
     }
 
-    /* ── Multiple results ── */
-    .morph-also {
-      margin-top: 10px;
-      font-size: 13px;
+    /* ── Loading ── */
+    .morph-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      font-size: 13.5px;
       color: var(--muted);
       font-style: italic;
     }
+    .spin {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--forest);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── Guide grid ── */
     .guide-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 14px;
       margin-top: 16px;
     }
@@ -132,14 +137,16 @@
       padding: 16px 18px;
       border-top: 4px solid var(--forest);
     }
-    .guide-card.ct-copper { border-top-color: var(--copper); }
+    .guide-card.copper { border-top-color: var(--copper); }
+    .guide-card.blue   { border-top-color: #5a70c0; }
     .guide-card h3 {
       font-family: var(--font-d);
       font-size: 1rem;
       color: var(--forest);
       margin-bottom: 5px;
     }
-    .guide-card.ct-copper h3 { color: var(--copper); }
+    .guide-card.copper h3 { color: var(--copper); }
+    .guide-card.blue   h3 { color: #3a50b0; }
     .guide-card p {
       font-size: 13px;
       color: var(--ink);
@@ -161,10 +168,19 @@
       padding: 3px 9px;
       color: var(--ink);
       cursor: pointer;
-      transition: background 0.13s, color 0.13s, border-color 0.13s;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
     }
-    .guide-ex:hover { background: var(--forest); color: #fff; border-color: var(--forest); }
-    .guide-card.ct-copper .guide-ex:hover { background: var(--copper); border-color: var(--copper); }
+    .guide-ex:hover              { background: var(--forest); color: #fff; border-color: var(--forest); }
+    .guide-card.copper .guide-ex:hover { background: var(--copper); border-color: var(--copper); }
+    .guide-card.blue   .guide-ex:hover { background: #3a50b0;      border-color: #3a50b0; color:#fff; }
+
+    .affix-note {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--font-m);
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -174,85 +190,78 @@
   <div class="page-hero">
     <span class="page-hero-icon">🧬</span>
     <h1>Morphology</h1>
-    <p>Enter a word to identify its word formation process — and explore the full reference guide below.</p>
+    <p>Enter any word to identify its word formation process — powered by Wiktionary's open etymology data.</p>
   </div>
 
   <div class="section">
 
-    <!-- ══ TOOL ══════════════════════════════════════════ -->
+    <!-- ══ ANALYZER ══ -->
     <div class="tool-card" style="margin-bottom:32px;">
       <div class="tool-card-header">
         <span class="icon">🔍</span>
-        <div><h2>Word Formation Analyzer</h2><p>Identify how a word was formed</p></div>
+        <div>
+          <h2>Word Formation Analyzer</h2>
+          <p>Identifies how a word was formed — any word, including new and rare ones</p>
+        </div>
       </div>
       <div class="tool-card-body">
+
         <div class="notice">
-          Enter any English word and the analyzer will identify its word formation process and give a morphological breakdown. Try both simple and complex words.
-        </div>
-        <div class="morph-input-row" style="margin-top:14px;">
-          <div class="input-group" style="margin:0;">
-            <label>Enter a Word</label>
-            <input type="text" id="morphIn" placeholder="e.g. unhappy, brunch, NASA, toothbrush…"
-              style="font-size:15px;" autocorrect="off" autocapitalize="off" spellcheck="false"
-              onkeydown="if(event.key==='Enter') analyzeMorph()">
-          </div>
-          <button class="btn btn-primary" onclick="analyzeMorph()"
-            style="margin-top:22px;white-space:nowrap;">Analyze</button>
+          Analyzes word formation processes using a live open linguistic database covering hundreds of thousands of words, including recent coinages. Enter any English word.
         </div>
 
-        <p style="font-size:12.5px;color:var(--muted);margin-top:8px;">
+        <div class="morph-input-row">
+          <div class="input-group" style="margin:0;">
+            <label>Enter a Word</label>
+            <input type="text" id="morphIn"
+              placeholder="e.g. podcast, brunch, edit, ballet, NASA…"
+              style="font-size:15px;"
+              autocorrect="off" autocapitalize="none" spellcheck="false"
+              onkeydown="if(event.key==='Enter') runAnalyze()">
+          </div>
+          <button class="btn btn-primary" id="analyzeBtn" onclick="runAnalyze()">Analyze</button>
+        </div>
+
+        <p style="font-size:12.5px;color:var(--muted);margin-top:9px;">
           Try:&nbsp;
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('unhappy')">unhappy</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('teacher')">teacher</span>
           <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('brunch')">brunch</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('toothbrush')">toothbrush</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('NASA')">NASA</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('ad')">ad</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('bye-bye')">bye-bye</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('email')">email</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('buzz')">buzz</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('ballet')">ballet</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('podcast')">podcast</span>
           <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('edit')">edit</span>
-          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('rewrite')">rewrite</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('NASA')">NASA</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('ballet')">ballet</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('toothbrush')">toothbrush</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('unhappy')">unhappy</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('buzz')">buzz</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('bye-bye')">bye-bye</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('laser')">laser</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('smog')">smog</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="quickLoad('ad')">ad</span>
         </p>
 
         <div class="result-box" id="morphRes" style="margin-top:14px;"></div>
       </div>
     </div>
 
-    <!-- ══ GUIDE ══════════════════════════════════════════ -->
+    <!-- ══ GUIDE ══ -->
     <h2 class="section-title">Word Formation Processes — Reference Guide</h2>
     <div class="guide-grid">
 
-      <div class="guide-card">
-        <h3>Prefixation</h3>
-        <p>A prefix is attached to the beginning of a base word, changing its meaning without changing its word class.</p>
+      <div class="guide-card blue">
+        <h3>Affixation</h3>
+        <p>Addition of a bound morpheme (affix) to a base. Includes prefixation (before the base), suffixation (after), infixation (within), and circumfixation (around). Derivational affixes create new words; inflectional affixes mark grammar.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('unhappy')">unhappy</span>
-          <span class="guide-ex" onclick="quickLoad('rewrite')">rewrite</span>
-          <span class="guide-ex" onclick="quickLoad('preview')">preview</span>
-          <span class="guide-ex" onclick="quickLoad('misuse')">misuse</span>
-          <span class="guide-ex" onclick="quickLoad('disagree')">disagree</span>
-          <span class="guide-ex" onclick="quickLoad('antiwar')">antiwar</span>
-        </div>
-      </div>
-
-      <div class="guide-card ct-copper">
-        <h3>Suffixation</h3>
-        <p>A suffix is added to the end of a base word. Derivational suffixes often change the word class; inflectional suffixes mark grammatical categories.</p>
-        <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('teacher')">teacher</span>
-          <span class="guide-ex" onclick="quickLoad('happiness')">happiness</span>
-          <span class="guide-ex" onclick="quickLoad('quickly')">quickly</span>
+          <span class="guide-ex" onclick="quickLoad('rewrite')">rewrite</span>
           <span class="guide-ex" onclick="quickLoad('readable')">readable</span>
           <span class="guide-ex" onclick="quickLoad('nationalize')">nationalize</span>
-          <span class="guide-ex" onclick="quickLoad('running')">running</span>
         </div>
+        <p class="affix-note">★ A dedicated Affixation tool with full morpheme breakdown is coming soon.</p>
       </div>
 
       <div class="guide-card">
         <h3>Compounding</h3>
-        <p>Two or more free morphemes (independent words) are combined to form a new word. The compound can be closed, hyphenated, or open.</p>
+        <p>Two or more free morphemes are joined to form a new word. The compound can be written as one word, hyphenated, or open. The meaning is often more specific than the sum of its parts.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('toothbrush')">toothbrush</span>
           <span class="guide-ex" onclick="quickLoad('blackbird')">blackbird</span>
@@ -262,89 +271,86 @@
         </div>
       </div>
 
-      <div class="guide-card ct-copper">
+      <div class="guide-card copper">
         <h3>Conversion (Zero Derivation)</h3>
-        <p>A word changes its grammatical category (e.g. noun → verb) without any addition of an affix. The form stays the same; the function changes.</p>
+        <p>A word shifts grammatical category without any change in form. No affix is added — the word simply begins to function as a different part of speech. Also called zero derivation or functional shift.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('email')">email</span>
           <span class="guide-ex" onclick="quickLoad('google')">google</span>
-          <span class="guide-ex" onclick="quickLoad('text')">text</span>
-          <span class="guide-ex" onclick="quickLoad('bottle')">bottle</span>
           <span class="guide-ex" onclick="quickLoad('microwave')">microwave</span>
+          <span class="guide-ex" onclick="quickLoad('bottle')">bottle</span>
+          <span class="guide-ex" onclick="quickLoad('text')">text</span>
         </div>
       </div>
 
       <div class="guide-card">
         <h3>Clipping</h3>
-        <p>A word is shortened by removing one or more syllables from the full form. The meaning stays the same, though register often becomes informal.</p>
+        <p>A word is shortened by removing one or more syllables from the original form. The meaning is preserved but the register usually becomes more informal. Can clip from the front (fore-clipping), back (back-clipping), or both.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('ad')">ad</span>
           <span class="guide-ex" onclick="quickLoad('gym')">gym</span>
-          <span class="guide-ex" onclick="quickLoad('phone')">phone</span>
           <span class="guide-ex" onclick="quickLoad('flu')">flu</span>
           <span class="guide-ex" onclick="quickLoad('lab')">lab</span>
           <span class="guide-ex" onclick="quickLoad('fridge')">fridge</span>
+          <span class="guide-ex" onclick="quickLoad('phone')">phone</span>
         </div>
       </div>
 
-      <div class="guide-card ct-copper">
-        <h3>Blending</h3>
-        <p>Parts of two or more words are merged into a single new word (portmanteau). Typically the beginning of one word is joined with the end of another.</p>
+      <div class="guide-card copper">
+        <h3>Blending (Portmanteau)</h3>
+        <p>Parts of two or more words are merged into a single new word. Typically the beginning of one word is fused with the end of another. The result carries meanings from both sources.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('brunch')">brunch</span>
           <span class="guide-ex" onclick="quickLoad('smog')">smog</span>
+          <span class="guide-ex" onclick="quickLoad('podcast')">podcast</span>
           <span class="guide-ex" onclick="quickLoad('blog')">blog</span>
           <span class="guide-ex" onclick="quickLoad('sitcom')">sitcom</span>
           <span class="guide-ex" onclick="quickLoad('hangry')">hangry</span>
-          <span class="guide-ex" onclick="quickLoad('glamping')">glamping</span>
         </div>
       </div>
 
       <div class="guide-card">
         <h3>Acronym &amp; Initialism</h3>
-        <p>An acronym is formed from initial letters of a phrase and pronounced as a word (NASA). An initialism is spelled out letter by letter (FBI).</p>
+        <p>Formed from the initial letters of a multi-word phrase. An <em>acronym</em> is pronounced as a whole word (NASA, laser); an <em>initialism</em> is spelled out letter by letter (FBI, BBC). Some acronyms become fully lexicalized over time.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('NASA')">NASA</span>
           <span class="guide-ex" onclick="quickLoad('laser')">laser</span>
           <span class="guide-ex" onclick="quickLoad('radar')">radar</span>
           <span class="guide-ex" onclick="quickLoad('scuba')">scuba</span>
-          <span class="guide-ex" onclick="quickLoad('wifi')">wifi</span>
+          <span class="guide-ex" onclick="quickLoad('gif')">gif</span>
         </div>
       </div>
 
-      <div class="guide-card ct-copper">
+      <div class="guide-card copper">
         <h3>Back-formation</h3>
-        <p>A shorter word is created by removing an affix from a longer existing word — the reverse of the usual affixation process.</p>
+        <p>A shorter word is created by removing what appears to be an affix from a longer existing word — the reverse of typical affixation. The source word was not actually formed by adding the affix; the back-form is a new creation.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('edit')">edit</span>
           <span class="guide-ex" onclick="quickLoad('babysit')">babysit</span>
           <span class="guide-ex" onclick="quickLoad('televise')">televise</span>
           <span class="guide-ex" onclick="quickLoad('donate')">donate</span>
           <span class="guide-ex" onclick="quickLoad('enthuse')">enthuse</span>
-          <span class="guide-ex" onclick="quickLoad('sculpt')">sculpt</span>
         </div>
       </div>
 
       <div class="guide-card">
         <h3>Reduplication</h3>
-        <p>A word or part of a word is repeated, either exactly (full reduplication) or with a vowel/consonant change (partial reduplication).</p>
+        <p>A word or part of a word is repeated. <em>Full reduplication</em> copies the entire form; <em>partial (ablaut) reduplication</em> repeats with a vowel or consonant change. Common in child language, emphasis, and many world languages.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('bye-bye')">bye-bye</span>
-          <span class="guide-ex" onclick="quickLoad('so-so')">so-so</span>
-          <span class="guide-ex" onclick="quickLoad('night-night')">night-night</span>
           <span class="guide-ex" onclick="quickLoad('chit-chat')">chit-chat</span>
           <span class="guide-ex" onclick="quickLoad('zigzag')">zigzag</span>
           <span class="guide-ex" onclick="quickLoad('flip-flop')">flip-flop</span>
+          <span class="guide-ex" onclick="quickLoad('so-so')">so-so</span>
         </div>
       </div>
 
-      <div class="guide-card ct-copper">
+      <div class="guide-card copper">
         <h3>Onomatopoeia</h3>
-        <p>A word is created to phonetically imitate or suggest the sound it describes. The word's pronunciation echoes its meaning.</p>
+        <p>A word is created whose pronunciation imitates or suggests the sound it denotes. The word-form itself echoes its meaning. Universal across languages, though the exact sounds differ culturally.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('buzz')">buzz</span>
           <span class="guide-ex" onclick="quickLoad('hiss')">hiss</span>
-          <span class="guide-ex" onclick="quickLoad('bang')">bang</span>
           <span class="guide-ex" onclick="quickLoad('splash')">splash</span>
           <span class="guide-ex" onclick="quickLoad('sizzle')">sizzle</span>
           <span class="guide-ex" onclick="quickLoad('murmur')">murmur</span>
@@ -353,10 +359,9 @@
 
       <div class="guide-card">
         <h3>Borrowing (Loanword)</h3>
-        <p>A word is adopted from another language, sometimes with minor phonological or orthographic adaptation. English has borrowed extensively from French, Latin, Greek, Arabic, and many others.</p>
+        <p>A word is adopted from another language, with little or no modification. English has borrowed from hundreds of languages throughout its history — French, Latin, Greek, Arabic, Hindi, Japanese, and many others.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('ballet')">ballet</span>
-          <span class="guide-ex" onclick="quickLoad('pizza')">pizza</span>
           <span class="guide-ex" onclick="quickLoad('algebra')">algebra</span>
           <span class="guide-ex" onclick="quickLoad('tsunami')">tsunami</span>
           <span class="guide-ex" onclick="quickLoad('kindergarten')">kindergarten</span>
@@ -364,15 +369,26 @@
         </div>
       </div>
 
-      <div class="guide-card ct-copper">
+      <div class="guide-card copper">
         <h3>Coinage / Neologism</h3>
-        <p>An entirely new word is invented, not derived from any existing word or morpheme. Often associated with brand names or technological inventions.</p>
+        <p>An entirely new word is invented with no derivation from existing morphemes. True coinages are rare; they are often associated with brand names, scientific inventions, or deliberate creative acts.</p>
         <div class="guide-exs">
           <span class="guide-ex" onclick="quickLoad('kodak')">kodak</span>
-          <span class="guide-ex" onclick="quickLoad('xerox')">xerox</span>
-          <span class="guide-ex" onclick="quickLoad('aspirin')">aspirin</span>
           <span class="guide-ex" onclick="quickLoad('nylon')">nylon</span>
           <span class="guide-ex" onclick="quickLoad('googol')">googol</span>
+          <span class="guide-ex" onclick="quickLoad('quark')">quark</span>
+          <span class="guide-ex" onclick="quickLoad('hobbit')">hobbit</span>
+        </div>
+      </div>
+
+      <div class="guide-card blue">
+        <h3>Calque (Loan Translation)</h3>
+        <p>A word or phrase is borrowed from another language by translating its component parts literally into the target language, rather than adopting the foreign form directly.</p>
+        <div class="guide-exs">
+          <span class="guide-ex" onclick="quickLoad('skyscraper')">skyscraper</span>
+          <span class="guide-ex" onclick="quickLoad('flea market')">flea market</span>
+          <span class="guide-ex" onclick="quickLoad('masterpiece')">masterpiece</span>
+          <span class="guide-ex" onclick="quickLoad('loanword')">loanword</span>
         </div>
       </div>
 
@@ -385,758 +401,536 @@
 'use strict';
 
 /* ══════════════════════════════════════════════════════════
-   LOOKUP TABLES
+   LANGUAGE CODE → NAME MAP  (Wiktionary template codes)
 ══════════════════════════════════════════════════════════ */
-
-var BLENDS = {
-  'brunch':['breakfast','lunch'],'smog':['smoke','fog'],'blog':['web','log'],
-  'sitcom':['situation','comedy'],'romcom':['romance','comedy'],
-  'mockumentary':['mock','documentary'],'docusoap':['documentary','soap opera'],
-  'edutainment':['education','entertainment'],'infotainment':['information','entertainment'],
-  'infomercial':['information','commercial'],'podcast':['iPod','broadcast'],
-  'webinar':['web','seminar'],'netizen':['network','citizen'],
-  'emoticon':['emotion','icon'],'pixel':['picture','element'],
-  'transistor':['transfer','resistor'],'motel':['motor','hotel'],
-  'camcorder':['camera','recorder'],'medicare':['medical','care'],
-  'motorcade':['motor','cavalcade'],'paratrooper':['parachute','trooper'],
-  'telecast':['television','broadcast'],'telethon':['television','marathon'],
-  'labradoodle':['Labrador','poodle'],'liger':['lion','tiger'],
-  'spork':['spoon','fork'],'snark':['snide','remark'],
-  'glamping':['glamorous','camping'],'staycation':['stay','vacation'],
-  'hangry':['hungry','angry'],'frenemy':['friend','enemy'],
-  'bromance':['brother','romance'],'mansplain':['man','explain'],
-  'ginormous':['gigantic','enormous'],'fantabulous':['fantastic','fabulous'],
-  'cheeseburger':['cheese','hamburger'],'workaholic':['work','alcoholic'],
-  'guesstimate':['guess','estimate'],'greenwash':['green','whitewash'],
-  'tween':['between','teen'],'vlog':['video','blog'],
-  'cosplay':['costume','play'],'sexting':['sex','texting'],
-  'biopic':['biography','picture'],'fanzine':['fan','magazine'],
-  'gastropub':['gastronomy','pub'],'wikipedia':['wiki','encyclopedia'],
-  'oxbridge':['Oxford','Cambridge'],'Tanzania':['Tanganyika','Zanzibar'],
-  'smartphone':['smart','phone'],'chortle':['chuckle','snort'],
-  'glitterati':['glitter','literati'],'affluenza':['affluence','influenza'],
-  'breathalyzer':['breath','analyzer'],'jeggings':['jeans','leggings'],
-  'skype':['sky','peer-to-peer'],'twirl':['twist','whirl'],
+var LANGS = {
+  af:'Afrikaans', ar:'Arabic', az:'Azerbaijani', be:'Belarusian',
+  bg:'Bulgarian', bn:'Bengali', ca:'Catalan', cs:'Czech',
+  cy:'Welsh', da:'Danish', de:'German', el:'Greek (Modern)',
+  eo:'Esperanto', es:'Spanish', et:'Estonian', eu:'Basque',
+  fa:'Persian', fi:'Finnish', fr:'French', ga:'Irish', gl:'Galician',
+  gu:'Gujarati', he:'Hebrew', hi:'Hindi', hr:'Croatian',
+  hu:'Hungarian', hy:'Armenian', id:'Indonesian', is:'Icelandic',
+  it:'Italian', ja:'Japanese', ka:'Georgian', kn:'Kannada',
+  ko:'Korean', la:'Latin', lt:'Lithuanian', lv:'Latvian',
+  mk:'Macedonian', ml:'Malayalam', mr:'Marathi', ms:'Malay',
+  mt:'Maltese', nl:'Dutch', 'no':'Norwegian', pa:'Punjabi',
+  pl:'Polish', pt:'Portuguese', ro:'Romanian', ru:'Russian',
+  sa:'Sanskrit', sk:'Slovak', sl:'Slovenian', sq:'Albanian',
+  sr:'Serbian', sv:'Swedish', sw:'Swahili', ta:'Tamil',
+  te:'Telugu', th:'Thai', tr:'Turkish', uk:'Ukrainian',
+  ur:'Urdu', uz:'Uzbek', vi:'Vietnamese', zh:'Chinese',
+  yi:'Yiddish', ang:'Old English', enm:'Middle English',
+  fro:'Old French', frm:'Middle French', grc:'Ancient Greek',
+  'non':'Old Norse', dum:'Middle Dutch', gmh:'Middle High German',
+  goh:'Old High German', osx:'Old Saxon', nds:'Low German',
+  got:'Gothic', pro:'Old Occitan', ofs:'Old Frisian',
+  inc:'Indo-Iranian', sem:'Semitic', nan:'Min Nan Chinese',
+  yue:'Cantonese', tl:'Tagalog', jv:'Javanese', mg:'Malagasy',
+  xh:'Xhosa', zu:'Zulu', am:'Amharic', ne:'Nepali', si:'Sinhala',
+  'mul':'multiple languages',
 };
 
-var CLIPPINGS = {
-  'ad':'advertisement','ads':'advertisements','app':'application',
-  'auto':'automobile','bike':'bicycle','bot':'robot','burger':'hamburger',
-  'bus':'omnibus','cab':'taxicab','cello':'violoncello','champ':'champion',
-  'chemo':'chemotherapy','condo':'condominium','copter':'helicopter',
-  'deli':'delicatessen','demo':'demonstration','doc':'doctor',
-  'dorm':'dormitory','exam':'examination','fax':'facsimile',
-  'flu':'influenza','fridge':'refrigerator','gas':'gasoline',
-  'gym':'gymnasium','indie':'independent','info':'information',
-  'intro':'introduction','lab':'laboratory','limo':'limousine',
-  'math':'mathematics','maths':'mathematics','memo':'memorandum',
-  'mic':'microphone','mike':'microphone','mob':'mobile vulgus',
-  'perm':'permanent wave','phone':'telephone','photo':'photograph',
-  'plane':'airplane','pop':'popular','porn':'pornography',
-  'pro':'professional','prof':'professor','pub':'public house',
-  'recap':'recapitulation','ref':'referee','rep':'representative',
-  'rhino':'rhinoceros','specs':'spectacles','stereo':'stereophonic',
-  'sub':'submarine','tech':'technology','telly':'television',
-  'temp':'temporary','typo':'typographical error','uni':'university',
-  'vet':'veterinarian','zoo':'zoological garden','celeb':'celebrity',
-  'diss':'disrespect','emo':'emotional','prom':'promenade',
-  'grad':'graduate','bio':'biography','psych':'psychology',
-  'sync':'synchronize','taxi':'taxicab','tix':'tickets',
-  'carb':'carbohydrate','mayo':'mayonnaise','sci-fi':'science fiction',
-  'varsity':'university','wig':'periwig','op':'operation',
-  'max':'maximum','min':'minimum','stats':'statistics',
-  'hippo':'hippopotamus','kilo':'kilogram','metro':'metropolitan',
-  'mini':'miniature','mono':'monophonic','quad':'quadrangle',
-  'cred':'credibility','abs':'abdominals','bro':'brother',
-  'sis':'sister','perk':'perquisite','caf':'cafeteria',
-};
-
-var BACKFORMATIONS = {
-  'edit':'editor','babysit':'babysitter','burgle':'burglar',
-  'donate':'donation','emote':'emotion','enthuse':'enthusiasm',
-  'escalate':'escalator','grovel':'groveling','liaise':'liaison',
-  'opt':'option','sculpt':'sculptor','sightsee':'sightseeing',
-  'sleaze':'sleazy','televise':'television','typewrite':'typewriter',
-  'orate':'oration','automate':'automation','commentate':'commentator',
-  'aggress':'aggression','surveil':'surveillance','diagnose':'diagnosis',
-  'extradite':'extradition','obsess':'obsession','swindle':'swindler',
-  'resurrect':'resurrection','peddle':'peddler','intuit':'intuition',
-  'orientate':'orientation','laze':'lazy','beg':'beggar',
-  'cobble':'cobbler','reminisce':'reminiscence','housekeep':'housekeeper',
-};
-
-var ONOMATOPOEIA = new Set([
-  'bang','buzz','click','crack','crash','creak','drip','fizz','giggle',
-  'grunt','gurgle','hiss','honk','hum','jingle','knock','meow','moo',
-  'murmur','oink','plink','plop','plunk','pop','purr','quack','rattle',
-  'roar','rumble','rustle','screech','sizzle','slap','slurp','smack',
-  'snap','sniff','splash','squeak','squeal','swoosh','thud','thump',
-  'tick','tinkle','tweet','twitter','vroom','wail','whine','whir',
-  'whisper','whoosh','woof','yelp','zap','zip','zoom','baa','bark',
-  'beep','bleat','bloop','boom','bray','bubble','burp','caw','chatter',
-  'cheep','chirp','chug','clang','clank','clap','clatter','clink',
-  'cluck','coo','cough','crunch','ding','dong','flap','flutter',
-  'gargle','glug','gobble','groan','growl','grumble','gulp','hiccup',
-  'howl','jangle','lap','moan','mumble','neigh','patter','ping',
-  'puff','rip','scrape','shuffle','slam','slosh','snore','sob',
-  'squish','stamp','stomp','swish','tap','throb','twang','ululate',
-  'warble','whack','whimper','whistle','yap','yowl','squelch',
-]);
-
-var BORROWINGS = {
-  // French
-  'ballet':'French','bouquet':'French','cafe':'French','chef':'French',
-  'chauffeur':'French','cliche':'French','connoisseur':'French',
-  'critique':'French','debut':'French','depot':'French','elite':'French',
-  'entrepreneur':'French','facade':'French','genre':'French',
-  'gourmet':'French','hotel':'French','liaison':'French',
-  'mirage':'French','naive':'French','niche':'French',
-  'plateau':'French','prestige':'French','renaissance':'French',
-  'repertoire':'French','resume':'French','silhouette':'French',
-  'souvenir':'French','surveillance':'French','unique':'French',
-  'rouge':'French','noir':'French',
-  // Italian
-  'broccoli':'Italian','cappuccino':'Italian','casino':'Italian',
-  'concerto':'Italian','fiasco':'Italian','graffiti':'Italian',
-  'influenza':'Italian','lava':'Italian','mafia':'Italian',
-  'opera':'Italian','pasta':'Italian','piano':'Italian',
-  'pizza':'Italian','scenario':'Italian','soprano':'Italian',
-  'tempo':'Italian','umbrella':'Italian','volcano':'Italian',
-  'zucchini':'Italian','cello':'Italian',
-  // Spanish
-  'alligator':'Spanish','armadillo':'Spanish','avocado':'Spanish',
-  'barbecue':'Spanish','bronco':'Spanish','cafeteria':'Spanish',
-  'cargo':'Spanish','cigar':'Spanish','cockroach':'Spanish',
-  'guerrilla':'Spanish','hammock':'Spanish','hurricane':'Spanish',
-  'lasso':'Spanish','mustang':'Spanish','ranch':'Spanish',
-  'rodeo':'Spanish','salsa':'Spanish','tobacco':'Spanish',
-  'tomato':'Spanish','vanilla':'Spanish','vigilante':'Spanish',
-  'chocolate':'Spanish (from Nahuatl)',
-  // German
-  'angst':'German','blitz':'German','doppelganger':'German',
-  'frankfurter':'German','hamster':'German','kindergarten':'German',
-  'kitsch':'German','noodle':'German','pretzel':'German',
-  'rucksack':'German','spiel':'German','wanderlust':'German',
-  'zeitgeist':'German','hamburger':'German','dachshund':'German',
-  'uber':'German',
-  // Japanese
-  'anime':'Japanese','emoji':'Japanese','haiku':'Japanese',
-  'judo':'Japanese','karaoke':'Japanese','karate':'Japanese',
-  'kimono':'Japanese','manga':'Japanese','origami':'Japanese',
-  'samurai':'Japanese','sushi':'Japanese','tofu':'Japanese',
-  'tsunami':'Japanese','tycoon':'Japanese','wasabi':'Japanese',
-  // Arabic
-  'alcohol':'Arabic','algebra':'Arabic','algorithm':'Arabic',
-  'almanac':'Arabic','assassin':'Arabic','coffee':'Arabic',
-  'cotton':'Arabic','elixir':'Arabic','gazelle':'Arabic',
-  'giraffe':'Arabic','lemon':'Arabic','magazine':'Arabic',
-  'mattress':'Arabic','sofa':'Arabic','sugar':'Arabic',
-  'syrup':'Arabic','tariff':'Arabic','zero':'Arabic',
-  // Latin
-  'agenda':'Latin','aquarium':'Latin','campus':'Latin',
-  'cactus':'Latin','circus':'Latin','data':'Latin',
-  'exit':'Latin','medium':'Latin','memorandum':'Latin',
-  'nucleus':'Latin','radius':'Latin','status':'Latin',
-  'stimulus':'Latin','versus':'Latin','virus':'Latin',
-  'index':'Latin','census':'Latin',
-  // Greek
-  'academy':'Greek','chaos':'Greek','democracy':'Greek',
-  'drama':'Greek','echo':'Greek','enigma':'Greek',
-  'epidemic':'Greek','gymnasium':'Greek','history':'Greek',
-  'mystery':'Greek','phenomenon':'Greek','rhythm':'Greek',
-  'sarcasm':'Greek','sympathy':'Greek','theory':'Greek',
-  'trophy':'Greek','theatre':'Greek',
-  // Sanskrit / Hindi / Urdu
-  'avatar':'Sanskrit','bungalow':'Hindi','cheetah':'Hindi',
-  'guru':'Sanskrit','jungle':'Hindi','karma':'Sanskrit',
-  'loot':'Hindi','mantra':'Sanskrit','nirvana':'Sanskrit',
-  'shampoo':'Hindi','thug':'Hindi','yoga':'Sanskrit',
-  'pyjamas':'Urdu/Persian','pundit':'Sanskrit',
-  // Dutch
-  'boss':'Dutch','booze':'Dutch','brandy':'Dutch',
-  'cookie':'Dutch','cruise':'Dutch','easel':'Dutch',
-  'golf':'Dutch','landscape':'Dutch','sketch':'Dutch',
-  'sleigh':'Dutch','snack':'Dutch','waffle':'Dutch','yacht':'Dutch',
-  // Persian
-  'bazaar':'Persian','caravan':'Persian','chess':'Persian',
-  'jasmine':'Persian','khaki':'Persian','shawl':'Persian',
-  'spinach':'Persian','tulip':'Persian',
-  // Old Norse / Scandinavian
-  'bag':'Old Norse','cake':'Old Norse','egg':'Old Norse',
-  'gap':'Old Norse','knife':'Old Norse','law':'Old Norse',
-  'reindeer':'Old Norse','saga':'Old Norse','skill':'Old Norse',
-  'skull':'Old Norse','sky':'Old Norse','ugly':'Old Norse',
-  'window':'Old Norse','wing':'Old Norse',
-  // Portuguese
-  'albatross':'Portuguese','cobra':'Portuguese',
-  'flamingo':'Portuguese','marmalade':'Portuguese',
-};
-
-var CONVERSIONS = {
-  'google':'verb (from proper noun Google)', 'email':'verb/noun (noun → verb)',
-  'text':'verb (from noun text)','friend':'verb (from noun friend)',
-  'unfriend':'verb (from noun friend)','bottle':'verb (from noun bottle)',
-  'table':'verb/noun (noun ↔ verb)','chair':'verb (from noun chair)',
-  'microwave':'verb (from noun microwave)','host':'verb (from noun host)',
-  'ship':'verb (from noun ship)','network':'verb (from noun network)',
-  'impact':'verb (from noun impact)','access':'verb (from noun access)',
-  'contact':'verb (from noun contact)','blog':'verb (from noun blog)',
-  'debut':'verb (from noun debut)','interview':'verb (from noun interview)',
-  'comb':'verb (from noun comb)','dust':'verb (from noun dust)',
-  'fish':'verb (from noun fish)','bus':'verb (from noun bus)',
-  'drive':'noun (from verb drive)','walk':'noun (from verb walk)',
-  'run':'noun (from verb run)','laugh':'noun (from verb laugh)',
-  'smile':'noun (from verb smile)','dance':'noun (from verb dance)',
-  'drink':'noun (from verb drink)','cut':'noun (from verb cut)',
-  'cook':'noun (from verb cook)','guide':'noun (from verb guide)',
-  'download':'verb (noun → verb)','upload':'verb (noun → verb)',
-  'input':'verb (noun → verb)','process':'verb (noun → verb)',
-  'position':'verb (noun → verb)','service':'verb (noun → verb)',
-  'trademark':'verb (noun → verb)','carpet':'verb (from noun carpet)',
-};
-
-var LEXICALIZED_ACRONYMS = {
-  'laser':'Light Amplification by Stimulated Emission of Radiation',
-  'radar':'Radio Detection And Ranging',
-  'scuba':'Self-Contained Underwater Breathing Apparatus',
-  'wifi':'Wireless Fidelity','nato':'North Atlantic Treaty Organization',
-  'aids':'Acquired Immune Deficiency Syndrome',
-  'gif':'Graphics Interchange Format',
-  'jpeg':'Joint Photographic Experts Group',
-  'pdf':'Portable Document Format','atm':'Automated Teller Machine',
-  'nasa':'National Aeronautics and Space Administration',
-  'fbi':'Federal Bureau of Investigation',
-  'cia':'Central Intelligence Agency','who':'World Health Organization',
-  'un':'United Nations','eu':'European Union',
-  'ascii':'American Standard Code for Information Interchange',
-  'html':'HyperText Markup Language','css':'Cascading Style Sheets',
-  'faq':'Frequently Asked Questions','asap':'As Soon As Possible',
-  'dna':'Deoxyribonucleic Acid','rna':'Ribonucleic Acid',
-  'pin':'Personal Identification Number',
-  'sim':'Subscriber Identity Module',
-  'zip':'Zone Improvement Plan',
-};
-
-var COINAGES = new Set([
-  'kodak','xerox','aspirin','nylon','velcro','kleenex','jacuzzi',
-  'googol','quark','hobbit','cyberspace','pandemonium',
-  'utopia','serendipity','blurb',
-]);
-
-/* Partial reduplication patterns (vowel change between copies) */
-var PARTIAL_REDUP = new Set([
-  'chit-chat','chitchat','zigzag','flip-flop','flipflop',
-  'tick-tock','ticktock','ding-dong','dingdong','ping-pong',
-  'mishmash','riffraff','shilly-shally','knickknack',
-  'walkie-talkie','hurly-burly','mumbo-jumbo','hodgepodge',
-  'hanky-panky','helter-skelter','topsy-turvy','namby-pamby',
-  'willy-nilly','hocus-pocus','itsy-bitsy','teeny-weeny',
-]);
-
-/* ── AFFIXES ── */
-/* Prefixes: sorted by length desc to match longest first */
-var PREFIXES = [
-  {s:'counter', m:'against/opposing'},
-  {s:'pseudo',  m:'false/imitation'},
-  {s:'super',   m:'above/beyond'},
-  {s:'hyper',   m:'over/excessive'},
-  {s:'inter',   m:'between/among'},
-  {s:'intra',   m:'within'},
-  {s:'micro',   m:'very small'},
-  {s:'macro',   m:'very large'},
-  {s:'extra',   m:'outside/beyond'},
-  {s:'ultra',   m:'beyond/extreme'},
-  {s:'proto',   m:'first/original'},
-  {s:'paleo',   m:'old/ancient'},
-  {s:'neuro',   m:'nerve/neural'},
-  {s:'trans',   m:'across/beyond'},
-  {s:'multi',   m:'many'},
-  {s:'under',   m:'below/insufficient'},
-  {s:'quasi',   m:'seemingly/partly'},
-  {s:'semi',    m:'half/partly'},
-  {s:'anti',    m:'against/opposing'},
-  {s:'fore',    m:'before/front'},
-  {s:'post',    m:'after/behind'},
-  {s:'over',    m:'above/excessively'},
-  {s:'auto',    m:'self'},
-  {s:'self',    m:'oneself'},
-  {s:'neo',     m:'new/recent'},
-  {s:'non',     m:'not/absence of'},
-  {s:'sub',     m:'under/below'},
-  {s:'pre',     m:'before'},
-  {s:'pro',     m:'in favor of/before'},
-  {s:'mid',     m:'middle'},
-  {s:'out',     m:'beyond/surpassing'},
-  {s:'mis',     m:'wrongly/badly'},
-  {s:'dis',     m:'not/reversal'},
-  {s:'bio',     m:'life'},
-  {s:'geo',     m:'earth'},
-  {s:'eco',     m:'environment'},
-  {s:'un',      m:'not/reversal'},
-  {s:'re',      m:'again/back'},
-  {s:'de',      m:'removal/reversal'},
-  {s:'ex',      m:'former/out of'},
-  {s:'in',      m:'not/into'},
-  {s:'im',      m:'not (before b/m/p)'},
-  {s:'ir',      m:'not (before r)'},
-  {s:'il',      m:'not (before l)'},
-  {s:'bi',      m:'two'},
-  {s:'co',      m:'together/with'},
-  {s:'a',       m:'not/without'},
-];
-
-/* Suffixes: sorted by length desc */
-var SUFFIXES = [
-  {s:'ification', m:'process/result of making', type:'deriv', pos:'N'},
-  {s:'ization',   m:'process of making',         type:'deriv', pos:'N'},
-  {s:'isation',   m:'process of making',         type:'deriv', pos:'N'},
-  {s:'tion',      m:'action/process',             type:'deriv', pos:'N'},
-  {s:'sion',      m:'action/process',             type:'deriv', pos:'N'},
-  {s:'ment',      m:'action/result',              type:'deriv', pos:'N'},
-  {s:'ness',      m:'state/quality',              type:'deriv', pos:'N'},
-  {s:'ity',       m:'state/quality',              type:'deriv', pos:'N'},
-  {s:'ance',      m:'state/action',               type:'deriv', pos:'N'},
-  {s:'ence',      m:'state/action',               type:'deriv', pos:'N'},
-  {s:'ship',      m:'state/condition/skill',      type:'deriv', pos:'N'},
-  {s:'hood',      m:'state/condition',            type:'deriv', pos:'N'},
-  {s:'dom',       m:'domain/state',               type:'deriv', pos:'N'},
-  {s:'ism',       m:'doctrine/practice/system',   type:'deriv', pos:'N'},
-  {s:'ist',       m:'person/agent/adherent',      type:'deriv', pos:'N'},
-  {s:'eer',       m:'agent/one engaged in',       type:'deriv', pos:'N'},
-  {s:'ess',       m:'feminine agent',             type:'deriv', pos:'N'},
-  {s:'age',       m:'collective/result/action',   type:'deriv', pos:'N'},
-  {s:'ure',       m:'action/result',              type:'deriv', pos:'N'},
-  {s:'ery',       m:'place/collective/practice',  type:'deriv', pos:'N'},
-  {s:'able',      m:'capable of/worthy of',       type:'deriv', pos:'Adj'},
-  {s:'ible',      m:'capable of',                 type:'deriv', pos:'Adj'},
-  {s:'ful',       m:'full of/characterized by',   type:'deriv', pos:'Adj'},
-  {s:'less',      m:'without/lacking',            type:'deriv', pos:'Adj'},
-  {s:'ish',       m:'somewhat/like/approximately',type:'deriv', pos:'Adj'},
-  {s:'ous',       m:'having the quality of',      type:'deriv', pos:'Adj'},
-  {s:'ious',      m:'having the quality of',      type:'deriv', pos:'Adj'},
-  {s:'ical',      m:'relating to',                type:'deriv', pos:'Adj'},
-  {s:'ic',        m:'relating to/characteristic', type:'deriv', pos:'Adj'},
-  {s:'ive',       m:'tending to/having nature of',type:'deriv', pos:'Adj'},
-  {s:'ary',       m:'relating to/connected with', type:'deriv', pos:'Adj/N'},
-  {s:'ory',       m:'relating to/place of',       type:'deriv', pos:'Adj/N'},
-  {s:'ward',      m:'direction toward',           type:'deriv', pos:'Adj/Adv'},
-  {s:'wise',      m:'manner/direction',           type:'deriv', pos:'Adv'},
-  {s:'like',      m:'resembling',                 type:'deriv', pos:'Adj'},
-  {s:'ize',       m:'to make/become',             type:'deriv', pos:'V'},
-  {s:'ise',       m:'to make/become',             type:'deriv', pos:'V'},
-  {s:'ify',       m:'to make/cause to be',        type:'deriv', pos:'V'},
-  {s:'ate',       m:'to perform action',          type:'deriv', pos:'V'},
-  {s:'en',        m:'to make/become',             type:'deriv', pos:'V'},
-  {s:'al',        m:'relating to/of',             type:'deriv', pos:'Adj/N'},
-  {s:'er',        m:'agent/one who',              type:'deriv', pos:'N'},
-  {s:'or',        m:'agent/one who',              type:'deriv', pos:'N'},
-  {s:'ee',        m:'recipient/patient',          type:'deriv', pos:'N'},
-  {s:'ly',        m:'in the manner of',           type:'deriv', pos:'Adv'},
-  {s:'ing',       m:'progressive/gerund',         type:'infl',  pos:'V'},
-  {s:'ed',        m:'past tense/past participle', type:'infl',  pos:'V'},
-  {s:'er',        m:'comparative',                type:'infl',  pos:'Adj', inflNote:'comparative'},
-  {s:'est',       m:'superlative',                type:'infl',  pos:'Adj'},
-  {s:'s',         m:'plural/3rd-person singular', type:'infl',  pos:'N/V'},
-];
-
-/* Words that look prefixed/suffixed but are not */
-var FALSE_PREFIX_WORDS = new Set([
-  'under','over','inner','outer','inter','after','uncle','ink','into',
-  'often','able','area','army','above','across','along','among','around',
-  'about','ahead','apart','aside','against','already','always','among',
-  'animal','answer','apply','arise','art','ask','away','bit','but','by',
-  'inn','inch','iron','issue','its','itself','image','idea',
-  'miss','mission','mistake','must','most','more','modern','model',
-  'remain','record','regard','rest','result','road','role','room','rule',
-  'reach','real','refer','reflect','represent',
-  'pre','pro','sub','dis','mis','non','bi','co','re','de','ex','in',
-  'semi','anti','auto','neo','eco','geo','bio','mid','out',
-]);
-
-var FALSE_SUFFIX_WORDS = new Set([
-  'ring','king','sing','bring','thing','sting','string','spring','swing',
-  'fling','sling','cling','wring','wing','ping','rang','sang','hung',
-  'lung','rung','sung','young','among','long','strong','wrong','song',
-  'her','per','after','water','butter','bitter','better','letter',
-  'litter','matter','scatter','shatter','pattern','modern','eastern',
-  'western','northern','southern','winter','sister','mister','minister',
-  'red','bed','led','fed','said','paid','laid','wed','shed','sped',
-  'as','is','us','was','has','his','this','class','mass','grass','pass',
-  'glass','brass','gas','yes','less','stress','press','dress','address',
-  'access','process','success','excess','miss','kiss','hiss','bliss',
-  'ball','call','fall','hall','tall','wall','full','pull','bull','sell',
-  'tell','well','bell','fell','smell','spell','shell','still','fill',
-  'hill','kill','mill','pill','will','bill','ill','all','old','cold',
-  'fold','gold','hold','bold','sold','told','mold','polled',
-  'age','cage','page','rage','sage','stage','wage','image',
-  'one','done','none','gone','bone','cone','lone','tone','zone',
-  'ate','gate','late','mate','rate','fate','hate','state','plate',
-  'ice','nice','rice','mice','vice','price','slice','twice','advice',
-  'ace','face','lace','pace','race','place','space','grace','trace',
-  'ive','give','live','five','hive','dive','drive','arrive','alive',
-]);
-
-/* Minimum stem length per suffix */
-var SUFFIX_MIN_STEM = {
-  's':4, 'ed':3, 'er':3, 'ing':3, 'en':3, 'al':4,
-  'ee':3, 'or':3, 'ly':3, 'ic':3,
-};
-
-/* ══════════════════════════════════════════════════════════
-   STEM VALIDATOR
-══════════════════════════════════════════════════════════ */
-function hasVowel(s) { return /[aeiouAEIOU]/.test(s); }
-
-function plausibleStem(stem) {
-  if (!stem || stem.length < 2) return false;
-  if (!hasVowel(stem)) return false;
-  /* Reject stems ending in awkward clusters that aren't real */
-  if (/[^aeiou]{4,}$/.test(stem)) return false;
-  return true;
+function langName(code) {
+  return LANGS[code.trim()] || code.trim();
 }
 
 /* ══════════════════════════════════════════════════════════
-   COMPOUND SPLITTER
-   Tries to split word into two known parts
+   QUICK LOCAL RULES  (instant, no network)
+   Catches the most unambiguous cases before the API returns
 ══════════════════════════════════════════════════════════ */
-var WORD_LIST = new Set([
-  'air','arm','art','bag','ball','band','bank','bar','base','bath','bay',
-  'bed','bell','bird','black','blue','board','boat','body','book','box',
-  'brain','bread','bright','broad','brown','bus','cake','call','card',
-  'care','cat','chain','chair','chest','child','church','city','class',
-  'clean','clear','clock','cloud','coat','cold','corn','dark','day',
-  'dead','deep','deer','dish','dog','door','down','dry','dust','ear',
-  'earth','east','eye','face','farm','fast','field','fire','fish',
-  'flag','flat','floor','flower','fly','folk','food','foot','fore',
-  'frame','free','fresh','front','full','game','gate','girl','glass',
-  'gold','good','grain','grass','green','grey','ground','guard','gun',
-  'hair','hand','hard','head','heart','heat','heel','high','hill',
-  'hold','hole','home','horn','horse','hot','hour','house','ice','iron',
-  'island','keep','key','kind','land','law','leaf','left','letter',
-  'life','light','line','lip','lock','long','look','low','mail','man',
-  'mark','master','meat','men','mid','mill','mind','moon','mother',
-  'mouth','mud','nail','neck','nest','net','news','night','north',
-  'nose','oak','over','pain','paper','park','part','path','peace',
-  'pick','pit','place','plain','play','point','pool','post','pot',
-  'pound','power','print','rain','red','right','ring','river','road',
-  'rock','roof','room','root','round','safe','salt','sand','school',
-  'sea','sharp','sheep','ship','shoe','shop','shore','short','side',
-  'sign','silver','skin','sky','slow','snow','soft','song','south',
-  'spring','star','step','stick','still','stone','stop','storm','stream',
-  'street','strong','sun','sweet','tail','tea','tide','time','tip',
-  'town','tree','turn','under','up','wake','walk','wall','war','warm',
-  'watch','water','wave','way','west','wheel','white','wild','wind',
-  'wing','wire','wood','word','work','world','yard','year',
-  'black','blue','brown','cold','dark','deep','dry','dull','fair',
-  'fast','fine','firm','flat','free','full','good','grand','great',
-  'grey','hard','high','hot','kind','large','late','light','long',
-  'loud','low','new','nice','old','open','plain','poor','pure','quick',
-  'quiet','rich','rough','round','safe','sharp','short','slow','small',
-  'soft','sour','still','sweet','tall','thick','thin','tight','warm',
-  'weak','wide','wild','wise','young',
-  'ball','brush','burn','case','fall','fight','fly','ground','house',
-  'keeper','less','light','like','line','man','mark','out','over',
-  'place','print','proof','room','set','side','stone','store','storm',
-  'time','turn','watch','way','work','yard',
-  'birth','blood','bone','brain','break','breath','burn','cast','class',
-  'cloth','crack','cross','cup','cut','draw','drive','drop','fall',
-  'frame','free','fresh','front','full','gain','get','give','go',
-  'good','grow','gun','hand','head','hit','hold','jump','keep','kill',
-  'know','lead','leap','left','let','lift','live','look','lose','make',
-  'mid','miss','night','note','out','pass','pick','press','pull','push',
-  'put','read','ride','right','rise','run','rush','send','set','show',
-  'sit','skip','sleep','slip','split','stand','stay','step','stop',
-  'take','throw','tie','top','touch','turn','walk','win','write',
+
+/* Full reduplication (hyphenated) */
+function quickReduplFull(word) {
+  if (word.indexOf('-') === -1) return false;
+  var parts = word.split('-');
+  return parts.length === 2 && parts[0].toLowerCase() === parts[1].toLowerCase() && parts[0].length >= 2;
+}
+
+/* Partial/ablaut reduplication – hard-coded set */
+var PART_REDUP = new Set([
+  'chit-chat','chitchat','zigzag','zig-zag','flip-flop','flipflop',
+  'tick-tock','ticktock','ding-dong','dingdong','ping-pong','pingpong',
+  'mishmash','riff-raff','riffraff','shilly-shally','knickknack',
+  'walkie-talkie','hurly-burly','mumbo-jumbo','hodgepodge',
+  'hanky-panky','helter-skelter','topsy-turvy','namby-pamby',
+  'willy-nilly','hocus-pocus','itsy-bitsy','teeny-weeny',
+  'tip-top','tiptop','so-so','go-go',
 ]);
 
-function splitCompound(word) {
-  var lo = word.toLowerCase();
-  for (var i = 3; i <= lo.length - 3; i++) {
-    var left  = lo.slice(0, i);
-    var right = lo.slice(i);
-    if (WORD_LIST.has(left) && WORD_LIST.has(right)) {
-      return [left, right];
-    }
+/* All-caps acronym */
+function quickAcronym(word) {
+  return /^[A-Z]{2,}$/.test(word);
+}
+
+/* ══════════════════════════════════════════════════════════
+   WIKTIONARY API
+══════════════════════════════════════════════════════════ */
+function fetchWithTimeout(url, ms) {
+  return Promise.race([
+    fetch(url),
+    new Promise(function(_, reject) {
+      setTimeout(function() { reject(new Error('timeout')); }, ms);
+    }),
+  ]);
+}
+
+function fetchWiktionary(word) {
+  var url = 'https://en.wiktionary.org/w/api.php'
+    + '?action=query&prop=revisions&rvprop=content&rvslots=main'
+    + '&format=json&titles=' + encodeURIComponent(word) + '&origin=*';
+  return fetchWithTimeout(url, 7000).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(data) {
+    var pages = data.query && data.query.pages;
+    if (!pages) return null;
+    var page = Object.values(pages)[0];
+    if (page.missing !== undefined) return null;
+    var rev = page.revisions && page.revisions[0];
+    if (!rev) return null;
+    return (rev.slots ? rev.slots.main['*'] : rev['*']) || null;
+  });
+}
+
+/* ── Extract ==English== section ── */
+function getEnglish(wiki) {
+  var m = wiki.match(/==English==([\s\S]*?)(?=\n==[^=]|\n==\w|$)/i);
+  return m ? m[1] : null;
+}
+
+/* ── Extract ===Etymology=== (any number) ── */
+function getEtymology(eng) {
+  var m = eng.match(/===Etymology(?:\s*\d+)?===([\s\S]*?)(?=\n===|$)/i);
+  return m ? m[1] : null;
+}
+
+/* ── Strip wikitext markup to plain text ── */
+function wikiPlain(s) {
+  return s
+    .replace(/\[\[(?:[^\]|]*\|)?([^\]]+)\]\]/g, '$1') // [[link|text]]
+    .replace(/\{\{(?:l|link|m|mention)\|[^|]+\|([^|}]+)[^}]*\}\}/g, '$1')
+    .replace(/\{\{[^}]+\}\}/g, '')   // remaining templates
+    .replace(/'{2,}/g, '')            // bold/italic markers
+    .replace(/<[^>]+>/g, '')          // HTML tags
+    .replace(/\s+/g, ' ').trim();
+}
+
+/* ── Parse wikitext etymology → WFP result object ── */
+function parseEtymology(etym, word) {
+  if (!etym) return null;
+  var plain = wikiPlain(etym);
+  var result = null;
+
+  /* Helper: first capture group value from a template regex */
+  function cap(re, str) { var m = (str || etym).match(re); return m ? m[1].replace(/[_{}|\[\]]/g,'').trim() : null; }
+  function cap2(re, str) { var m = (str || etym).match(re); return m ? [m[1].replace(/[_{}|\[\]]/g,'').trim(), m[2].replace(/[_{}|\[\]]/g,'').trim()] : null; }
+
+  /* ── 1. Blend ── */
+  var bm = etym.match(/\{\{blend\|[^|]+\|([^|}\]]+)\|([^|}\]]+)/);
+  if (bm) return {
+    process:'Blending (Portmanteau)', badge:'badge-lex', type:'Lexical',
+    parts:[{t:clean(bm[1]),l:'source 1'},{t:clean(bm[2]),l:'source 2'}],
+    note:'<code>'+esc(word)+'</code> is a blend of <strong>'+esc(clean(bm[1]))+'</strong> + <strong>'+esc(clean(bm[2]))+'</strong>. Blending fuses parts of two source words into one new form.',
+    src:'Wiktionary'
+  };
+
+  /* ── 2. Clipping ── */
+  var cm = etym.match(/\{\{(?:clipping(?:\s+of)?|clip(?:\s+of)?)\|[^|]+\|([^|}\]]+)/i);
+  if (cm) return {
+    process:'Clipping', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'clipped form'},{t:clean(cm[1]),l:'full form'}],
+    note:'<code>'+esc(word)+'</code> is a clipped form of <strong>'+esc(clean(cm[1]))+'</strong>, shortened while retaining the original meaning.',
+    src:'Wiktionary'
+  };
+
+  /* ── 3. Back-formation ── */
+  var bf = etym.match(/\{\{(?:back-form(?:ation)?|bf)\|[^|]+\|([^|}\]]+)/i);
+  if (bf) return {
+    process:'Back-formation', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'back-formed word'},{t:clean(bf[1]),l:'source word'}],
+    note:'<code>'+esc(word)+'</code> was back-formed from <strong>'+esc(clean(bf[1]))+'</strong> — a shorter word created by removing what appeared to be an affix, even though the longer word was not derived by affixation.',
+    src:'Wiktionary'
+  };
+
+  /* ── 4. Acronym ── */
+  if (/\{\{acronym(?:\s+of)?\|/i.test(etym)) return {
+    process:'Acronym', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'acronym'}],
+    note:'<code>'+esc(word)+'</code> is an acronym — formed from the initial letters of a phrase and pronounced as a single word.',
+    src:'Wiktionary'
+  };
+
+  /* ── 5. Initialism ── */
+  if (/\{\{initialism(?:\s+of)?\|/i.test(etym)) return {
+    process:'Initialism', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'initialism'}],
+    note:'<code>'+esc(word)+'</code> is an initialism — formed from initial letters, with each letter spoken individually.',
+    src:'Wiktionary'
+  };
+
+  /* ── 6. Onomatopoeia ── */
+  if (/\{\{(?:onomatopo|onom)\w*\|/i.test(etym) || /\bimitat(?:ive|ion)\b|\bechoi?c\b/i.test(plain)) return {
+    process:'Onomatopoeia', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'onomatopoeic word'}],
+    note:'<code>'+esc(word)+'</code> is onomatopoeic — its pronunciation imitates or echoes the sound it denotes.',
+    src:'Wiktionary'
+  };
+
+  /* ── 7. Reduplication ── */
+  if (/\{\{reduplication\|/i.test(etym) || /\breduplication\b/i.test(plain)) return {
+    process:'Reduplication', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'reduplicated form'}],
+    note:'<code>'+esc(word)+'</code> is formed through reduplication — full or partial repetition of the base form.',
+    src:'Wiktionary'
+  };
+
+  /* ── 8. Compound ── */
+  var ko = etym.match(/\{\{(?:compound|com)\|[^|]+\|([^|}\]]+)\|([^|}\]]+)/i);
+  if (ko) return {
+    process:'Compounding', badge:'badge-deriv', type:'Derivational',
+    parts:[{t:clean(ko[1]),l:'free morpheme 1'},{t:clean(ko[2]),l:'free morpheme 2'}],
+    note:'<code>'+esc(word)+'</code> is a compound of <strong>'+esc(clean(ko[1]))+'</strong> + <strong>'+esc(clean(ko[2]))+'</strong> — two free morphemes joined to create a new lexical item.',
+    src:'Wiktionary'
+  };
+
+  /* ── 9. Calque ── */
+  var cq = etym.match(/\{\{(?:calque|cal)\|[^|]+\|([^|}\]]+)/i);
+  if (cq) return {
+    process:'Calque (Loan Translation)', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'calque'},{t:langName(clean(cq[1])),l:'source language'}],
+    note:'<code>'+esc(word)+'</code> is a calque — a word formed by translating the components of a foreign expression literally into English rather than borrowing the foreign form directly.',
+    src:'Wiktionary'
+  };
+
+  /* ── 10. Affixation: {{af}}, {{prefix}}, {{suffix}}, {{confix}} ── */
+  if (/\{\{(?:af|affix|pre|prefix|suf|suffix|con|confix)\|/i.test(etym)) {
+    var sub = 'prefixation, suffixation, or both';
+    var pfx = etym.match(/\{\{(?:pre|prefix)\|[^|]+\|([^|}\]]+)\|([^|}\]]+)/i);
+    var sfx = etym.match(/\{\{(?:suf|suffix)\|[^|]+\|([^|}\]]+)\|([^|}\]]+)/i);
+    var parts = [];
+    if (pfx) { parts.push({t:clean(pfx[1])+'-',l:'prefix'}); parts.push({t:clean(pfx[2]),l:'base'}); sub='prefixation'; }
+    else if (sfx) { parts.push({t:clean(sfx[1]),l:'base'}); parts.push({t:'-'+clean(sfx[2]),l:'suffix'}); sub='suffixation'; }
+    else { parts.push({t:esc(word),l:'affixed word'}); }
+    return {
+      process:'Affixation', badge:'badge-deriv', type:'Derivational', parts:parts,
+      note:'<code>'+esc(word)+'</code> is formed through affixation ('+sub+'). The dedicated <strong>Affixation</strong> tool (coming soon) will give a full morpheme-by-morpheme breakdown.',
+      src:'Wiktionary'
+    };
   }
+
+  /* ── 11. Coinage ── */
+  if (/\{\{(?:coin|invented)\b/i.test(etym) || /\bcoined by\b/i.test(plain)) return {
+    process:'Coinage / Neologism', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'coined word'}],
+    note:'<code>'+esc(word)+'</code> is a coined word — invented without derivation from existing morphemes.',
+    src:'Wiktionary'
+  };
+
+  /* ── 12. Borrowing: {{bor}}, {{borrowed}}, {{lbor}} ── */
+  var bor = etym.match(/\{\{(?:bor|borrowed|lbor)\|[^|]+\|([^|}\]]+)/i);
+  if (bor) return {
+    process:'Borrowing (Loanword)', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'loanword'},{t:langName(clean(bor[1])),l:'source language'}],
+    note:'<code>'+esc(word)+'</code> was borrowed from <strong>'+langName(clean(bor[1]))+'</strong>.',
+    src:'Wiktionary'
+  };
+
+  /* ── 13. Inherited / derived — may indicate borrowing ── */
+  var der = etym.match(/\{\{(?:der|inh|inherited)\|[^|]+\|([^|}\]]+)/i);
+  if (der) {
+    var lc = clean(der[1]);
+    var skip = new Set(['ang','enm','ine-pro','gem-pro','ine.pro','gem.pro']);
+    if (!skip.has(lc)) return {
+      process:'Borrowing (Loanword)', badge:'badge-lex', type:'Lexical',
+      parts:[{t:esc(word),l:'loanword'},{t:langName(lc),l:'source language'}],
+      note:'<code>'+esc(word)+'</code> is derived/borrowed from <strong>'+langName(lc)+'</strong>.',
+      src:'Wiktionary'
+    };
+  }
+
+  /* ── 14. Plain-text fallback patterns ── */
+  var bmix = plain.match(/\bblend(?:ing)?\s+of\s+["']?(\w[\w-]*)["']?\s+and\s+["']?(\w[\w-]*)/i);
+  if (bmix) return {
+    process:'Blending (Portmanteau)', badge:'badge-lex', type:'Lexical',
+    parts:[{t:bmix[1],l:'source 1'},{t:bmix[2],l:'source 2'}],
+    note:'<code>'+esc(word)+'</code> is a blend of <strong>'+esc(bmix[1])+'</strong> + <strong>'+esc(bmix[2])+'</strong>.',
+    src:'Wiktionary'
+  };
+
+  var cliP = plain.match(/\bclipping\s+of\s+["']?(\w[\w-]*)/i);
+  if (cliP) return {
+    process:'Clipping', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'clipped form'},{t:cliP[1],l:'full form'}],
+    note:'Clipped from <strong>'+esc(cliP[1])+'</strong>.',
+    src:'Wiktionary'
+  };
+
+  if (/\bback.?form(?:ation)?\b/i.test(plain)) return {
+    process:'Back-formation', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'back-formed word'}],
+    note:'<code>'+esc(word)+'</code> is a back-formation from a longer existing word.',
+    src:'Wiktionary'
+  };
+
+  var langRx = plain.match(/(?:borrowed?\s+)?from\s+(?:Old\s+|Middle\s+|Ancient\s+)?([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/);
+  if (langRx) {
+    var knownLangs = /^(French|Latin|Greek|Italian|Spanish|German|Arabic|Japanese|Dutch|Persian|Sanskrit|Hindi|Urdu|Portuguese|Norse|Chinese|Turkish|Russian|Hebrew|Malay|Swahili|Nahuatl|Quechua|Tagalog|Bengali|Tamil|Korean|Vietnamese)$/i;
+    if (knownLangs.test(langRx[1])) return {
+      process:'Borrowing (Loanword)', badge:'badge-lex', type:'Lexical',
+      parts:[{t:esc(word),l:'loanword'},{t:langRx[1],l:'source language'}],
+      note:'<code>'+esc(word)+'</code> was borrowed from <strong>'+esc(langRx[1])+'</strong>.',
+      src:'Wiktionary'
+    };
+  }
+
+  if (/\bcoined\b|\bneologism\b|\binvented\b/i.test(plain)) return {
+    process:'Coinage / Neologism', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'coined word'}],
+    note:'<code>'+esc(word)+'</code> is a coined or invented word.',
+    src:'Wiktionary'
+  };
+
+  if (/\bcompo?und\b/i.test(plain)) return {
+    process:'Compounding', badge:'badge-deriv', type:'Derivational',
+    parts:[{t:esc(word),l:'compound word'}],
+    note:'<code>'+esc(word)+'</code> is a compound word, formed by joining two or more free morphemes.',
+    src:'Wiktionary'
+  };
+
+  if (/\bconversion\b|\bzero.?derivation\b/i.test(plain)) return {
+    process:'Conversion (Zero Derivation)', badge:'badge-deriv', type:'Derivational',
+    parts:[{t:esc(word),l:'converted word'}],
+    note:'<code>'+esc(word)+'</code> underwent conversion — a shift in word class without any change in form.',
+    src:'Wiktionary'
+  };
+
+  if (/\bcalque\b|\bloan\s+translation\b/i.test(plain)) return {
+    process:'Calque (Loan Translation)', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'calque'}],
+    note:'<code>'+esc(word)+'</code> is a calque — formed by translating the parts of a foreign phrase literally.',
+    src:'Wiktionary'
+  };
+
+  if (/\bprefix\w*\b|\bsuffix\w*\b|\baffix\w*\b/i.test(plain)) return {
+    process:'Affixation', badge:'badge-deriv', type:'Derivational',
+    parts:[{t:esc(word),l:'affixed word'}],
+    note:'<code>'+esc(word)+'</code> is formed through affixation. See the dedicated Affixation tool for a full breakdown.',
+    src:'Wiktionary'
+  };
+
   return null;
 }
 
 /* ══════════════════════════════════════════════════════════
-   MAIN ANALYZER
+   LOCAL QUICK RULES  (used when Wiktionary gives nothing)
 ══════════════════════════════════════════════════════════ */
-function analyzeWord(raw) {
-  var word = raw.trim();
-  var lo   = word.toLowerCase();
-  var results = [];
+var LOCAL_ACRONYMS = {
+  laser:'Light Amplification by Stimulated Emission of Radiation',
+  radar:'Radio Detection And Ranging',
+  scuba:'Self-Contained Underwater Breathing Apparatus',
+  gif:'Graphics Interchange Format',
+  jpeg:'Joint Photographic Experts Group',
+  pdf:'Portable Document Format',
+};
+var LOCAL_ONOMA = new Set([
+  'buzz','hiss','bang','crash','crack','drip','fizz','gurgle','murmur',
+  'oink','plop','pop','purr','quack','rattle','roar','rumble','rustle',
+  'screech','sizzle','slap','slurp','smack','snap','splash','squeak',
+  'squeal','thud','thump','tick','tweet','wail','whir','whoosh','woof',
+  'yelp','zap','zoom','bark','beep','boom','chirp','chug','clang','clap',
+  'cluck','coo','crunch','ding','dong','growl','grumble','gulp','honk',
+  'howl','jingle','meow','moo','ping','snore','swoosh','tap','vroom',
+]);
+var LOCAL_CLIPS = {
+  ad:'advertisement',app:'application',auto:'automobile',bike:'bicycle',
+  bot:'robot',burger:'hamburger',bus:'omnibus',cab:'taxicab',
+  chemo:'chemotherapy',condo:'condominium',deli:'delicatessen',
+  demo:'demonstration',doc:'doctor',dorm:'dormitory',exam:'examination',
+  fax:'facsimile',flu:'influenza',fridge:'refrigerator',gym:'gymnasium',
+  lab:'laboratory',limo:'limousine',math:'mathematics',maths:'mathematics',
+  memo:'memorandum',mic:'microphone',phone:'telephone',photo:'photograph',
+  plane:'airplane',pro:'professional',prof:'professor',pub:'public house',
+  ref:'referee',rep:'representative',rhino:'rhinoceros',
+  sub:'submarine',tech:'technology',telly:'television',
+  temp:'temporary',uni:'university',vet:'veterinarian',zoo:'zoological garden',
+  celeb:'celebrity',carb:'carbohydrate',mayo:'mayonnaise',
+  hippo:'hippopotamus',metro:'metropolitan',
+};
 
-  /* 1. Empty */
-  if (!word) return [];
-
-  /* 2. Reduplication */
-  if (word.indexOf('-') !== -1) {
+function localFallback(word, lo) {
+  /* Full reduplication */
+  if (quickReduplFull(word)) {
     var parts = word.split('-');
-    if (parts.length === 2) {
-      var p0 = parts[0].toLowerCase(), p1 = parts[1].toLowerCase();
-      if (p0 === p1 && p0.length >= 2) {
-        results.push({ process:'Reduplication', subtype:'Full Reduplication',
-          breakdown: [{text:parts[0], cls:'mp-blend1', lbl:'form 1'}, {text:parts[1], cls:'mp-blend2', lbl:'copy'}],
-          badge:'badge-lex', type:'Lexical',
-          note:'The word is fully reduplicated: the base form <code>'+parts[0]+'</code> is repeated to form a new word. Full reduplication often signals emphasis, plurality, or ongoing action.' });
-        return results;
-      }
-    }
+    return {
+      process:'Reduplication', badge:'badge-lex', type:'Lexical',
+      parts:[{t:parts[0],l:'base form'},{t:parts[1],l:'copied form'}],
+      note:'<code>'+esc(word)+'</code> is fully reduplicated — the base form is copied exactly to create a new word.',
+      src:'Built-in'
+    };
   }
-  if (PARTIAL_REDUP.has(lo) || PARTIAL_REDUP.has(word)) {
-    results.push({ process:'Reduplication', subtype:'Partial Reduplication',
-      breakdown:[{text:word, cls:'mp-base', lbl:'reduplicated form'}],
+  /* Partial reduplication */
+  if (PART_REDUP.has(lo)) return {
+    process:'Reduplication', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'partial reduplication'}],
+    note:'<code>'+esc(word)+'</code> is a partial (ablaut) reduplication — the base is repeated with a vowel or consonant change.',
+    src:'Built-in'
+  };
+  /* All-caps acronym */
+  if (quickAcronym(word)) {
+    var full = LOCAL_ACRONYMS[lo];
+    return {
+      process: full ? 'Lexicalized Acronym' : 'Acronym / Initialism',
       badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> is a partial/ablaut reduplication — the consonant frame is repeated with a vowel change, creating a new lexical item.' });
-    return results;
-  }
-
-  /* 3. Acronym / Initialism */
-  if (/^[A-Z]{2,}$/.test(word)) {
-    var full = LEXICALIZED_ACRONYMS[lo] || null;
-    results.push({ process: full ? 'Lexicalized Acronym' : 'Acronym / Initialism',
-      breakdown:[{text:word, cls:'mp-base', lbl:'acronym'}],
-      badge:'badge-lex', type:'Lexical',
+      parts:[{t:word,l: full ? 'lexicalized acronym' : 'acronym / initialism'}],
       note: full
-        ? '<code>'+word+'</code> was originally formed from initials (<em>'+full+'</em>) but is now used as an ordinary word — it has been lexicalized.'
-        : '<code>'+word+'</code> is formed from the initial letters of a multi-word phrase. If pronounced as a word, it is an <strong>acronym</strong>; if letter by letter, it is an <strong>initialism</strong>.' });
-    return results;
+        ? '<code>'+esc(word)+'</code> originated as an acronym for <em>'+esc(full)+'</em> and is now a fully lexicalized word.'
+        : '<code>'+esc(word)+'</code> appears to be an acronym or initialism. If pronounced as one word it is an acronym; if letter by letter, an initialism.',
+      src:'Built-in'
+    };
   }
-
-  /* 4. Lexicalized acronyms (lowercase) */
-  if (LEXICALIZED_ACRONYMS[lo]) {
-    results.push({ process:'Lexicalized Acronym',
-      breakdown:[{text:word, cls:'mp-base', lbl:'lexicalized acronym'}],
-      badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> originated as an acronym for <em>'+LEXICALIZED_ACRONYMS[lo]+'</em> but has become a fully lexicalized word in its own right.' });
-    return results;
-  }
-
-  /* 5. Blending */
-  if (BLENDS[lo]) {
-    var parts = BLENDS[lo];
-    results.push({ process:'Blending (Portmanteau)',
-      breakdown:[{text:parts[0], cls:'mp-blend1', lbl:'source 1'}, {text:parts[1], cls:'mp-blend2', lbl:'source 2'}],
-      badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> is a blend of <strong>'+parts[0]+'</strong> + <strong>'+parts[1]+'</strong>. Blending merges parts of two source words into a single new form.' });
-    return results;
-  }
-
-  /* 6. Clipping */
-  if (CLIPPINGS[lo]) {
-    results.push({ process:'Clipping',
-      breakdown:[{text:word, cls:'mp-base', lbl:'clipped form'},{text:CLIPPINGS[lo], cls:'mp-blend1', lbl:'full form'}],
-      badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> is a clipped form of <strong>'+CLIPPINGS[lo]+'</strong>. Clipping shortens a word while retaining its meaning, usually producing a more informal register.' });
-    return results;
-  }
-
-  /* 7. Backformation */
-  if (BACKFORMATIONS[lo]) {
-    results.push({ process:'Back-formation',
-      breakdown:[{text:word, cls:'mp-base', lbl:'back-formed word'},{text:BACKFORMATIONS[lo], cls:'mp-blend1', lbl:'source word'}],
-      badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> was back-formed from <strong>'+BACKFORMATIONS[lo]+'</strong> by removing what appeared to be an affix, even though the original word was not derived by affixation.' });
-    return results;
-  }
-
-  /* 8. Onomatopoeia */
-  if (ONOMATOPOEIA.has(lo)) {
-    results.push({ process:'Onomatopoeia',
-      breakdown:[{text:word, cls:'mp-base', lbl:'onomatopoeic word'}],
-      badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> is an onomatopoeic word — its pronunciation imitates or suggests the sound it denotes. The word was coined to echo a natural sound.' });
-    return results;
-  }
-
-  /* 9. Borrowing */
-  if (BORROWINGS[lo]) {
-    results.push({ process:'Borrowing (Loanword)',
-      breakdown:[{text:word, cls:'mp-base', lbl:'loanword'}],
-      badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> is a loanword borrowed from <strong>'+BORROWINGS[lo]+'</strong>. English adopted it with little or no phonological change.' });
-  }
-
-  /* 10. Conversion */
-  if (CONVERSIONS[lo]) {
-    results.push({ process:'Conversion (Zero Derivation)',
-      breakdown:[{text:word, cls:'mp-base', lbl:'converted word'}],
-      badge:'badge-deriv', type:'Derivational',
-      note:'<code>'+word+'</code> underwent conversion: it shifted word class ('+CONVERSIONS[lo]+') without any change in form. No affix was added — the grammatical category alone changed.' });
-    if (results.length > 1) return results; /* borrowing + conversion */
-  }
-
-  /* 11. Coinage */
-  if (COINAGES.has(lo)) {
-    results.push({ process:'Coinage / Neologism',
-      breakdown:[{text:word, cls:'mp-base', lbl:'coined word'}],
-      badge:'badge-lex', type:'Lexical',
-      note:'<code>'+word+'</code> is a coined word — it was invented without derivation from existing morphemes. Such words are rare and usually tied to specific inventors, brands, or creative contexts.' });
-    return results;
-  }
-
-  /* 12. Compounding — hyphenated */
-  if (word.indexOf('-') !== -1 && word.split('-').length === 2) {
-    var pts = word.split('-');
-    results.push({ process:'Compounding',
-      breakdown:[{text:pts[0], cls:'mp-blend1', lbl:'free morpheme 1'},{text:pts[1], cls:'mp-blend2', lbl:'free morpheme 2'}],
-      badge:'badge-deriv', type:'Derivational',
-      note:'<code>'+word+'</code> is a hyphenated compound formed from two free morphemes. Compounds combine independent words to create a new lexical item whose meaning may differ from the sum of its parts.' });
-    if (!results.some(function(r){ return r.process.startsWith('Borrow'); })) return results;
-  }
-
-  /* 13. Compounding — closed (known list) */
-  var compSplit = splitCompound(lo);
-  if (compSplit) {
-    results.push({ process:'Compounding',
-      breakdown:[{text:compSplit[0], cls:'mp-blend1', lbl:'free morpheme 1'},{text:compSplit[1], cls:'mp-blend2', lbl:'free morpheme 2'}],
-      badge:'badge-deriv', type:'Derivational',
-      note:'<code>'+word+'</code> is a closed compound formed by combining <strong>'+compSplit[0]+'</strong> + <strong>'+compSplit[1]+'</strong>. Both parts are free morphemes that can stand alone.' });
-    if (!results.some(function(r){ return r.process.startsWith('Borrow'); })) return results;
-  }
-
-  /* 14. Affixation */
-  if (!FALSE_PREFIX_WORDS.has(lo) && !FALSE_SUFFIX_WORDS.has(lo)) {
-    var foundPrefix = null, foundSuffix = null;
-
-    /* Check prefixes */
-    for (var pi = 0; pi < PREFIXES.length; pi++) {
-      var pf = PREFIXES[pi];
-      if (lo.startsWith(pf.s) && lo.length > pf.s.length + 2) {
-        var stem = lo.slice(pf.s.length);
-        if (plausibleStem(stem) && stem.length >= 3) {
-          foundPrefix = { affix: pf.s, stem: stem, meaning: pf.m };
-          break;
-        }
-      }
-    }
-
-    /* Check suffixes */
-    for (var si = 0; si < SUFFIXES.length; si++) {
-      var sf = SUFFIXES[si];
-      var minLen = SUFFIX_MIN_STEM[sf.s] || 3;
-      if (lo.endsWith(sf.s) && lo.length > sf.s.length + minLen - 1) {
-        var base = lo.slice(0, lo.length - sf.s.length);
-        /* Handle common spelling changes */
-        var testBases = [base];
-        if (sf.s === 'ness' && base.endsWith('i')) testBases.push(base.slice(0,-1)+'y');
-        if (sf.s === 'er'   && base.endsWith('n') && base.endsWith('nn')) testBases.push(base.slice(0,-1));
-        if ((sf.s === 'ing' || sf.s === 'ed') && base.endsWith(base[base.length-1]) && base.length > 3) testBases.push(base.slice(0,-1));
-        if (sf.s === 'tion') { testBases.push(base+'e'); testBases.push(base+'t'); }
-        if (sf.s === 'ity')  { testBases.push(base.replace(/^(.*?)(?:al)?$/, '$1')); }
-
-        var goodBase = testBases.find(function(b){ return plausibleStem(b) && b.length >= minLen; });
-        if (goodBase && !FALSE_SUFFIX_WORDS.has(lo)) {
-          foundSuffix = { affix: sf.s, base: goodBase, meaning: sf.m, type: sf.type, pos: sf.pos };
-          break;
-        }
-      }
-    }
-
-    /* Both prefix AND suffix → parasynthesis / simultaneous affixation */
-    if (foundPrefix && foundSuffix) {
-      results.push({ process:'Simultaneous Affixation',
-        breakdown:[
-          {text:foundPrefix.affix+'-', cls:'mp-prefix', lbl:'prefix'},
-          {text:foundSuffix.base,      cls:'mp-base',   lbl:'base'},
-          {text:'-'+foundSuffix.affix, cls:'mp-suffix',  lbl:'suffix'},
-        ],
-        badge:'badge-deriv', type:'Derivational',
-        note:'<code>'+word+'</code> shows simultaneous affixation (also called parasynthesis): the prefix <code>'+foundPrefix.affix+'-</code> ('+foundPrefix.m+') and the suffix <code>-'+foundSuffix.affix+'</code> ('+foundSuffix.meaning+') are both added to the base, producing a new word class ('+foundSuffix.pos+').' });
-      return results;
-    }
-
-    /* Prefix only */
-    if (foundPrefix) {
-      results.push({ process:'Prefixation',
-        breakdown:[
-          {text:foundPrefix.affix+'-', cls:'mp-prefix', lbl:'prefix'},
-          {text:foundPrefix.stem,      cls:'mp-base',   lbl:'base'},
-        ],
-        badge:'badge-deriv', type:'Derivational',
-        note:'<code>'+word+'</code> is formed by attaching the prefix <code>'+foundPrefix.affix+'-</code> (meaning: <em>'+foundPrefix.m+'</em>) to the base <strong>'+foundPrefix.stem+'</strong>. Prefixation generally changes meaning without changing the word class.' });
-      return results;
-    }
-
-    /* Suffix only */
-    if (foundSuffix) {
-      var bType = foundSuffix.type === 'infl' ? 'badge-infl' : 'badge-deriv';
-      var bLabel = foundSuffix.type === 'infl' ? 'Inflectional' : 'Derivational';
-      var note = foundSuffix.type === 'infl'
-        ? '<code>'+word+'</code> is formed by the inflectional suffix <code>-'+foundSuffix.affix+'</code> ('+foundSuffix.meaning+') added to the base <strong>'+foundSuffix.base+'</strong>. Inflectional suffixes mark grammatical categories (tense, number, aspect) without changing word class.'
-        : '<code>'+word+'</code> is formed by the derivational suffix <code>-'+foundSuffix.affix+'</code> ('+foundSuffix.meaning+') added to the base <strong>'+foundSuffix.base+'</strong>. This suffix forms a new word of category <strong>'+foundSuffix.pos+'</strong>.';
-      results.push({ process: foundSuffix.type === 'infl' ? 'Suffixation (Inflectional)' : 'Suffixation',
-        breakdown:[
-          {text:foundSuffix.base,      cls:'mp-base',   lbl:'base'},
-          {text:'-'+foundSuffix.affix, cls:'mp-suffix',  lbl:'suffix'},
-        ],
-        badge:bType, type:bLabel, note:note });
-      return results;
-    }
-  }
-
-  /* 15. Borrowing only (if we had it but no other process) */
-  if (results.length > 0) return results;
-
-  /* 16. Unknown */
-  results.push({ process:'Cannot Determine',
-    breakdown:[{text:word, cls:'mp-base', lbl:'word'}],
-    badge:'badge-lex', type:'Unknown',
-    note:'The word formation process of <code>'+word+'</code> could not be determined automatically. It may be a <strong>coinage</strong>, a highly irregular derivation, a <strong>proper noun</strong>, or a word requiring broader context. Check the guide below for the full list of processes.' });
-  return results;
+  /* Lexicalized acronyms (lowercase) */
+  if (LOCAL_ACRONYMS[lo]) return {
+    process:'Lexicalized Acronym', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'lexicalized acronym'}],
+    note:'<code>'+esc(word)+'</code> started as an acronym for <em>'+esc(LOCAL_ACRONYMS[lo])+'</em> but is now used as an ordinary word.',
+    src:'Built-in'
+  };
+  /* Onomatopoeia */
+  if (LOCAL_ONOMA.has(lo)) return {
+    process:'Onomatopoeia', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'onomatopoeic word'}],
+    note:'<code>'+esc(word)+'</code> is onomatopoeic — its pronunciation imitates the sound it describes.',
+    src:'Built-in'
+  };
+  /* Clipping */
+  if (LOCAL_CLIPS[lo]) return {
+    process:'Clipping', badge:'badge-lex', type:'Lexical',
+    parts:[{t:esc(word),l:'clipped form'},{t:LOCAL_CLIPS[lo],l:'full form'}],
+    note:'<code>'+esc(word)+'</code> is a clipping of <strong>'+esc(LOCAL_CLIPS[lo])+'</strong>.',
+    src:'Built-in'
+  };
+  return null;
 }
 
 /* ══════════════════════════════════════════════════════════
-   RENDER RESULT
+   HELPERS
 ══════════════════════════════════════════════════════════ */
-function renderResult(results) {
-  if (!results.length) return '';
-  var r = results[0];
-  var html = '<div class="result-label" style="margin-bottom:8px;">Word Formation Process</div>';
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function clean(s){ return s ? s.replace(/[_\[\]{}']/g,'').replace(/\|.*/,'').trim() : ''; }
+
+/* ══════════════════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════════════════ */
+function renderResult(r, word) {
+  var html = '<div class="result-label" style="margin-bottom:6px;">Word Formation Process</div>';
+
+/* Source badge removed */
+
+  /* Process name */
   html += '<div class="morph-process-name">'+esc(r.process)+'</div>';
   html += '<span class="morph-badge '+r.badge+'">'+esc(r.type)+'</span>';
 
   /* Breakdown visual */
-  html += '<div class="morph-breakdown">';
-  r.breakdown.forEach(function(p, idx){
-    if (idx > 0 && r.breakdown.length > 1) html += '<span class="morph-plus">+</span>';
-    html += '<div class="morph-part '+p.cls+'"><div class="morph-part-text">'+esc(p.text)+'</div><div class="morph-part-label">'+esc(p.lbl)+'</div></div>';
-  });
-  html += '</div>';
-
-  html += '<div class="morph-note">'+r.note+'</div>';
-
-  if (results.length > 1) {
-    html += '<div class="morph-also">Also detected: ';
-    html += results.slice(1).map(function(r2){ return '<strong>'+esc(r2.process)+'</strong>'; }).join(', ');
+  if (r.parts && r.parts.length) {
+    html += '<div class="morph-breakdown">';
+    var clss = ['mp-a','mp-b','mp-c'];
+    r.parts.forEach(function(p, i) {
+      if (i > 0) html += '<span class="morph-plus">+</span>';
+      html += '<div class="morph-part '+clss[i % clss.length]+'">'
+        + '<div class="morph-part-text">'+p.t+'</div>'
+        + '<div class="morph-part-label">'+esc(p.l)+'</div>'
+        + '</div>';
+    });
     html += '</div>';
   }
+
+  html += '<div class="morph-note">'+r.note+'</div>';
   return html;
 }
 
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function showLoading(word) {
+  var el = document.getElementById('morphRes');
+  el.className = 'result-box show';
+  el.innerHTML = '<div class="morph-loading">'
+    + '<div class="spin"></div>'
+    + 'Analyzing <strong style="margin: 0 3px;">'+esc(word)+'</strong>…'
+    + '</div>';
+}
+
+function showResult(r, word) {
+  var el = document.getElementById('morphRes');
+  el.className = 'result-box show success';
+  el.innerHTML = renderResult(r, word);
+}
+
+function showError(word) {
+  var el = document.getElementById('morphRes');
+  el.className = 'result-box show warning';
+  el.innerHTML = '<div style="font-size:14px;line-height:1.7;">'
+    + '⚠ Could not find etymology data for <strong>'+esc(word)+'</strong> on Wiktionary. '
+    + 'This may be a very new word, a proper noun, a misspelling, or a highly specialized term. '
+    + 'Try the full form of a clipped word, or check the spelling.'
+    + '</div>';
 }
 
 /* ══════════════════════════════════════════════════════════
-   UI
+   MAIN ENTRY POINT
 ══════════════════════════════════════════════════════════ */
-function analyzeMorph() {
+function runAnalyze() {
   var word = document.getElementById('morphIn').value.trim();
-  var el   = document.getElementById('morphRes');
-  if (!word) { el.className='result-box'; el.innerHTML=''; return; }
-  var results = analyzeWord(word);
-  el.className = 'result-box show success';
-  el.innerHTML = renderResult(results);
+  if (!word) {
+    document.getElementById('morphRes').className = 'result-box';
+    return;
+  }
+  var lo = word.toLowerCase();
+
+  /* 1. Try instant local rules first */
+  var quick = localFallback(word, lo);
+  if (quick) { showResult(quick, word); return; }
+
+  /* 2. Show loading spinner, then fetch Wiktionary */
+  showLoading(word);
+  document.getElementById('analyzeBtn').disabled = true;
+
+  fetchWiktionary(word).then(function(wiki) {
+    document.getElementById('analyzeBtn').disabled = false;
+    if (!wiki) {
+      /* Word not found on Wiktionary, try local fallback once more */
+      showError(word); return;
+    }
+    var eng  = getEnglish(wiki);
+    if (!eng) { showError(word); return; }
+    var etym = getEtymology(eng);
+    if (!etym) { showError(word); return; }
+
+    var result = parseEtymology(etym, word);
+    if (result) {
+      showResult(result, word);
+    } else {
+      /* Wiktionary found but etymology text couldn't be classified */
+      var el = document.getElementById('morphRes');
+      el.className = 'result-box show';
+      el.innerHTML = '<div class="morph-loading" style="align-items:flex-start;flex-direction:column;gap:10px;">'
+        + '<div style="font-size:13.5px;color:var(--ink);font-style:normal;">'
+        + '<strong>Data found</strong> for <code>'+esc(word)+'</code>, but it did not match a standard word formation pattern.'
+        + '</div>'
+        + '<div style="font-size:13px;color:var(--muted);font-family:var(--font-m);background:var(--bg-dark);border-radius:var(--r-sm);padding:10px 12px;width:100%;line-height:1.7;">'
+        + esc(wikiPlain(etym)).slice(0, 320) + (etym.length > 320 ? '…' : '')
+        + '</div></div>';
+    }
+  }).catch(function() {
+    document.getElementById('analyzeBtn').disabled = false;
+    /* Network error — try local fallback */
+    var fb = localFallback(word, lo);
+    if (fb) { showResult(fb, word); }
+    else { showError(word); }
+  });
 }
 
 function quickLoad(word) {
   document.getElementById('morphIn').value = word;
-  analyzeMorph();
-  document.getElementById('morphIn').focus();
+  runAnalyze();
 }
 </script>
 </body>
