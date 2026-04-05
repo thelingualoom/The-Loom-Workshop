@@ -350,15 +350,34 @@ function getEtymology(eng) {
 /* Strip wikitext to readable plain text */
 function wikiPlain(s) {
   return s
-    .replace(/\[\[(?:[^\]|]*\|)?([^\]]+)\]\]/g, '$1')
-    .replace(/\{\{(?:l|link|m|mention|lang)\|[a-z-]+\|([^|}\]]+)[^}]*\}\}/g, '$1')
-    .replace(/\{\{gloss\|([^}]+)\}\}/g, '"$1"')
-    .replace(/\{\{[^}]+\}\}/g, '')
-    .replace(/'{2,}/g, '')
+    /* Remove <ref>...</ref> citation blocks entirely */
+    .replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi, '')
+    .replace(/<ref[^>]*\/>/gi, '')
+    /* Remove HTML tags */
     .replace(/<[^>]+>/g, '')
-    .replace(/\[\[[^\]]+\]\]/g, '')
+    /* Remove bullet-point lines (* text) */
+    .replace(/^\*.*$/gm, '')
+    /* Remove external links [https://... text] */
+    .replace(/\[https?:\/\/[^\]]+\]/g, '')
+    /* Remove [[link|text]] → text */
+    .replace(/\[\[(?:[^\]|]*\|)?([^\]]+)\]\]/g, '$1')
+    /* Remove {{l|lang|word}} / {{m|lang|word}} → word */
+    .replace(/\{\{(?:l|m|link|mention|lang)\|[a-z-]+\|([^|}\]]+)[^}]*\}\}/gi, '$1')
+    /* Remove {{gloss|text}} → "text" */
+    .replace(/\{\{gloss\|([^}]+)\}\}/g, '"$1"')
+    /* Remove all remaining templates */
+    .replace(/\{\{[^}]*\}\}/g, '')
+    /* Remove bold/italic wiki markers */
+    .replace(/'{2,}/g, '')
+    /* Remove lines that are just punctuation remnants */
+    .replace(/^[,;:\s]+$/gm, '')
+    /* Collapse multiple spaces and newlines */
     .replace(/\n+/g, ' ')
     .replace(/\s{2,}/g, ' ')
+    /* Remove orphaned "from , from" / ", ," patterns */
+    .replace(/\bfrom\s*,/g, 'from')
+    .replace(/,\s*,/g, ',')
+    .replace(/\(\s*\)/g, '')
     .trim();
 }
 
@@ -503,14 +522,18 @@ function renderEtym(word, steps, century, plain, cognates) {
     html += '</div>';
   }
 
-  /* Plain narrative (cleaned Wiktionary text) */
+/* Plain narrative — cap length, remove trailing junk */
   if (plain && plain.length > 20) {
-    var cleaned = plain
-      /* Bold the word being looked up */
-      .replace(new RegExp('\\b' + word + '\\b', 'gi'), '<strong>$&</strong>')
-      /* Italicize likely foreign-language forms (short words in italic context) */
-      ;
-    html += '<div class="etym-narrative">' + cleaned + '</div>';
+    /* Take only up to the first 600 characters, cut at last full sentence */
+    var snippet = plain.length > 600 ? plain.slice(0, 600) : plain;
+    var lastDot = snippet.lastIndexOf('.');
+    if (lastDot > 80) snippet = snippet.slice(0, lastDot + 1);
+    /* Bold the word being looked up */
+    snippet = snippet.replace(
+      new RegExp('\\b' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi'),
+      '<strong>$&</strong>'
+    );
+    html += '<div class="etym-narrative">' + esc(snippet).replace(/&lt;strong&gt;/g,'<strong>').replace(/&lt;\/strong&gt;/g,'</strong>') + '</div>';
   }
 
   /* Cognates */
@@ -524,9 +547,9 @@ function renderEtym(word, steps, century, plain, cognates) {
       + '</div></div>';
   }
 
-  /* Did you know — only if plain text is rich enough */
-  var dykMatch = plain && plain.match(/([A-Z][^.!?]*(?:originally|literally|meant|meaning|referred to|from the sense)[^.!?]*[.!?])/i);
-  if (dykMatch) {
+/* Did you know — only short, clean sentences */
+  var dykMatch = plain && plain.match(/([A-Z][^.!?]{20,120}(?:originally meant|literally means|originally referred|came to mean|first meant|meant simply)[^.!?]{0,80}[.!?])/i);
+  if (dykMatch && dykMatch[1].length < 200) {
     html += '<div class="etym-dyk"><strong>Did you know?</strong> ' + esc(dykMatch[1]) + '</div>';
   }
 
