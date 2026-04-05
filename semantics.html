@@ -7,33 +7,1100 @@
   <title>Semantics | The Loom Workshop</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .coming-soon-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
-      min-height:54vh;text-align:center;padding:48px 24px;}
-    .cs-icon{font-size:52px;margin-bottom:18px;opacity:.85;}
-    .cs-title{font-family:var(--font-d);font-size:2rem;color:var(--forest);margin-bottom:10px;}
-    .cs-badge{display:inline-block;background:rgba(192,124,62,.12);color:var(--copper);
-      border:1.5px solid var(--copper);border-radius:20px;padding:5px 18px;
-      font-family:var(--font-m);font-size:12.5px;letter-spacing:.08em;margin-bottom:20px;}
-    .cs-desc{font-size:15px;color:var(--muted);max-width:420px;line-height:1.7;}
-    .cs-back{margin-top:28px;}
+
+    /* ── Sentence visualization ── */
+    .sem-sentence {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: flex-end;
+      padding: 30px 16px 14px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      margin: 14px 0 18px;
+      line-height: 1;
+    }
+    .sem-chunk {
+      position: relative;
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-family: var(--font-b);
+      font-size: 1rem;
+      margin-top: 18px;
+      cursor: default;
+      white-space: nowrap;
+    }
+    .sem-chunk-label {
+      position: absolute;
+      top: -17px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-m);
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0.85;
+    }
+
+    /* ── Role colour classes ── */
+    .role-agent       { background:rgba(27,58,45,.13);  color:#1B3A2D; border-bottom:2.5px solid #1B3A2D; }
+    .role-agent       .sem-chunk-label { color:#1B3A2D; }
+    .role-patient     { background:rgba(192,124,62,.13); color:#8a4a10; border-bottom:2.5px solid #C07C3E; }
+    .role-patient     .sem-chunk-label { color:#8a4a10; }
+    .role-theme       { background:rgba(40,70,180,.10);  color:#2040a0; border-bottom:2.5px solid #4060cc; }
+    .role-theme       .sem-chunk-label { color:#2040a0; }
+    .role-experiencer { background:rgba(110,35,130,.10); color:#6a2080; border-bottom:2.5px solid #8a40a0; }
+    .role-experiencer .sem-chunk-label { color:#6a2080; }
+    .role-stimulus    { background:rgba(190,70,10,.10);  color:#903010; border-bottom:2.5px solid #c04010; }
+    .role-stimulus    .sem-chunk-label { color:#903010; }
+    .role-recipient   { background:rgba(10,110,90,.12);  color:#0a6a58; border-bottom:2.5px solid #0a8a70; }
+    .role-recipient   .sem-chunk-label { color:#0a6a58; }
+    .role-beneficiary { background:rgba(10,90,130,.10);  color:#0a5080; border-bottom:2.5px solid #1070a0; }
+    .role-beneficiary .sem-chunk-label { color:#0a5080; }
+    .role-goal        { background:rgba(10,40,110,.10);  color:#0a2870; border-bottom:2.5px solid #1040a0; }
+    .role-goal        .sem-chunk-label { color:#0a2870; }
+    .role-source      { background:rgba(110,60,10,.10);  color:#6a3a0a; border-bottom:2.5px solid #8a5a20; }
+    .role-source      .sem-chunk-label { color:#6a3a0a; }
+    .role-location    { background:rgba(60,100,10,.12);  color:#3a620a; border-bottom:2.5px solid #5a8010; }
+    .role-location    .sem-chunk-label { color:#3a620a; }
+    .role-instrument  { background:rgba(140,30,10,.10);  color:#7a1a0a; border-bottom:2.5px solid #a03020; }
+    .role-instrument  .sem-chunk-label { color:#7a1a0a; }
+    .role-cause       { background:rgba(70,70,70,.10);   color:#404040; border-bottom:2.5px solid #808080; }
+    .role-cause       .sem-chunk-label { color:#404040; }
+    .role-time        { background:rgba(40,70,120,.09);  color:#284080; border-bottom:2.5px solid #5070a0; }
+    .role-time        .sem-chunk-label { color:#284080; }
+    .role-comitative  { background:rgba(90,30,130,.10);  color:#501878; border-bottom:2.5px solid #7030a0; }
+    .role-comitative  .sem-chunk-label { color:#501878; }
+    .role-predicate   { background:rgba(0,0,0,.05);      color:#555;    border-bottom:2.5px dashed #aaa; }
+    .role-predicate   .sem-chunk-label { color:#777; }
+
+    /* ── Role table ── */
+    .role-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .role-table th {
+      text-align: left;
+      font-family: var(--font-m);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .role-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .role-table tr:last-child td { border-bottom: none; }
+    .role-pill {
+      display: inline-block;
+      padding: 3px 11px;
+      border-radius: 12px;
+      font-family: var(--font-m);
+      font-size: 10.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .phrase-cell {
+      font-family: var(--font-b);
+      font-style: italic;
+      font-size: 14px;
+    }
+    .def-cell {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Passive badge ── */
+    .passive-badge {
+      font-family: var(--font-m);
+      font-size: 10.5px;
+      background: rgba(192,124,62,.12);
+      color: var(--copper);
+      border: 1px solid var(--copper-lt);
+      border-radius: 12px;
+      padding: 2px 10px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Guide grid ── */
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .guide-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      border-left: 4px solid var(--forest);
+    }
+    .guide-card.copper { border-left-color: var(--copper); }
+    .guide-card.blue   { border-left-color: #4060cc; }
+    .guide-card.teal   { border-left-color: #0a8a70; }
+    .guide-card.navy   { border-left-color: #1040a0; }
+    .guide-card.brown  { border-left-color: #8a5a20; }
+    .guide-card.olive  { border-left-color: #5a8010; }
+    .guide-card.crimson{ border-left-color: #a03020; }
+    .guide-card.gray   { border-left-color: #808080; }
+    .guide-card.steel  { border-left-color: #5070a0; }
+    .guide-card.violet { border-left-color: #7030a0; }
+    .guide-card.purple { border-left-color: #8a40a0; }
+    .guide-card.orange { border-left-color: #c04010; }
+    .guide-card h3 {
+      font-family: var(--font-m);
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--forest);
+      margin-bottom: 5px;
+    }
+    .guide-card.copper h3 { color: var(--copper); }
+    .guide-card.blue   h3 { color: #2040a0; }
+    .guide-card.teal   h3 { color: #0a6a58; }
+    .guide-card.navy   h3 { color: #0a2870; }
+    .guide-card.brown  h3 { color: #6a3a0a; }
+    .guide-card.olive  h3 { color: #3a620a; }
+    .guide-card.crimson h3{ color: #7a1a0a; }
+    .guide-card.gray   h3 { color: #404040; }
+    .guide-card.steel  h3 { color: #284080; }
+    .guide-card.violet h3 { color: #501878; }
+    .guide-card.purple h3 { color: #6a2080; }
+    .guide-card.orange h3 { color: #903010; }
+    .guide-card p { font-size: 13px; color: var(--ink); line-height: 1.6; margin-bottom: 6px; }
+    .guide-ex-tag {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--font-b);
+      font-style: italic;
+      display: block;
+      margin-top: 4px;
+    }
+    .guide-ex-tag em {
+      font-style: normal;
+      text-decoration: underline;
+      text-decoration-color: var(--muted);
+      color: var(--ink);
+    }
+
+    /* ── Loading ── */
+    .sem-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      font-size: 13.5px;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .spin {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--forest);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .sem-chunk { font-size: 0.88rem; padding: 4px 7px; }
+      .role-table td, .role-table th { padding: 7px 8px; font-size: 12.5px; }
+      .def-cell { display: none; }
+    }
   </style>
 </head>
 <body>
 <div id="nav-placeholder"></div>
 <main>
+
+  <div class="page-hero">
+    <span class="page-hero-icon">💬</span>
+    <h1>Semantics</h1>
+    <p>Where meaning is articulated, negotiated, and shaped within the boundaries of language.</p>
+  </div>
+
   <div class="section">
-    <div class="coming-soon-wrap">
-      <div class="cs-icon">💬</div>
-      <h1 class="cs-title">Semantics</h1>
-      <span class="cs-badge">✦ Coming Soon</span>
-      <p class="cs-desc">This tool is currently being built. Check back soon — it will be part of The Loom Workshop's growing linguistics toolkit.</p>
-      <div class="cs-back">
-        <a href="index.html" class="btn btn-outline">← Back to Home</a>
+
+    <!-- ══ TOOL ══ -->
+    <div class="tool-card" style="margin-bottom:32px;">
+      <div class="tool-card-header">
+        <span class="icon">🎭</span>
+        <div>
+          <h2>Thematic Role Analyzer</h2>
+          <p>Enter any sentence to see its semantic participant structure</p>
+        </div>
       </div>
+      <div class="tool-card-body">
+
+        <div class="notice">
+          Enter any English sentence. The analyzer identifies the thematic role of each noun phrase — Agent, Patient, Theme, Experiencer, Goal, Location, Instrument, and more. Works with active, passive, simple, and complex sentences.
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:14px;">
+          <div class="input-group" style="margin:0;">
+            <label>Enter a Sentence</label>
+            <input type="text" id="semIn"
+              placeholder="e.g. The teacher gave the students a book in the classroom."
+              style="font-size:14.5px;"
+              autocorrect="off" autocapitalize="none" spellcheck="false"
+              onkeydown="if(event.key==='Enter') runSem()">
+          </div>
+          <button class="btn btn-primary" id="semBtn" onclick="runSem()">Analyze</button>
+        </div>
+
+        <p style="font-size:12.5px;color:var(--muted);margin-top:9px;">
+          Try:&nbsp;
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('The teacher gave the students a book.')">gave a book</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('She loves music.')">loves music</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('The cat sat on the mat.')">sat on mat</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('He cut the bread with a knife.')">with a knife</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('The window was broken by the child.')">passive</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('She baked a cake for her sister.')">beneficiary</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('John traveled from London to Paris.')">source &amp; goal</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('The storm destroyed the city.')">cause</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('She danced with Maria at the festival.')">comitative</span>
+          <span class="tag" style="cursor:pointer;font-size:11px;" onclick="qLoad('The child fears the dark.')">experiencer</span>
+        </p>
+
+        <div class="result-box" id="semRes" style="margin-top:16px;"></div>
+
+      </div>
+    </div>
+
+    <!-- ══ GUIDE ══ -->
+    <h2 class="section-title">Thematic Roles — Reference Guide</h2>
+    <div class="guide-grid">
+
+      <div class="guide-card">
+        <h3>Agent</h3>
+        <p>The entity that intentionally and volitionally performs the action. Always animate and in control of the event.</p>
+        <span class="guide-ex-tag"><em>John</em> kicked the ball. / <em>She</em> wrote a letter.</span>
+      </div>
+
+      <div class="guide-card copper">
+        <h3>Patient</h3>
+        <p>The entity that is directly affected, changed, or acted upon by the action. May be destroyed or created.</p>
+        <span class="guide-ex-tag">John kicked <em>the ball</em>. / She broke <em>the vase</em>.</span>
+      </div>
+
+      <div class="guide-card blue">
+        <h3>Theme</h3>
+        <p>The entity that moves, is located, or is described — but is not necessarily changed by the event. Often used with verbs of motion and transfer.</p>
+        <span class="guide-ex-tag">She carried <em>the book</em>. / <em>The leaf</em> fell.</span>
+      </div>
+
+      <div class="guide-card purple">
+        <h3>Experiencer</h3>
+        <p>The entity that undergoes a psychological or perceptual state — an emotion, feeling, or sensory experience — without necessarily doing anything.</p>
+        <span class="guide-ex-tag"><em>She</em> fears spiders. / <em>He</em> loves jazz.</span>
+      </div>
+
+      <div class="guide-card orange">
+        <h3>Stimulus</h3>
+        <p>The entity or situation that causes or triggers the psychological state of the Experiencer. Usually the object of a mental or emotional verb.</p>
+        <span class="guide-ex-tag">She fears <em>spiders</em>. / The music moved <em>him</em>.</span>
+      </div>
+
+      <div class="guide-card teal">
+        <h3>Recipient</h3>
+        <p>The entity that receives something as the result of a transfer event. Typically animate and gains possession.</p>
+        <span class="guide-ex-tag">She gave <em>him</em> a gift. / He sent <em>her</em> a letter.</span>
+      </div>
+
+      <div class="guide-card blue">
+        <h3>Beneficiary</h3>
+        <p>The entity that benefits from the action, whether or not they receive anything directly. Usually marked by the preposition <em>for</em>.</p>
+        <span class="guide-ex-tag">She baked a cake <em>for her sister</em>.</span>
+      </div>
+
+      <div class="guide-card navy">
+        <h3>Goal</h3>
+        <p>The endpoint or destination of a movement or transfer event. Where or to whom something moves or is directed.</p>
+        <span class="guide-ex-tag">He walked <em>to the park</em>. / She moved <em>to London</em>.</span>
+      </div>
+
+      <div class="guide-card brown">
+        <h3>Source</h3>
+        <p>The starting point of a movement or transfer event. Where something moves away from or originates.</p>
+        <span class="guide-ex-tag">He came <em>from Paris</em>. / She took it <em>from the shelf</em>.</span>
+      </div>
+
+      <div class="guide-card olive">
+        <h3>Location</h3>
+        <p>The place where the action or state occurs. Not a direction or endpoint — a stable setting for the event.</p>
+        <span class="guide-ex-tag">The cat sat <em>on the mat</em>. / She works <em>in the library</em>.</span>
+      </div>
+
+      <div class="guide-card crimson">
+        <h3>Instrument</h3>
+        <p>The inanimate means or tool used to carry out an action. Usually introduced by <em>with</em> or <em>by means of</em>.</p>
+        <span class="guide-ex-tag">He cut the bread <em>with a knife</em>. / She typed <em>with one finger</em>.</span>
+      </div>
+
+      <div class="guide-card gray">
+        <h3>Cause</h3>
+        <p>A non-volitional force that brings about the event. Unlike an Agent, the Cause has no intention or control — it is a natural or abstract force.</p>
+        <span class="guide-ex-tag"><em>The storm</em> destroyed the crops. / <em>Fear</em> stopped him.</span>
+      </div>
+
+      <div class="guide-card steel">
+        <h3>Time</h3>
+        <p>A temporal expression that specifies when the action takes place. Introduced by prepositions like <em>at, on, in, during, after, before</em>.</p>
+        <span class="guide-ex-tag">She left <em>yesterday</em>. / He arrived <em>at noon</em>.</span>
+      </div>
+
+      <div class="guide-card violet">
+        <h3>Comitative</h3>
+        <p>The animate entity that accompanies the Agent in performing the action. Introduced by <em>with, along with,</em> or <em>together with</em>.</p>
+        <span class="guide-ex-tag">She danced <em>with John</em>. / He traveled <em>with his family</em>.</span>
+      </div>
+
     </div>
   </div>
 </main>
 <div id="footer-placeholder"></div>
 <script src="shared-ui.js"></script>
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+
+var MODALS   = new Set(['will','would','shall','should','can','could','may','might','must','ought','need','dare']);
+var HAVE_AUX = new Set(['have','has','had','having']);
+var BE_FORMS = new Set(['be','am','is','are','was','were','been','being']);
+var DO_FORMS = new Set(['do','does','did']);
+var ALL_AUX  = new Set(['will','would','shall','should','can','could','may','might','must','ought','need','dare',
+                        'have','has','had','having','be','am','is','are','was','were','been','being',
+                        'do','does','did','going','get','gets','got','gotten']);
+
+var IRREG = {
+  'was':'be','were':'be','been':'be','is':'be','are':'be','am':'be','being':'be',
+  'had':'have','has':'have','having':'have',
+  'did':'do','done':'do',
+  'went':'go','gone':'go',
+  'came':'come',
+  'saw':'see','seen':'see',
+  'heard':'hear',
+  'knew':'know','known':'know',
+  'felt':'feel',
+  'thought':'think',
+  'said':'say',
+  'told':'tell',
+  'gave':'give','given':'give',
+  'took':'take','taken':'take',
+  'brought':'bring',
+  'sent':'send',
+  'bought':'buy',
+  'sold':'sell',
+  'found':'find',
+  'made':'make',
+  'kept':'keep',
+  'ran':'run',
+  'flew':'fly','flown':'fly',
+  'drove':'drive','driven':'drive',
+  'wrote':'write','written':'write',
+  'broke':'break','broken':'break',
+  'built':'build',
+  'fell':'fall','fallen':'fall',
+  'rose':'rise','risen':'rise',
+  'got':'get','gotten':'get',
+  'sat':'sit',
+  'stood':'stand',
+  'put':'put','cut':'cut','hit':'hit','let':'let','set':'set','hurt':'hurt','read':'read','bid':'bid',
+  'chose':'choose','chosen':'choose',
+  'wore':'wear','worn':'wear',
+  'ate':'eat','eaten':'eat',
+  'drank':'drink','drunk':'drink',
+  'swam':'swim','swum':'swim',
+  'taught':'teach',
+  'caught':'catch',
+  'fought':'fight',
+  'left':'leave',
+  'led':'lead',
+  'held':'hold',
+  'met':'meet',
+  'lost':'lose',
+  'won':'win',
+  'paid':'pay',
+  'laid':'lay',
+  'grew':'grow','grown':'grow',
+  'threw':'throw','thrown':'throw',
+  'drew':'draw','drawn':'draw',
+  'spoke':'speak','spoken':'speak',
+  'bore':'bear','born':'bear','borne':'bear',
+  'shook':'shake','shaken':'shake',
+  'woke':'wake','woken':'wake',
+  'began':'begin','begun':'begin',
+  'rang':'ring','rung':'ring',
+  'sang':'sing','sung':'sing',
+  'tore':'tear','torn':'tear',
+  'froze':'freeze','frozen':'freeze',
+  'rode':'ride','ridden':'ride',
+  'hid':'hide','hidden':'hide',
+  'bit':'bite','bitten':'bite',
+  'lit':'light',
+  'slid':'slide',
+  'spread':'spread',
+  'lent':'lend',
+  'bent':'bend',
+  'spent':'spend',
+  'slept':'sleep',
+  'wept':'weep',
+  'crept':'creep',
+  'swept':'sweep',
+  'dealt':'deal',
+  'meant':'mean',
+  'leapt':'leap',
+  'shone':'shine',
+  'struck':'strike','stricken':'strike',
+  'spun':'spin',
+  'sped':'speed',
+};
+
+var PSYCH_VERBS = new Set([
+  'love','hate','like','dislike','enjoy','fear','dread','adore','cherish',
+  'despise','loathe','envy','appreciate','regret','resent','admire',
+  'respect','pity','miss','need','want','desire','prefer','wish','hope',
+  'expect','believe','think','know','understand','realize','recognize',
+  'remember','forget','mind','care','see','hear','smell','taste','feel',
+  'perceive','sense','notice','wonder','doubt','trust','suspect',
+  'concern','bother','surprise','amaze','please','upset','excite',
+  'bore','interest','fascinate','disturb','frighten','scare','worry',
+  'annoy','irritate','confuse','shock','thrill','disappoint','satisfy',
+  'embarrass','amuse','attract','delight','horrify','comfort','reassure',
+  'impress','intrigue','puzzle','alarm','overwhelm','inspire','enthuse',
+]);
+
+var MOTION_VERBS = new Set([
+  'go','come','move','travel','walk','run','fly','drive','swim','jump',
+  'fall','rise','return','arrive','depart','leave','enter','exit',
+  'approach','reach','cross','pass','rush','hurry','stroll','wander',
+  'climb','descend','ascend','drop','sink','float','drift','roll',
+  'slide','slip','crawl','march','flee','escape','advance','retreat',
+  'proceed','follow','chase','pursue','race','sprint','jog','ride',
+  'sail','row','glide','soar','plunge','tumble','bounce','meander','roam',
+]);
+
+var TRANSFER_VERBS = new Set([
+  'give','send','offer','bring','take','carry','deliver','pass','hand',
+  'show','teach','pay','sell','buy','lend','borrow','rent','provide',
+  'supply','donate','award','grant','assign','distribute','share',
+  'transfer','ship','dispatch','mail','submit','present','fetch',
+  'collect','throw','toss','fling','loan','advance','withdraw',
+  'deposit','forward','return','restore',
+]);
+
+var COMM_VERBS = new Set([
+  'say','tell','speak','talk','ask','answer','reply','write','read',
+  'announce','declare','explain','describe','mention','suggest',
+  'recommend','warn','promise','threaten','order','request','inform',
+  'notify','report','discuss','argue','debate','complain','advise',
+  'instruct','command','confess','admit','deny','claim','assert',
+  'state','express','communicate','whisper','shout','cry','scream',
+  'yell','mutter','mumble','respond','address','quote','comment',
+  'remark','define','call','repeat','confirm','acknowledge',
+  'question','challenge','convince','persuade','urge','insist',
+  'demand','plead','beg','describe','narrate',
+]);
+
+var CREATE_VERBS = new Set([
+  'make','create','build','construct','produce','manufacture','design',
+  'write','paint','draw','compose','invent','develop','generate',
+  'form','shape','forge','craft','prepare','cook','bake','brew',
+  'assemble','establish','found','organize','arrange','plan',
+  'knit','sew','weave','carve','sculpt','mold','print','record',
+  'film','photograph','publish','launch','open',
+]);
+
+var DESTROY_VERBS = new Set([
+  'break','destroy','demolish','ruin','damage','harm','hurt','kill',
+  'murder','eliminate','remove','erase','burn','cut','tear',
+  'smash','crush','shatter','split','crack','snap','wreck','devastate',
+  'dismantle','collapse','dissolve','attack','hit','strike','punch',
+  'kick','wound','injure','shoot','stab','bomb','slash','chop','bite',
+]);
+
+var STATE_VERBS = new Set([
+  'be','seem','appear','become','remain','stay','look','sound','keep',
+  'continue','stand','sit','lie','exist','occur','happen','consist',
+  'contain','include','involve','comprise','belong','own','possess',
+  'have','hold','lack','resemble','differ','equal','matter','weigh',
+  'measure','cost','last','need','require','deserve',
+]);
+
+var ALL_VERBS = new Set([
+  'use','change','open','close','turn','start','stop','finish','try',
+  'help','work','play','eat','drink','sleep','wake','clean','wash',
+  'fix','repair','find','lose','win','beat','defeat','protect','save',
+  'lift','hold','grab','pick','place','push','pull','press',
+  'catch','touch','lock','unlock','sign','mark','call','meet','join',
+  'test','check','measure','count','search','watch','listen','observe',
+  'examine','study','learn','practice','perform','act','sing','dance',
+  'exercise','train','serve','operate','function','lead','guide',
+  'direct','control','manage','handle','deal','solve','decide','choose',
+  'accept','reject','approve','refuse','agree','disagree','connect',
+  'separate','divide','combine','mix','grow','expand','increase',
+  'decrease','improve','succeed','fail','wait','rest','relax',
+  'stretch','bend','fold','wrap','cover','hide','reveal','discover',
+  'imagine','consider','suppose','assume','conclude','prove',
+]);
+
+// merge all into one big set for lookup
+var ALL_KNOWN = (function() {
+  var s = new Set();
+  [PSYCH_VERBS, MOTION_VERBS, TRANSFER_VERBS, COMM_VERBS,
+   CREATE_VERBS, DESTROY_VERBS, STATE_VERBS, ALL_VERBS].forEach(function(vs) {
+    vs.forEach(function(v) { s.add(v); });
+  });
+  return s;
+}());
+
+var CAUSE_SUBJ = new Set([
+  'earthquake','storm','tornado','hurricane','typhoon','cyclone','flood',
+  'drought','famine','fire','explosion','blast','crash','disease','virus',
+  'bacteria','infection','illness','fever','cancer','pandemic','epidemic',
+  'heat','cold','frost','ice','snow','rain','wind','lightning','thunder',
+  'wave','tide','tsunami','erosion','gravity','force','pressure',
+  'radiation','poison','toxin','gas','smoke','pollution','contamination',
+  'war','conflict','crisis','accident','disaster','recession','depression',
+  'fear','stress','anxiety','shock','grief','anger','fate','chance','luck',
+  'weight','time','age','darkness','light','noise','pain','cold','heat',
+]);
+
+var PERSON_WORDS = new Set([
+  'man','woman','child','boy','girl','person','people','individual',
+  'friend','enemy','stranger','colleague','partner','companion',
+  'teacher','student','doctor','nurse','worker','boss','employee',
+  'parent','mother','father','sister','brother','son','daughter',
+  'husband','wife','uncle','aunt','nephew','niece','cousin','relative',
+  'officer','soldier','guard','player','captain','leader','member',
+  'neighbor','client','customer','passenger','resident','citizen',
+  'him','her','them','me','us','you','someone','anyone','everyone',
+  'nobody','somebody','anybody','himself','herself','themselves',
+  'yourself','myself','ourselves','one','another',
+]);
+
+var TIME_WORDS = new Set([
+  'morning','afternoon','evening','night','midnight','noon','dawn','dusk',
+  'day','week','month','year','decade','century','era','age','period',
+  'moment','second','minute','hour','instant','while','time',
+  'yesterday','today','tomorrow','now','then','soon','recently',
+  'monday','tuesday','wednesday','thursday','friday','saturday','sunday',
+  'january','february','march','april','may','june','july','august',
+  'september','october','november','december',
+  'spring','summer','autumn','fall','winter','season',
+]);
+
+var DETS = new Set([
+  'the','a','an','this','that','these','those','my','your','his',
+  'her','its','our','their','some','any','each','every','all','no',
+]);
+
+var SUBJ_PRONS = new Set(['i','you','he','she','it','we','they']);
+var OBJ_PRONS  = new Set(['me','him','her','us','them','you','it','whom']);
+
+var MULTI_PREPS = [
+  'because of','out of','away from','along with','together with',
+  'accompanied by','on behalf of','as a result of','on account of',
+  'owing to','due to','thanks to','in front of','on top of',
+  'next to','by means of','aside from','apart from','instead of',
+  'in addition to','in spite of','with regard to',
+];
+
+var LOC_PREPS  = new Set(['in','on','at','near','beside','by','between','among','above','below','under','beneath','over','across','behind','before','around','inside','outside','within','throughout','along','upon','next to','in front of','on top of','underneath','opposite','against']);
+var GOAL_PREPS = new Set(['to','into','onto','toward','towards']);
+var SRC_PREPS  = new Set(['from','out of','off','away from']);
+var BEN_PREPS  = new Set(['for','on behalf of']);
+var CAUSE_PREPS= new Set(['because of','due to','owing to','as a result of','on account of','thanks to']);
+var COM_PREPS  = new Set(['with','along with','together with','accompanied by']);
+var TIME_PREPS = new Set(['during','after','before','since','until','while','when','following','upon']);
+var TRANSPORT  = new Set(['car','bus','train','plane','boat','ship','taxi','bike','bicycle','motorcycle','foot','hand','air','sea','rail','road','ferry','helicopter','subway','metro']);
+
+/* ═══════════════════════════════════════════
+   LEMMATIZER
+═══════════════════════════════════════════ */
+function lemma(word) {
+  var w = word.toLowerCase().replace(/[^a-z']/g, '');
+  if (IRREG[w]) return IRREG[w];
+  if (w.endsWith('ies') && w.length > 4) return w.slice(0,-3)+'y';
+  if (w.endsWith('ves') && w.length > 4) return w.slice(0,-3)+'f';
+  if (w.endsWith('ing') && w.length > 6) {
+    var st = w.slice(0,-3);
+    if (st.length > 2 && st[st.length-1]===st[st.length-2]) return st.slice(0,-1);
+    return st;
+  }
+  if (w.endsWith('ed') && w.length > 5) {
+    var st = w.slice(0,-2);
+    if (st.length > 2 && st[st.length-1]===st[st.length-2]) return st.slice(0,-1);
+    if (st.endsWith('i')) return st.slice(0,-1)+'y';
+    return st;
+  }
+  if (w.endsWith('es') && w.length > 4 && !w.match(/[aeiouy]es$/)) return w.slice(0,-2);
+  if (w.endsWith('s') && w.length > 3 && !w.endsWith('ss')) return w.slice(0,-1);
+  return w;
+}
+
+/* ═══════════════════════════════════════════
+   VERB CLASSIFIER
+═══════════════════════════════════════════ */
+function classifyVerb(lem) {
+  if (PSYCH_VERBS.has(lem))    return 'psych';
+  if (MOTION_VERBS.has(lem))   return 'motion';
+  if (TRANSFER_VERBS.has(lem)) return 'transfer';
+  if (COMM_VERBS.has(lem))     return 'comm';
+  if (CREATE_VERBS.has(lem))   return 'create';
+  if (DESTROY_VERBS.has(lem))  return 'destroy';
+  if (STATE_VERBS.has(lem))    return 'state';
+  return 'action';
+}
+
+function classifyFromDef(def) {
+  if (!def) return 'action';
+  var d = def.toLowerCase();
+  if (/move|travel|walk|fly|arrive|depart|journey/.test(d))        return 'motion';
+  if (/give|send|transfer|deliver|provide|supply|convey/.test(d))  return 'transfer';
+  if (/say|speak|tell|communicate|express|describe|inform/.test(d)) return 'comm';
+  if (/create|make|build|produce|construct|form|craft/.test(d))    return 'create';
+  if (/destroy|break|damage|harm|hurt|kill|eliminate/.test(d))     return 'destroy';
+  if (/feel|perceive|experience|emotion|mental|sense|love/.test(d)) return 'psych';
+  if (/remain|stay|be|exist|continue|state|consist/.test(d))       return 'state';
+  return 'action';
+}
+
+/* ═══════════════════════════════════════════
+   PASSIVE DETECTION
+═══════════════════════════════════════════ */
+function isPassive(tokens) {
+  for (var i = 0; i < tokens.length - 1; i++) {
+    var t = tokens[i].toLowerCase();
+    if (!BE_FORMS.has(t)) continue;
+    for (var j = i+1; j < Math.min(i+5, tokens.length); j++) {
+      var w  = tokens[j].toLowerCase();
+      var wl = lemma(w);
+      if (/^(not|n't|never|just|already|also|even|really|still)$/.test(w)) continue;
+      if (ALL_KNOWN.has(wl) && (w.endsWith('ed') || w.endsWith('en') || w.endsWith('t') || IRREG[w])) return true;
+      break;
+    }
+  }
+  return false;
+}
+
+/* ═══════════════════════════════════════════
+   FIND MAIN VERB
+═══════════════════════════════════════════ */
+var SKIP_FIRST = new Set(['the','a','an','this','that','these','those','my','your','his','her','its','our','their','i','you','he','she','it','we','they','here','there','not','no']);
+
+function findVerb(tokens) {
+  var auxStart = -1;
+  var verbIdx  = -1;
+  var verbLem  = '';
+
+  for (var i = 0; i < tokens.length; i++) {
+    var t  = tokens[i];
+    var lo = t.toLowerCase().replace(/[^a-z']/g,'');
+    var wl = lemma(lo);
+
+    if (ALL_AUX.has(lo) || ALL_AUX.has(wl)) {
+      if (auxStart === -1) auxStart = i;
+      continue;
+    }
+
+    if (SKIP_FIRST.has(lo) && i === 0) continue;
+
+    var known     = ALL_KNOWN.has(wl) || ALL_KNOWN.has(lo);
+    var inflected = lo.endsWith('ed') || lo.endsWith('ing');
+    var afterAux  = auxStart !== -1;
+    var notPrep   = !isPrep(lo);
+    var notDet    = !DETS.has(lo);
+    var notPron   = !SUBJ_PRONS.has(lo);
+
+    if (notDet && notPrep && (known || afterAux || (inflected && i > 0))) {
+      verbIdx = i;
+      verbLem = wl;
+      break;
+    }
+  }
+
+  // fallback: first word in any verb list
+  if (verbIdx === -1) {
+    for (var i = 1; i < tokens.length; i++) {
+      var lo = tokens[i].toLowerCase().replace(/[^a-z']/g,'');
+      var wl = lemma(lo);
+      if (ALL_KNOWN.has(wl) || ALL_KNOWN.has(lo)) {
+        verbIdx = i; verbLem = wl;
+        if (auxStart === -1) auxStart = i;
+        break;
+      }
+    }
+  }
+
+  if (verbIdx === -1) return null;
+  if (auxStart === -1 || auxStart >= verbIdx) auxStart = verbIdx;
+  return { idx: verbIdx, auxStart: auxStart, lem: verbLem };
+}
+
+/* ═══════════════════════════════════════════
+   PREPOSITION HELPERS
+═══════════════════════════════════════════ */
+function isPrep(w) {
+  return LOC_PREPS.has(w)||GOAL_PREPS.has(w)||SRC_PREPS.has(w)||
+         BEN_PREPS.has(w)||CAUSE_PREPS.has(w)||COM_PREPS.has(w)||
+         TIME_PREPS.has(w)||w==='of'||w==='about'||w==='like'||w==='than'||w==='as'||w==='by'||w==='through'||w==='via'||w==='using';
+}
+
+function findNextPrep(tokens, start) {
+  for (var i = start; i < tokens.length; i++) {
+    var lo = tokens[i].toLowerCase();
+    // check multi-word preps
+    for (var m = 0; m < MULTI_PREPS.length; m++) {
+      var mp = MULTI_PREPS[m], mpw = mp.split(' ');
+      if (lo === mpw[0] && i + mpw.length - 1 < tokens.length) {
+        var ok = true;
+        for (var k = 1; k < mpw.length; k++) {
+          if (tokens[i+k].toLowerCase() !== mpw[k]) { ok=false; break; }
+        }
+        if (ok) return { idx: i, prep: mp, len: mpw.length };
+      }
+    }
+    if (isPrep(lo) && lo !== 'of' && lo !== 'like' && lo !== 'than' && lo !== 'as') {
+      return { idx: i, prep: lo, len: 1 };
+    }
+  }
+  return null;
+}
+
+/* ═══════════════════════════════════════════
+   POST-VERBAL PARSER
+═══════════════════════════════════════════ */
+function parsePost(tokens, vclass, passive) {
+  var chunks = [];
+  var fp = findNextPrep(tokens, 0);
+  var objToks = fp ? tokens.slice(0, fp.idx) : tokens.slice();
+
+  // Detect ditransitive (two NPs before first PP)
+  // e.g. "gave John a book"  or "gave the students a book"
+  var brk = -1;
+  if ((vclass === 'transfer' || vclass === 'comm' || vclass === 'create') && objToks.length >= 2) {
+    for (var i = 1; i < objToks.length; i++) {
+      var lo = objToks[i].toLowerCase();
+      if ((DETS.has(lo) || OBJ_PRONS.has(lo)) && i > 0) { brk = i; break; }
+    }
+  }
+
+  if (brk > 0) {
+    chunks.push({ type:'obj1', prep:null, np:objToks.slice(0,brk) });
+    chunks.push({ type:'obj2', prep:null, np:objToks.slice(brk) });
+  } else if (objToks.length > 0) {
+    chunks.push({ type:'obj', prep:null, np:objToks });
+  }
+
+  // PPs
+  var pos = fp ? fp.idx : tokens.length;
+  while (pos < tokens.length) {
+    var pr = findNextPrep(tokens, pos);
+    if (!pr) break;
+    var nxPr = findNextPrep(tokens, pr.idx + pr.len);
+    var npEnd = nxPr ? nxPr.idx : tokens.length;
+    var np = tokens.slice(pr.idx + pr.len, npEnd);
+    chunks.push({ type:'pp', prep:pr.prep, np:np });
+    pos = npEnd;
+  }
+  return chunks;
+}
+
+/* ═══════════════════════════════════════════
+   ROLE ASSIGNMENT
+═══════════════════════════════════════════ */
+function npStr(np) { return np.join(' '); }
+
+function isAnimateNP(str) {
+  var words = str.toLowerCase().split(/\s+/);
+  if (words.some(function(w){ return PERSON_WORDS.has(w.replace(/[^a-z]/g,'')); })) return true;
+  // capitalized non-DET word → likely proper name
+  var toks = str.split(/\s+/);
+  for (var i = 0; i < toks.length; i++) {
+    if (!DETS.has(toks[i].toLowerCase()) && /^[A-Z]/.test(toks[i])) return true;
+  }
+  return false;
+}
+
+function isTimeNP(str) {
+  var words = str.toLowerCase().split(/\s+/);
+  return words.some(function(w){ return TIME_WORDS.has(w.replace(/[^a-z]/g,'')); })
+    || /\b\d{1,2}(:\d{2})?\s*(am|pm|AM|PM)\b/.test(str)
+    || /\b\d{4}\b/.test(str)
+    || /\b\d+(st|nd|rd|th)\b/.test(str);
+}
+
+function isCauseSubj(str) {
+  return str.toLowerCase().split(/\s+/).some(function(w){ return CAUSE_SUBJ.has(w.replace(/[^a-z]/g,'')); });
+}
+
+function subjRole(str, vclass, passive) {
+  if (passive) return { r:'Patient', d:'The entity affected by the action (recovered in passive voice)' };
+  if (!str || str.toLowerCase() === 'there' || str.toLowerCase() === 'it') return null;
+  if (vclass === 'psych')  return { r:'Experiencer', d:'The entity that experiences a psychological or emotional state' };
+  if (vclass === 'state')  return { r:'Theme', d:'The entity in the described state' };
+  if (vclass === 'motion') return { r:'Theme', d:'The entity that moves (moves itself)' };
+  if (isCauseSubj(str))   return { r:'Cause', d:'A non-volitional force that brings about the event' };
+  return { r:'Agent', d:'The entity that intentionally performs the action' };
+}
+
+function objRole(str, vclass) {
+  switch (vclass) {
+    case 'psych':    return { r:'Stimulus',  d:'The entity or situation that triggers the psychological state' };
+    case 'motion':   return { r:'Theme',     d:'The entity moved or placed by the agent' };
+    case 'state':    return { r:'Theme',     d:'The entity in the described state' };
+    case 'comm':     return { r:'Theme',     d:'The content or message communicated' };
+    case 'create':   return { r:'Patient',   d:'The entity created or produced' };
+    case 'destroy':  return { r:'Patient',   d:'The entity destroyed or significantly affected' };
+    case 'transfer': return { r:'Theme',     d:'The entity being transferred or given' };
+    default:         return { r:'Patient',   d:'The entity directly affected by the action' };
+  }
+}
+
+function ppRole(prep, np, npString, vclass, passive) {
+  var lo = prep.toLowerCase();
+
+  if (lo === 'by' && passive) return { r:'Agent', d:'The entity performing the action (recovered in passive)' };
+
+  if (SRC_PREPS.has(lo))  return { r:'Source',  d:'The starting point of movement or transfer' };
+
+  if (GOAL_PREPS.has(lo)) {
+    if (vclass === 'transfer' || vclass === 'comm')
+      return { r:'Recipient / Goal', d:'The endpoint of transfer — who receives or where something goes' };
+    return { r:'Goal', d:'The endpoint or destination of movement' };
+  }
+
+  if (BEN_PREPS.has(lo))   return { r:'Beneficiary', d:'The entity that benefits from the action' };
+  if (CAUSE_PREPS.has(lo)) return { r:'Cause',       d:'The non-volitional cause or reason for the event' };
+
+  if (lo === 'with' || lo === 'along with' || lo === 'together with' || lo === 'accompanied by') {
+    if (lo !== 'with' || isAnimateNP(npString))
+      return { r:'Comitative', d:'The entity accompanying the Agent in the action' };
+    // inanimate with → Instrument
+    return { r:'Instrument', d:'The means or tool used to perform the action' };
+  }
+
+  if (lo === 'using' || lo === 'via' || lo === 'by means of' || lo === 'through') {
+    return { r:'Instrument', d:'The means or tool used to perform the action' };
+  }
+
+  if (lo === 'by') {
+    // "by car/train/foot" → Instrument; else → Location/Manner
+    var lastWord = np.length > 0 ? np[np.length-1].toLowerCase() : '';
+    if (TRANSPORT.has(lastWord)) return { r:'Instrument', d:'The means of conveyance or method' };
+    if (isTimeNP(npString))      return { r:'Time',       d:'When the action takes place' };
+    return { r:'Location', d:'A position beside or near which the action occurs' };
+  }
+
+  if (TIME_PREPS.has(lo)) return { r:'Time', d:'When the action takes place' };
+
+  if (['at','on','in'].includes(lo)) {
+    if (isTimeNP(npString)) return { r:'Time',     d:'When the action takes place' };
+    return                           { r:'Location', d:'Where the action takes place' };
+  }
+
+  if (lo === 'about')  return { r:'Stimulus', d:'The topic or subject of a mental or communicative act' };
+
+  if (LOC_PREPS.has(lo)) return { r:'Location', d:'Where the action takes place' };
+
+  return { r:'Adjunct', d:'Additional circumstantial information' };
+}
+
+/* ═══════════════════════════════════════════
+   CSS CLASS MAP
+═══════════════════════════════════════════ */
+var CSS = {
+  'Agent':'role-agent','Patient':'role-patient','Theme':'role-theme',
+  'Experiencer':'role-experiencer','Stimulus':'role-stimulus',
+  'Recipient':'role-recipient','Recipient / Goal':'role-recipient',
+  'Beneficiary':'role-beneficiary','Goal':'role-goal','Source':'role-source',
+  'Location':'role-location','Instrument':'role-instrument','Cause':'role-cause',
+  'Time':'role-time','Comitative':'role-comitative','Predicate':'role-predicate',
+  'Adjunct':'role-cause',
+};
+function css(r) { return CSS[r] || 'role-predicate'; }
+
+/* ═══════════════════════════════════════════
+   MAIN ANALYSIS
+═══════════════════════════════════════════ */
+function analyze(sentence, vclassOverride) {
+  var raw    = sentence.trim().replace(/[.!?;,]+$/, '');
+  var tokens = raw.split(/\s+/).filter(Boolean);
+  if (tokens.length < 2) return { err: 'Please enter a complete sentence (subject + verb).' };
+
+  var vr = findVerb(tokens);
+  if (!vr) return { err: 'Could not identify the main verb. Please try another sentence.' };
+
+  var passive = isPassive(tokens);
+  var vclass  = vclassOverride || classifyVerb(vr.lem);
+
+  var subjToks = tokens.slice(0, vr.auxStart);
+  var verbToks = tokens.slice(vr.auxStart, vr.idx + 1);
+  var postToks = tokens.slice(vr.idx + 1);
+
+  var sStr = subjToks.join(' ');
+  var isDummy = (sStr.toLowerCase() === 'there' || (sStr.toLowerCase() === 'it' && ['rain','snow','hail','drizzle','thunder'].includes(vr.lem)));
+
+  var parts = [];
+
+  // Subject
+  if (sStr && !isDummy) {
+    var sr = subjRole(sStr, vclass, passive);
+    if (sr) parts.push({ r:sr.r, phrase:sStr, d:sr.d });
+  }
+
+  // Predicate
+  if (verbToks.length > 0) {
+    parts.push({ r:'Predicate', phrase:verbToks.join(' '), d:'The verb expressing the event or state' });
+  }
+
+  // Post-verbal
+  var chunks = parsePost(postToks, vclass, passive);
+  chunks.forEach(function(ch) {
+    var str = ch.np.join(' ');
+    var display = ch.prep ? ch.prep + ' ' + str : str;
+    if (!display.trim()) return;
+
+    var info;
+    if (ch.type === 'obj1' && chunks.some(function(c){return c.type==='obj2';})) {
+      info = passive
+        ? { r:'Theme',     d:'The entity transferred' }
+        : { r:'Recipient', d:'The entity that receives what is transferred' };
+    } else if (ch.type === 'obj2') {
+      info = vclass==='create'
+        ? { r:'Patient', d:'The entity created' }
+        : { r:'Theme',   d:'The entity transferred or given' };
+    } else if (ch.type === 'obj') {
+      info = objRole(str, vclass);
+    } else {
+      info = ppRole(ch.prep, ch.np, str, vclass, passive);
+    }
+    parts.push({ r:info.r, phrase:display, d:info.d });
+  });
+
+  return { parts:parts, passive:passive, vlem:vr.lem, vclass:vclass };
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render(result) {
+  var el = document.getElementById('semRes');
+  if (result.err) {
+    el.className = 'result-box show warning';
+    el.innerHTML = '<div style="font-size:14px;line-height:1.7;">⚠ ' + esc(result.err) + '</div>';
+    return;
+  }
+
+  var parts = result.parts;
+  var html = '';
+
+  // Label
+  html += '<div class="result-label" style="margin-bottom:6px;">Thematic Structure'
+    + (result.passive ? ' <span class="passive-badge">Passive</span>' : '') + '</div>';
+
+  // Sentence visualizer
+  html += '<div class="sem-sentence">';
+  parts.forEach(function(p) {
+    if (!p.phrase.trim()) return;
+    var c = css(p.r);
+    html += '<span class="sem-chunk ' + c + '" title="' + esc(p.r) + '">'
+      + '<span class="sem-chunk-label ' + c + '">' + esc(p.r) + '</span>'
+      + esc(p.phrase) + '</span>';
+  });
+  html += '</div>';
+
+  // Table
+  html += '<table class="role-table"><thead><tr>'
+    + '<th>Thematic Role</th><th>Phrase</th><th>What it means</th>'
+    + '</tr></thead><tbody>';
+  parts.forEach(function(p) {
+    if (!p.phrase.trim()) return;
+    var c = css(p.r);
+    html += '<tr>'
+      + '<td><span class="role-pill ' + c + '">' + esc(p.r) + '</span></td>'
+      + '<td class="phrase-cell">' + esc(p.phrase) + '</td>'
+      + '<td class="def-cell">' + esc(p.d) + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+
+  el.className = 'result-box show success';
+  el.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════
+   API LOOKUP FOR UNKNOWN VERBS
+═══════════════════════════════════════════ */
+function fetchVerbDef(v) {
+  return fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(v))
+    .then(function(r){ if(!r.ok) return null; return r.json(); })
+    .then(function(d){
+      if (!d || !d[0]) return null;
+      var ms = d[0].meanings || [];
+      for (var i = 0; i < ms.length; i++) {
+        if (ms[i].partOfSpeech === 'verb' && ms[i].definitions && ms[i].definitions[0])
+          return ms[i].definitions[0].definition;
+      }
+      return ms[0] && ms[0].definitions && ms[0].definitions[0] ? ms[0].definitions[0].definition : null;
+    })
+    .catch(function(){ return null; });
+}
+
+/* ═══════════════════════════════════════════
+   UI
+═══════════════════════════════════════════ */
+function runSem() {
+  var sentence = document.getElementById('semIn').value.trim();
+  if (!sentence) { document.getElementById('semRes').className='result-box'; return; }
+
+  var el  = document.getElementById('semRes');
+  var btn = document.getElementById('semBtn');
+
+  var tokens = sentence.replace(/[.!?;,]+$/,'').split(/\s+/).filter(Boolean);
+  var vr = findVerb(tokens);
+  var knownVerb = vr && (ALL_KNOWN.has(vr.lem) || ALL_KNOWN.has(vr.lem.slice(0,-1)));
+
+  if (knownVerb) {
+    render(analyze(sentence));
+  } else {
+    el.className = 'result-box show';
+    el.innerHTML = '<div class="sem-loading"><div class="spin"></div>Analyzing…</div>';
+    btn.disabled = true;
+    var toFetch = vr ? vr.lem : '';
+    fetchVerbDef(toFetch).then(function(def) {
+      btn.disabled = false;
+      render(analyze(sentence, def ? classifyFromDef(def) : 'action'));
+    }).catch(function() {
+      btn.disabled = false;
+      render(analyze(sentence));
+    });
+  }
+}
+
+function qLoad(s) {
+  document.getElementById('semIn').value = s;
+  runSem();
+}
+</script>
 </body>
 </html>
