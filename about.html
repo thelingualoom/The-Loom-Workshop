@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <title>About | The Loom Workshop</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .about-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    /* ── Hero ── */
+    .about-hero {
+      text-align: center;
+      padding: 56px 24px 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .about-hero-badge {
+      display: inline-block;
+      font-family: var(--font-m);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--copper);
+      border: 1px solid var(--copper-lt);
+      border-radius: 20px;
+      padding: 4px 16px;
+      margin-bottom: 22px;
+    }
+    .about-hero h1 {
+      font-family: var(--font-d);
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      color: var(--forest);
+      line-height: 1.2;
+      margin-bottom: 18px;
+    }
+    .about-hero h1 em {
+      font-style: italic;
+      color: var(--copper);
+    }
+    .about-hero p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 28px;
+      line-height: 1.75;
+    }
+
+    /* ── Divider ── */
+    .about-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--forest), var(--copper));
+      border-radius: 2px;
+      margin: 40px auto;
+    }
+
+    /* ── Section heading ── */
+    .about-h2 {
+      font-family: var(--font-d);
+      font-size: 1.45rem;
+      color: var(--forest);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    /* ── Body text ── */
+    .about-wrap p {
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .about-wrap a { color: var(--forest); font-weight: 600; }
+
+    /* ── Pull quote ── */
+    .about-quote {
+      border-left: 4px solid var(--copper);
+      padding: 14px 20px;
+      margin: 28px 0;
+      background: rgba(192,124,62,.06);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      font-family: var(--font-d);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--forest);
+      line-height: 1.7;
+    }
+
+    /* ── Tool list ── */
+    .tool-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 20px 0 32px;
+    }
+    .tool-item {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+      border-top: 3px solid var(--forest);
+      text-decoration: none;
+      display: block;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .tool-item:hover {
+      border-top-color: var(--copper);
+      transform: translateY(-2px);
+    }
+    .tool-item-icon { font-size: 22px; margin-bottom: 7px; }
+    .tool-item-name {
+      font-family: var(--font-d);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 4px;
+    }
+    .tool-item-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .tool-item-badge {
+      display: inline-block;
+      margin-top: 6px;
+      font-family: var(--font-m);
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(192,124,62,.1);
+      color: var(--copper);
+      border: 1px solid var(--copper-lt);
+      border-radius: 10px;
+      padding: 2px 8px;
+    }
+
+    /* ── Values grid ── */
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 20px 0 32px;
+    }
+    .value-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 18px 16px;
+    }
+    .value-card-icon {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+    .value-card h3 {
+      font-family: var(--font-m);
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--forest);
+      margin-bottom: 6px;
+    }
+    .value-card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    /* ── Creator card ── */
+    .creator-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 28px 32px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      margin: 20px 0 32px;
+    }
+    @media (max-width: 540px) {
+      .creator-card { flex-direction: column; padding: 20px; }
+    }
+    .creator-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--forest);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      border: 3px solid var(--copper-lt);
+    }
+    .creator-name {
+      font-family: var(--font-d);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 3px;
+    }
+    .creator-role {
+      font-family: var(--font-m);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--copper);
+      margin-bottom: 10px;
+    }
+    .creator-bio {
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.75;
+      margin-bottom: 0;
+    }
+
+    /* ── CTA ── */
+    .about-cta {
+      text-align: center;
+      background: var(--forest);
+      border-radius: var(--r);
+      padding: 40px 32px;
+      margin-top: 40px;
+    }
+    .about-cta h2 {
+      font-family: var(--font-d);
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .about-cta p {
+      color: rgba(255,255,255,0.75);
+      font-size: 14.5px;
+      margin-bottom: 24px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn-white {
+      background: #fff;
+      color: var(--forest);
+      border: none;
+      font-weight: 700;
+    }
+    .btn-white:hover { background: var(--bg-dark); }
+    .btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      border: 1.5px solid rgba(255,255,255,0.35);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.6);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<main>
+
+  <!-- HERO -->
+  <div class="about-hero">
+    <div class="about-hero-badge">✦ About The Loom Workshop</div>
+    <h1>Linguistics Theory,<br><em>Made Hands-On</em></h1>
+    <p>The Loom Workshop is a free, browser-based toolkit that turns abstract linguistic concepts into interactive, explorable tools — built for students, educators, and language enthusiasts.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="index.html" class="btn btn-primary">Explore the Tools</a>
+      <a href="https://www.thelingualoom.com" target="_blank" class="btn btn-outline">Visit The Lingua Loom →</a>
+    </div>
+  </div>
+
+  <div class="about-wrap">
+
+    <div class="about-divider"></div>
+
+    <!-- WHAT IS IT -->
+    <h2 class="about-h2">What Is The Loom Workshop?</h2>
+    <p>The Loom Workshop is the practical companion to <a href="https://www.thelingualoom.com" target="_blank">The Lingua Loom</a>. Where The Lingua Loom teaches linguistic theory through content and explanation, The Loom Workshop lets you experience it directly — by typing, analyzing, building, and exploring.</p>
+
+    <div class="about-quote">
+      "Every tool here exists because a student somewhere needed to move from knowing about language to actually working with it."
+    </div>
+
+    <p>Everything runs entirely in your browser. There is no account to create, no software to install, and no paywall. You can use any tool on any device — phone, tablet, or desktop — and your work stays completely private on your own screen.</p>
+
+    <div class="about-divider"></div>
+
+    <!-- TOOLS -->
+    <h2 class="about-h2">The Tools</h2>
+    <p>The Workshop is organized by the core branches of linguistics. Each page holds one or more dedicated tools — and more are being added regularly.</p>
+
+    <div class="tool-list">
+      <a href="phonetics.html" class="tool-item">
+        <div class="tool-item-icon">🎙</div>
+        <div class="tool-item-name">Phonetics &amp; Phonology</div>
+        <div class="tool-item-desc">Full IPA keyboard — click any symbol to build transcriptions in real time.</div>
+      </a>
+      <a href="morphology.html" class="tool-item">
+        <div class="tool-item-icon">🧬</div>
+        <div class="tool-item-name">Morphology</div>
+        <div class="tool-item-desc">Word Formation Analyzer — identifies how any word was built, using live linguistic data.</div>
+      </a>
+      <a href="syntax.html" class="tool-item">
+        <div class="tool-item-icon">🌳</div>
+        <div class="tool-item-name">Syntax</div>
+        <div class="tool-item-desc">Syntax Tree Builder — draw phrase-structure trees from bracket notation instantly.</div>
+      </a>
+      <a href="semantics.html" class="tool-item">
+        <div class="tool-item-icon">💬</div>
+        <div class="tool-item-name">Semantics</div>
+        <div class="tool-item-desc">Thematic Role Analyzer — identifies Agent, Patient, Theme, Goal, and more in any sentence.</div>
+      </a>
+      <a href="text-analysis.html" class="tool-item">
+        <div class="tool-item-icon">📊</div>
+        <div class="tool-item-name">Text Analysis</div>
+        <div class="tool-item-desc">Full linguistic analysis — readability, vocabulary richness, frequency, sentence structure.</div>
+      </a>
+      <a href="etymology.html" class="tool-item">
+        <div class="tool-item-icon">📖</div>
+        <div class="tool-item-name">Etymology</div>
+        <div class="tool-item-desc">Word Origin Tracer — follows any English word back through its historical language journey.</div>
+      </a>
+    </div>
+
+    <div class="about-divider"></div>
+
+    <!-- VALUES -->
+    <h2 class="about-h2">What We Stand For</h2>
+
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-card-icon">🔓</div>
+        <h3>Free, Always</h3>
+        <p>No subscriptions, no paywalls, no premium tiers. Every tool is free for everyone, permanently.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">🔒</div>
+        <h3>Private by Design</h3>
+        <p>Nothing you type is collected or stored. All processing happens on your device, not on a server.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">📱</div>
+        <h3>Works Everywhere</h3>
+        <p>Designed for mobile and desktop equally. No app to install — just open a browser and start.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">🎓</div>
+        <h3>Academically Grounded</h3>
+        <p>Every tool is built on established linguistic theory — not simplifications or approximations.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">🌱</div>
+        <h3>Always Growing</h3>
+        <p>The Workshop is actively developed. New tools and features are added on an ongoing basis.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">🌍</div>
+        <h3>Open Data</h3>
+        <p>Live linguistic data is sourced from open platforms — not locked in a private database.</p>
+      </div>
+    </div>
+
+    <div class="about-divider"></div>
+
+    <!-- CREATOR -->
+    <h2 class="about-h2">Who Built This</h2>
+
+    <div class="creator-card">
+      <div class="creator-avatar">🌿</div>
+      <div>
+        <div class="creator-name">The Lingua Loom</div>
+        <div class="creator-role">Linguistics Education &amp; Digital Content</div>
+        <p class="creator-bio">The Loom Workshop was designed and built by The Lingua Loom — a linguistics education brand operating at the intersection of theoretical linguistics and applied educational technology. The Lingua Loom creates content, courses, and tools that make linguistics accessible, engaging, and genuinely useful for students at every level.</p>
+      </div>
+    </div>
+
+    <div class="about-divider"></div>
+
+    <!-- DATA SOURCES -->
+    <h2 class="about-h2">Data &amp; Attribution</h2>
+    <p>Some tools in the Workshop fetch live data from open linguistic databases to ensure coverage of the full vocabulary of English, including new and rare words. The sources used are:</p>
+    <ul style="font-size:15px;line-height:1.85;color:var(--ink);padding-left:20px;margin-bottom:16px;">
+      <li><strong>Wiktionary</strong> — etymology, word origin, and historical language data. Operated by the Wikimedia Foundation under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.</li>
+      <li><strong>Free Dictionary API</strong> — definitions and part-of-speech data. A free public API.</li>
+    </ul>
+    <p>Only the specific word being looked up is ever sent in these requests — no other data. See our <a href="privacy.html">Privacy Policy</a> for full details.</p>
+
+    <!-- CTA -->
+    <div class="about-cta">
+      <h2>Ready to Explore?</h2>
+      <p>Pick any tool and start working with language directly. No setup, no account — just linguistics.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="index.html" class="btn btn-white">Browse All Tools</a>
+        <a href="https://www.thelingualoom.com" target="_blank" class="btn btn-ghost">Visit Main Site →</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="shared-ui.js"></script>
+</body>
+</html>
