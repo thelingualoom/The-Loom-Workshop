@@ -44,14 +44,11 @@
          Explore, analyze, and experiment with the building blocks of human language.</p>
     </div>
     <div>
-      <h4>Tools</h4>
+      <h4>About</h4>
       <ul>
-        <li><a href="phonetics.html">Phonetics &amp; Phonology</a></li>
-        <li><a href="morphology.html">Morphology</a></li>
-        <li><a href="syntax.html">Syntax</a></li>
-        <li><a href="semantics.html">Semantics</a></li>
-        <li><a href="text-analysis.html">Text Analysis</a></li>
-        <li><a href="etymology.html">Etymology</a></li>
+        <li><a href="https://www.thelingualoom.com" target="_blank">Main Website</a></li>
+        <li><a href="index.html">About The Workshop</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
       </ul>
     </div>
     <div>
@@ -63,11 +60,18 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© ${new Date().getFullYear()} The Lingua Loom · The Loom Workshop</span>
+    <span>© ${new Date().getFullYear()} The Lingua Loom · The Loom Workshop
+      &nbsp;·&nbsp; <a href="privacy.html" style="color:var(--muted);text-decoration:none;">Privacy Policy</a>
+    </span>
     <span class="cc-badge">
       <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>
       — Free for educational &amp; non-commercial use
     </span>
+  </div>
+<div style="background:var(--forest);padding:10px 24px;text-align:center;font-family:var(--font-m);font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:0.04em;line-height:1.8;">
+    🔒 All tools run entirely in your browser — no data is stored or collected. &nbsp;·&nbsp;
+    Etymology &amp; word data sourced from Wiktionary (CC BY-SA) and the Free Dictionary API. &nbsp;·&nbsp;
+    🚧 Workshop in active development — new tools added regularly.
   </div>
 </footer>`;
 
