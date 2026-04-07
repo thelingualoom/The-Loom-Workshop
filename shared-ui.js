@@ -47,18 +47,11 @@
       <h4>About</h4>
       <ul>
         <li><a href="https://www.thelingualoom.com" target="_blank">Main Website</a></li>
-        <li><a href="index.html">About The Workshop</a></li>
+        <li><a href="about.html">About The Workshop</a></li>
         <li><a href="privacy.html">Privacy Policy</a></li>
       </ul>
     </div>
-    <div>
-      <h4>About</h4>
-      <ul>
-        <li><a href="https://www.thelingualoom.com" target="_blank">Main Website</a></li>
-        <li><a href="index.html">About The Workshop</a></li>
-      </ul>
-    </div>
-  </div>
+    
   <div class="footer-bottom">
     <span>© ${new Date().getFullYear()} The Lingua Loom · The Loom Workshop
       &nbsp;·&nbsp; <a href="privacy.html" style="color:var(--muted);text-decoration:none;">Privacy Policy</a>
