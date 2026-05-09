@@ -400,6 +400,17 @@
 <script>
 'use strict';
 
+/* ── Simple rate limiter: max 1 request per 500ms ── */
+var lastFetchTime = 0;
+var FETCH_INTERVAL = 500; /* milliseconds */
+
+function canFetch() {
+  var now = Date.now();
+  if (now - lastFetchTime < FETCH_INTERVAL) return false;
+  lastFetchTime = now;
+  return true;
+}
+
 /* ══════════════════════════════════════════════════════════
    LANGUAGE CODE → NAME MAP  (Wiktionary template codes)
 ══════════════════════════════════════════════════════════ */
@@ -881,6 +892,11 @@ function runAnalyze() {
   var word = document.getElementById('morphIn').value.trim();
   if (!word) {
     document.getElementById('morphRes').className = 'result-box';
+    return;
+  }
+  if (!canFetch()) {
+    el.className = 'result-box show warning';
+    el.innerHTML = '<div style="font-size:14px;">Please wait a moment before searching again.</div>';
     return;
   }
   var lo = word.toLowerCase();
