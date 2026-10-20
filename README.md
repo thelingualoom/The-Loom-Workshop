@@ -1,85 +1,103 @@
-<div align="center">
+# 🧵 The Loom Workshop
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=The%20Lingua%20Loom&fontSize=42&fontColor=fff&animation=twinkling&fontAlignY=32&desc=Where%20Language%20Meets%20Logic&descAlignY=55&descSize=18" width="100%"/>
+**Interactive linguistics tools, free and in your browser.**
+The practical companion to [The Lingua Loom](https://www.thelingualoom.com/),
+where the main site teaches the theory and the Workshop lets you practise it.
 
-</div>
+🔗 **Open the Workshop:** [theloomworkshop.thelingualoom.com](https://theloomworkshop.thelingualoom.com)
 
----
+## About
 
-<div align="center">
+The Loom Workshop is a free, browser-based toolkit that turns abstract
+linguistic ideas into things you can type, analyse, build, and explore. It is
+made for students, educators, and language enthusiasts. There is no account to
+create and nothing to install.
 
-🧵 *Linguist · Educational Tool Builder · Language Educator*
+## The Tools
 
-</div>
+| Page | Tool | What it does |
+| --- | --- | --- |
+| 🎙️ Phonetics & Phonology | IPA Keyboard | Click symbols to build IPA transcriptions |
+| 🧬 Morphology | Word Formation Analyzer | Shows how a word was built, plus a reference guide to word formation processes |
+| 🌳 Syntax | Syntax Tree Builder | Draws phrase-structure trees from bracket notation |
+| 💬 Semantics | Thematic Role Analyzer | Identifies roles such as Agent, Patient, Theme, and Goal, plus a reference guide |
+| 📊 Text Analysis | Linguistic Text Analyzer | Readability, vocabulary richness, word frequency, and sentence structure |
+| 📖 Etymology | Word Origin Tracer | Follows an English word back through its history |
 
----
+## Data Sources
 
-## 🪡 Who I Am
+Some tools look up words live from open linguistic sources:
 
-I work at the intersection of **language science and learning design** — building tools and content that make linguistics feel less like a textbook and more like a discovery.
+- [Wiktionary](https://en.wiktionary.org/) for etymology and word-origin data
+  (available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/))
+- [Free Dictionary API](https://dictionaryapi.dev/) for definitions and parts of speech
 
-If you've ever wondered why words sound the way they do, how sentences hold their shape, or where a word came from before it reached you — you're in the right place.
+Only the word you look up is sent in these requests.
 
----
+## Privacy
 
-## 🧰 What I've Built
+All processing runs in your browser. The Workshop does not collect or store
+the text you enter. See the [Privacy Policy](privacy.html) for details.
 
-**[The Loom Workshop](https://theloomworkshop.thelingualoom.com)** is my flagship project — a free, browser-based educational toolkit for linguistics. No downloads. No paywalls. Just the science of language, made learnable.
+## Built With
 
-It covers:
+- HTML, CSS, and JavaScript (no build step)
+- [Google Fonts](https://fonts.google.com/)
+- Hosted on GitHub Pages with a custom domain
 
-- 🌿 **Syntax** — sentence structure and tree building
-- 🔤 **Morphology** — how words are formed and transformed
-- 🎙️ **Phonetics** — the sounds beneath the speech
-- 📜 **Etymology** — the histories words carry without telling you
+## Repository Structure
 
-Built entirely from scratch with HTML, CSS, and JavaScript. Every tool designed with students in mind.
+| File | Description |
+| --- | --- |
+| `index.html` | Home page |
+| `about.html` | About the Workshop |
+| `privacy.html` | Privacy policy |
+| `phonetics.html` | IPA Keyboard |
+| `morphology.html` | Word Formation Analyzer |
+| `syntax.html` | Syntax Tree Builder |
+| `semantics.html` | Thematic Role Analyzer |
+| `text-analysis.html` | Linguistic Text Analyzer |
+| `etymology.html` | Word Origin Tracer |
+| `shared-ui.js` | Shared navigation and footer |
+| `style.css` | Shared styles |
+| `favicon.jpg` | Workshop logo |
+| `CNAME` | Custom domain setting |
+| `LICENSE.txt` | License terms |
 
----
+## Run Locally
 
-## 🌐 Find Me Here
+1. Download or clone this repository.
+2. Open `index.html` in your browser.
 
-<div align="center">
+An internet connection is needed for the tools that look up words online.
 
-[![Website](https://img.shields.io/badge/🌐_Website-thelingualoom.com-4A90D9?style=for-the-badge)](https://www.thelingualoom.com)
+## Feedback
 
-[![The Loom Workshop](https://img.shields.io/badge/🧰_Loom_Workshop-Open_the_App-7B68EE?style=for-the-badge)](https://theloomworkshop.thelingualoom.com)
+Found a bug or have an idea for a new tool? Please
+[open an issue](https://github.com/thelingualoom/The-Loom-Workshop/issues).
 
-[![YouTube](https://img.shields.io/badge/YouTube-My_Channel-%23FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCH29-yWkNo2OrAn5KOzF85Q)
+## License
 
-[![Instagram](https://img.shields.io/badge/Instagram-@thelingualoom-%23E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/thelingualoom)
+The Workshop's educational content and tool pages are licensed under
+**[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)**. It is free
+for educational and non-commercial use, with credit to The Lingua Loom.
+Commercial use needs written permission.
 
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-Join_My_Channel-%2325D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://www.whatsapp.com/channel/0029VbBkZRT4yltYZiUG0S2v)
+The names **The Lingua Loom** and **The Loom Workshop** and the Workshop logo
+are not covered by this license. All rights are reserved.
 
-[![Email](https://img.shields.io/badge/Email-Get_In_Touch-D14836?style=for-the-badge&logo=gmail&logoColor=white)](https://mail.google.com/mail/?view=cm&to=thelingualoom@gmail.com)
+To credit this work:
 
-</div>
+> "The Loom Workshop" by The Lingua Loom
+> (https://theloomworkshop.thelingualoom.com), licensed under CC BY-NC 4.0.
 
----
+See [LICENSE.txt](LICENSE.txt) for the full terms.
 
-## 💻 Tools I Work With
+## Part of The Lingua Loom
 
-<div align="center">
+- 🌍 [Website](https://www.thelingualoom.com/)
+- ▶️ [YouTube](https://www.youtube.com/channel/UCH29-yWkNo2OrAn5KOzF85Q)
+- 📸 [Instagram](https://www.instagram.com/thelingualoom)
+- 📧 [thelingualoom@gmail.com](mailto:thelingualoom@gmail.com)
 
-![HTML5](https://img.shields.io/badge/HTML5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-![Markdown](https://img.shields.io/badge/Markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)
-![Git](https://img.shields.io/badge/Git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
-![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-121011?style=for-the-badge&logo=github&logoColor=white)
-![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
-![Canva](https://img.shields.io/badge/Canva-%2300C4CC.svg?style=for-the-badge&logo=canva&logoColor=white)
-
-</div>
-
----
-
-<div align="center">
-
-*Language is not just communication — it is the architecture of thought.*
-
-<br>
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
-
-</div>
+© 2026 The Lingua Loom
